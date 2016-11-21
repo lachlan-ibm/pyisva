@@ -18,8 +18,9 @@ class Common(object):
         self.USERNAME = username
         self.PASSWORD = password
 
-    def changeAdminPassword(self, newPassword):
-        self.PASSWORD = newPassword
+    def addOnValue(self, dictionary, key, value):
+        if value is not None:
+            dictionary[key] = str(value)
 
     def checkPassword(self, password=None):
         if password is None:
@@ -29,7 +30,7 @@ class Common(object):
         statusCode, contentHeader, content = client.get(self.BASE_URL, "/setup_complete", self.APPLICATION_JSON)
         return statusCode == 200
 
-    def _getJSON(self, description, endpoint, successCode=200, silent=False):
+    def getJSON(self, description, endpoint, successCode=200, silent=False):
         self.logger.debug("GET to %s" % description)
 
         client = ISAMRestClient(username=self.USERNAME, password=self.PASSWORD)
@@ -37,13 +38,18 @@ class Common(object):
 
         if statusCode == successCode:
             self._toDebug("Successful GET to %s." % description, content, statusCode)
-            return statusCode, json.loads(content)
         elif not silent:
             self._toError("Unsuccessful GET to %s." % description, content, statusCode)
 
-        return statusCode, None
+        return statusCode, self._decodeJson(content)
 
-    def _postJSON(self, description, endpoint, jsonObj="", successCode=200, silent=False):
+    def logFailed(self, message):
+        self.logger.error("Failed: %s" % message)
+
+    def logSuccess(self, message):
+        self.logger.info("Success: %s" % message)
+
+    def postJSON(self, description, endpoint, jsonObj="", successCode=200, silent=False):
         self.logger.debug("POST to %s [%s]" % (description, jsonObj))
 
         client = ISAMRestClient(username=self.USERNAME, password=self.PASSWORD)
@@ -51,13 +57,12 @@ class Common(object):
 
         if statusCode == successCode:
             self._toDebug("Successful POST to %s." % description, content, statusCode)
-            return statusCode, json.loads(content)
         elif not silent:
             self._toError("Unsuccessful POST to %s." % description, content, statusCode)
 
-        return statusCode, None
+        return statusCode, self._decodeJson(content)
 
-    def _putJSON(self, description, endpoint, jsonObj="", successCode=200, silent=False):
+    def putJSON(self, description, endpoint, jsonObj="", successCode=200, silent=False):
         self.logger.debug("PUT to %s [%s]" % (description, jsonObj))
 
         client = ISAMRestClient(username=self.USERNAME, password=self.PASSWORD)
@@ -65,17 +70,15 @@ class Common(object):
 
         if statusCode == successCode:
             self._toDebug("Successful PUT to %s." % description, content, statusCode)
-            return statusCode, True
         elif not silent:
             self._toError("Unsuccessful PUT to %s." % description, content, statusCode)
 
-        return statusCode, None
+        return statusCode, self._decodeJson(content)
 
-    def _logFailed(self, message):
-        self.logger.error("Failed: %s" % message)
-
-    def _logSuccess(self, message):
-        self.logger.info("Success: %s" % message)
+    def _decodeJson(self, string):
+        if string is None or string == "":
+            return None
+        return json.loads(string)
 
     def _toDebug(self, message, content=None, statusCode=None):
         self.logger.debug("%s Content: [%s] Status Code: [%s]" % (message, content, statusCode))

@@ -22,46 +22,46 @@ class FirstSteps(Common):
         self.logger.info(description)
 
         jsonData = {"accepted":accept}
-        statusCode, content = self._putJSON("Service Agreement", self.SERVICE_AGREEMENTS_ACCEPTED, jsonData)
+        statusCode, content = self.putJSON("Service Agreement", self.SERVICE_AGREEMENTS_ACCEPTED, jsonData)
 
-        if content is not None:
-            self._logSuccess(description)
+        if statusCode == 200:
+            self.logSuccess(description)
             return True
 
-        self._logFailed(description)
+        self.logFailed(description)
 
     def completeSetup(self):
         description = "Completing setup"
         self.logger.info(description)
 
-        statusCode, content = self._putJSON("Setup Complete", self.SETUP_COMPLETE)
+        statusCode, content = self.putJSON("Setup Complete", self.SETUP_COMPLETE)
 
-        if content is not None:
-            self._logSuccess(description)
+        if statusCode == 200:
+            self.logSuccess(description)
             return True
 
-        self._logFailed(description)
+        self.logFailed(description)
 
     def isSetupComplete(self):
         description = "Checking if setup is complete"
         self.logger.info(description)
 
-        statusCode, content = self._getJSON("Setup Complete", self.SETUP_COMPLETE)
+        statusCode, content = self.getJSON("Setup Complete", self.SETUP_COMPLETE)
 
-        if content is not None:
-            self._logSuccess(description)
-            return content['configured']
+        if statusCode == 200 and content is not None:
+            self.logSuccess(description)
+            return content.get("configured", False)
 
-        self._logFailed(description)
+        self.logFailed(description)
 
     def isLicenseAccepted(self):
         description = "Checking if SLA has been accepted"
         self.logger.info(description)
 
-        statusCode, content = self._getJSON("Service Agreement", self.SERVICE_AGREEMENTS_ACCEPTED)
+        statusCode, content = self.getJSON("Service Agreement", self.SERVICE_AGREEMENTS_ACCEPTED)
 
-        if content is not None:
-            self._logSuccess(description)
-            return content['accepted']
+        if statusCode == 200 and content is not None:
+            self.logSuccess(description)
+            return content.get("accepted", False)
 
-        self._logFailed(description)
+        self.logFailed(description)
