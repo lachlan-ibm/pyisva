@@ -6,29 +6,25 @@ Created on Nov 17, 2016
 from com.ibm.isam.util.HTTPRequest import ISAMRestClient
 import json, logging
 
-class Common(object):
+class Base(object):
 
     APPLICATION_JSON = "application/json"
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.INFO):
-        self.logger = logging.getLogger("Common")
+    def __init__(self, baseUrl, username, password, logLevel=logging.ERROR):
+        self.logger = logging.getLogger("Base")
         self.logger.setLevel(logLevel)
 
         self.BASE_URL = baseUrl
         self.USERNAME = username
         self.PASSWORD = password
 
-    def addOnValue(self, dictionary, key, value):
+    def addOnStringValue(self, dictionary, key, value):
         if value is not None:
             dictionary[key] = str(value)
 
-    def checkPassword(self, password=None):
-        if password is None:
-            password = self.PASSWORD
-
-        client = ISAMRestClient(username=self.USERNAME, password=password)
-        statusCode, contentHeader, content = client.get(self.BASE_URL, "/setup_complete", self.APPLICATION_JSON)
-        return statusCode == 200
+    def addOnValue(self, dictionary, key, value):
+        if value is not None:
+            dictionary[key] = value
 
     def getJSON(self, description, endpoint, successCode=200, silent=False):
         self.logger.debug("GET to %s" % description)
@@ -39,12 +35,15 @@ class Common(object):
         if statusCode == successCode:
             self._toDebug("Successful GET to %s." % description, content, statusCode)
         elif not silent:
-            self._toError("Unsuccessful GET to %s." % description, content, statusCode)
+            self._toWarning("Unsuccessful GET to %s." % description, content, statusCode)
 
         return statusCode, self._decodeJson(content)
 
+    def logEntry(self, message):
+        self.logger.info(message)
+
     def logFailed(self, message):
-        self.logger.error("Failed: %s" % message)
+        self.logger.info("Failed: %s" % message)
 
     def logSuccess(self, message):
         self.logger.info("Success: %s" % message)
@@ -58,7 +57,7 @@ class Common(object):
         if statusCode == successCode:
             self._toDebug("Successful POST to %s." % description, content, statusCode)
         elif not silent:
-            self._toError("Unsuccessful POST to %s." % description, content, statusCode)
+            self._toWarning("Unsuccessful POST to %s." % description, content, statusCode)
 
         return statusCode, self._decodeJson(content)
 
@@ -71,17 +70,18 @@ class Common(object):
         if statusCode == successCode:
             self._toDebug("Successful PUT to %s." % description, content, statusCode)
         elif not silent:
-            self._toError("Unsuccessful PUT to %s." % description, content, statusCode)
+            self._toWarning("Unsuccessful PUT to %s." % description, content, statusCode)
 
         return statusCode, self._decodeJson(content)
 
     def _decodeJson(self, string):
-        if string is None or string == "":
+        try:
+            return json.loads(string)
+        except:
             return None
-        return json.loads(string)
 
     def _toDebug(self, message, content=None, statusCode=None):
         self.logger.debug("%s Content: [%s] Status Code: [%s]" % (message, content, statusCode))
 
-    def _toError(self, message, content=None, statusCode=None):
-        self.logger.error("%s Content: [%s] Status Code: [%s]" % (message, content, statusCode))
+    def _toWarning(self, message, content=None, statusCode=None):
+        self.logger.warning("%s Content: [%s] Status Code: [%s]" % (message, content, statusCode))
