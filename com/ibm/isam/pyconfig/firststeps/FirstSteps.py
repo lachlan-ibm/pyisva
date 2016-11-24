@@ -3,88 +3,96 @@ Created on Nov 17, 2016
 
 @copyright: IBM
 """
-from com.ibm.isam.pyconfig.Base import Base
-from com.ibm.isam.util.HTTPRequest import ISAMRestClient
-import logging
+from com.ibm.isam.util.RestClient import RestClient
+from com.ibm.isam.util.Logger import Logger
+import abc, logging
 
-class FirstSteps(Base):
+class FirstSteps(RestClient):
+    __metaclass__ = abc.ABCMeta
 
     SETUP_COMPLETE = "/setup_complete"
     SERVICE_AGREEMENTS_ACCEPTED = "/setup_service_agreements/accepted"
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.ERROR):
-        super(FirstSteps, self).__init__(baseUrl, username, password)
+    logger = Logger("FirstSteps")
 
-        self.logger = logging.getLogger("FirstSteps")
-        self.logger.setLevel(logLevel)
+    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
+        super(FirstSteps, self).__init__(baseUrl, username, password, logLevel)
+        FirstSteps.logger.setLevel(logLevel)
+
+    @abc.abstractmethod
+    def getIsamVersion(self):
+        pass
 
     #
     # First Steps Setup
     #
 
     def getSetupStatus(self):
-        description = "Retrieving Setup status"
-        self.logEntry(description)
+        methodName = "getSetupStatus()"
+        FirstSteps.logger.enterMethod(methodName)
+        result = False
 
-        statusCode, content = self.getJSON("Setup Complete", self.SETUP_COMPLETE)
+        statusCode, content = self.httpGetJson(FirstSteps.SETUP_COMPLETE)
 
         if statusCode == 200 and content is not None:
-            self.logSuccess(description)
-            return content.get("configured", False)
+            result = content.get("configured", False)
 
-        self.logFailed(description)
+        FirstSteps.logger.exitMethod(methodName)
+        return result
 
     def setSetupComplete(self):
-        description = "Completing Setup"
-        self.logEntry(description)
+        methodName = "setSetupComplete()"
+        FirstSteps.logger.enterMethod(methodName)
+        result = None
 
-        statusCode, content = self.putJSON("Setup Complete", self.SETUP_COMPLETE)
+        statusCode, content = self.httpPutJson(FirstSteps.SETUP_COMPLETE)
 
         if statusCode == 200:
-            self.logSuccess(description)
-            return (content or True)
+            result = (content or True)
 
-        self.logFailed(description)
+        FirstSteps.logger.exitMethod(methodName)
+        return result
 
     #
     # Service Agreements
     #
 
     def getSLAStatus(self):
-        description = "Retrieving SLA acceptance status"
-        self.logEntry(description)
+        methodName = "getSLAStatus()"
+        FirstSteps.logger.enterMethod(methodName)
+        result = False
 
-        statusCode, content = self.getJSON("Service Agreement", self.SERVICE_AGREEMENTS_ACCEPTED)
+        statusCode, content = self.httpGetJson(FirstSteps.SERVICE_AGREEMENTS_ACCEPTED)
 
         if statusCode == 200 and content is not None:
-            self.logSuccess(description)
-            return content.get("accepted", False)
+            result = content.get("accepted", False)
 
-        self.logFailed(description)
+        FirstSteps.logger.exitMethod(methodName)
+        return result
 
     def setSLAStatus(self, accept=True):
-        description = "Updating SLA acceptance status"
-        self.logEntry(description)
+        methodName = "setSLAStatus(accept)"
+        FirstSteps.logger.enterMethod(methodName)
+        result = None
 
         jsonData = {"accepted":accept}
-        statusCode, content = self.putJSON("Service Agreement", self.SERVICE_AGREEMENTS_ACCEPTED, jsonData)
+        statusCode, content = self.httpPutJson(FirstSteps.SERVICE_AGREEMENTS_ACCEPTED, jsonData)
 
         if statusCode == 200:
-            self.logSuccess(description)
-            return (content or True)
+            result = (content or True)
 
-        self.logFailed(description)
+        FirstSteps.logger.exitMethod(methodName)
+        return result
 
     #
     # Miscellaneous
     #
 
-    def testPassword(self, password=None):
-        if password is None:
-            password = self.PASSWORD
+    def testPassword(self):
+        methodName = "testPassword()"
+        FirstSteps.logger.enterMethod(methodName)
 
-        client = ISAMRestClient(username=self.USERNAME, password=password)
-        statusCode, contentHeader, content = client.get(self.BASE_URL, self.SETUP_COMPLETE, self.APPLICATION_JSON)
+        statusCode, content = self.httpGetJson(FirstSteps.SETUP_COMPLETE)
 
-        if statusCode == 200:
-            return True
+        FirstSteps.logger.exitMethod(methodName)
+        return statusCode == 200
