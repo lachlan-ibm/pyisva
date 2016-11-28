@@ -36,6 +36,11 @@ class Factory(object):
         moduleName = Factory.SYSTEM_SETTINGS + "networksettings." + className
         return self.classLoader(moduleName, className)(baseUrl, username, password, logLevel)
 
+    def getSystemSecureSettings(self, baseUrl, username, password, logLevel=logging.NOTSET):
+        className = "SecureSettings" + self.version
+        moduleName = Factory.SYSTEM_SETTINGS + "securesettings." + className
+        return self.classLoader(moduleName, className)(baseUrl, username, password, logLevel)
+
     def getSystemSystemSettings(self, baseUrl, username, password, logLevel=logging.NOTSET):
         className = "SystemSettings" + self.version
         moduleName = Factory.SYSTEM_SETTINGS + "systemsettings." + className
