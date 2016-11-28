@@ -27,6 +27,8 @@ class SecureSettings(RestClient):
     # SSL Certificates
     #
 
+    # Personal Certificates
+
     def importPersonalCertificate(self, kdbId, password, filePath):
         methodName = "importPersonalCertificate()"
         SecureSettings.logger.enterMethod(methodName)
@@ -41,6 +43,31 @@ class SecureSettings(RestClient):
                 files = {"cert": certificate}
 
                 endpoint = SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/personal_cert"
+                statusCode, content = self.httpPostFile(endpoint, data=jsonObj, files=files)
+
+                if statusCode == 200:
+                    result = True if content is None else content
+        except IOError, e:
+            SecureSettings.logger.error(methodName, str(e))
+
+        SecureSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    # Signer Certificates
+
+    def importSignerCertificate(self, kdbId, label, filePath):
+        methodName = "importPersonalCertificate()"
+        SecureSettings.logger.enterMethod(methodName)
+        result = None
+
+        try:
+            with open(filePath, 'rb') as certificate:
+                jsonObj = {}
+                Utils.addOnStringValue(jsonObj, "label", label)
+
+                files = {"cert": certificate}
+
+                endpoint = SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/signer_cert"
                 statusCode, content = self.httpPostFile(endpoint, data=jsonObj, files=files)
 
                 if statusCode == 200:

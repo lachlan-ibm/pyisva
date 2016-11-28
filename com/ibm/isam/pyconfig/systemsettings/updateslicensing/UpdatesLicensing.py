@@ -11,7 +11,8 @@ import abc, logging
 class UpdatesLicensing(RestClient):
     __metaclass__ = abc.ABCMeta
 
-    CAPABILITIES = "/isam/capabilities/v1"
+    CAPABILITIES = "/isam/capabilities"
+    CAPABILITIES_V1 = CAPABILITIES + "/v1"
 
     logger = Logger("UpdatesLicensing")
 
@@ -27,21 +28,45 @@ class UpdatesLicensing(RestClient):
     # Licensing and Activation
     #
 
-    def activateProductOffering(self, code):
-        methodName = "activateProductOffering()"
+    def createActivationOffering(self, code):
+        methodName = "createActivationOffering()"
         UpdatesLicensing.logger.enterMethod(methodName)
         result = None
 
-        if len(code) == 39:
-            jsonObj = {}
-            Utils.addOnStringValue(jsonObj, "code", code)
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "code", code)
 
-            statusCode, content = self.httpPostJson(UpdatesLicensing.CAPABILITIES, jsonObj)
+        statusCode, content = self.httpPostJson(UpdatesLicensing.CAPABILITIES_V1, jsonObj)
 
-            if statusCode == 200:
-                result = True if content is None else content
-        else:
-            UpdatesLicensing.logger.error(methodName, "Activation code is invalid [%s]" % code)
+        if statusCode == 200:
+            result = True if content is None else content
+
+        UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getActivationOffering(self, id):
+        methodName = "getActivationOffering()"
+        UpdatesLicensing.logger.enterMethod(methodName)
+        result = None
+
+        endpoint = "%s/%s/v1" % (UpdatesLicensing.CAPABILITIES, str(id))
+        statusCode, content = self.httpGetJson(endpoint)
+
+        if statusCode == 200 and content is not None:
+            result = content
+
+        UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getActivationOfferings(self):
+        methodName = "getActivationOfferings()"
+        UpdatesLicensing.logger.enterMethod(methodName)
+        result = None
+
+        statusCode, content = self.httpGetJson(UpdatesLicensing.CAPABILITIES_V1)
+
+        if statusCode == 200 and content is not None:
+            result = content
 
         UpdatesLicensing.logger.exitMethod(methodName, str(result))
         return result
