@@ -7,6 +7,7 @@ import importlib, logging
 
 class Factory(object):
 
+    ACCESS_CONTROL = "com.ibm.isam.pyconfig.accesscontrol."
     FIRST_STEPS = "com.ibm.isam.pyconfig.firststeps."
     SYSTEM_SETTINGS = "com.ibm.isam.pyconfig.systemsettings."
     WEB_SETTINGS = "com.ibm.isam.pyconfig.websettings."
@@ -49,6 +50,16 @@ class Factory(object):
     def getSystemUpdatesLicensing(self, baseUrl, username, password, logLevel=logging.NOTSET):
         className = "UpdatesLicensing" + self.version
         moduleName = Factory.SYSTEM_SETTINGS + "updateslicensing." + className
+        return self.classLoader(moduleName, className)(baseUrl, username, password, logLevel)
+
+    def getAccessManage(self, baseUrl, username, password, logLevel=logging.NOTSET):
+        className = "Manage" + self.version
+        moduleName = Factory.ACCESS_CONTROL + "manage." + className
+        return self.classLoader(moduleName, className)(baseUrl, username, password, logLevel)
+
+    def getAccessPolicy(self, baseUrl, username, password, logLevel=logging.NOTSET):
+        className = "Policy" + self.version
+        moduleName = Factory.ACCESS_CONTROL + "policy." + className
         return self.classLoader(moduleName, className)(baseUrl, username, password, logLevel)
 
     def getWebManage(self, baseUrl, username, password, logLevel=logging.NOTSET):
