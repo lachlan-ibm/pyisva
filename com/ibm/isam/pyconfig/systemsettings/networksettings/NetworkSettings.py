@@ -60,7 +60,7 @@ class NetworkSettings(RestClient):
         statusCode, content = self.httpPutJson(NetworkSettings.NET_DNS, jsonObj)
 
         if statusCode == 200:
-            result = (content or True)
+            result = True if content is None else content
 
         NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -81,7 +81,7 @@ class NetworkSettings(RestClient):
         statusCode, content = self.httpPostJson(ipv4HostEndpoint, jsonObj)
 
         if statusCode == 200:
-            result = (content or True)
+            result = True if content is None else content
 
         NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -162,7 +162,7 @@ class NetworkSettings(RestClient):
                     statusCode, content = self.httpPutJson(interfaceEndpoint, jsonObj)
 
                     if statusCode == 200:
-                        result = (content or True)
+                        result = True if content is None else content
 
         NetworkSettings.logger.exitMethod(methodName, str(result))
         return result

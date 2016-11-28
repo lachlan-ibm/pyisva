@@ -27,8 +27,8 @@ class UpdatesLicensing(RestClient):
     # Licensing and Activation
     #
 
-    def createActivationOffering(self, code):
-        methodName = "createActivationOffering()"
+    def activateProductOffering(self, code):
+        methodName = "activateProductOffering()"
         UpdatesLicensing.logger.enterMethod(methodName)
         result = None
 
@@ -39,7 +39,7 @@ class UpdatesLicensing(RestClient):
             statusCode, content = self.httpPostJson(UpdatesLicensing.CAPABILITIES, jsonObj)
 
             if statusCode == 200:
-                result = (content or True)
+                result = True if content is None else content
         else:
             UpdatesLicensing.logger.error(methodName, "Activation code is invalid [%s]" % code)
 

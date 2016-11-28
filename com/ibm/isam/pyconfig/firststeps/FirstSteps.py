@@ -48,7 +48,7 @@ class FirstSteps(RestClient):
         statusCode, content = self.httpPutJson(FirstSteps.SETUP_COMPLETE)
 
         if statusCode == 200:
-            result = (content or True)
+            result = True if content is None else content
 
         FirstSteps.logger.exitMethod(methodName)
         return result
@@ -79,7 +79,7 @@ class FirstSteps(RestClient):
         statusCode, content = self.httpPutJson(FirstSteps.SERVICE_AGREEMENTS_ACCEPTED, jsonData)
 
         if statusCode == 200:
-            result = (content or True)
+            result = True if content is None else content
 
         FirstSteps.logger.exitMethod(methodName)
         return result

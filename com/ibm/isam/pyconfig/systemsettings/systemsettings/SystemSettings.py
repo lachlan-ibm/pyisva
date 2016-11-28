@@ -12,6 +12,7 @@ class SystemSettings(RestClient):
     __metaclass__ = abc.ABCMeta
 
     ADMIN_CONFIG = "/core/admin_cfg"
+    ADVANCED_PARAMETERS = "/core/adv_params"
     LMI = "/lmi"
     LMI_RESTART = "/restarts/restart_server"
     TIME_CONFIG = "/core/time_cfg"
@@ -73,7 +74,7 @@ class SystemSettings(RestClient):
         statusCode, content = self.httpPutJson(SystemSettings.ADMIN_CONFIG, jsonObj)
 
         if statusCode == 200:
-            result = (content or True)
+            result = True if content is None else content
 
         SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -107,6 +108,38 @@ class SystemSettings(RestClient):
         return result
 
     #
+    # Advanced Tuning Parameters
+    #
+
+    def getAdvancedTuningParameters(self):
+        methodName = "getAdvancedTuningParameters()"
+        SystemSettings.logger.enterMethod(methodName)
+        result = None
+
+        statusCode, content = self.httpGetJson(SystemSettings.ADVANCED_PARAMETERS)
+
+        if statusCode == 200 and content is not None:
+            result = content.get("tuningParameters", [])
+
+        SystemSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getAdvancedTuningParameter(self, key, default=None):
+        methodName = "getAdvancedTuningParameter()"
+        SystemSettings.logger.enterMethod(methodName)
+        result = None
+
+        parameters = self.getAdvancedTuningParameters()
+
+        if parameters is not None:
+            for index in range(len(parameters)):
+                if parameters[index].get("key", "") == key:
+                    result = parameters[index].get("value", default)
+
+        SystemSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    #
     # Date and Time Settings
     #
 
@@ -124,7 +157,7 @@ class SystemSettings(RestClient):
         statusCode, content = self.httpPutJson(SystemSettings.TIME_CONFIG, jsonObj)
 
         if statusCode == 200:
-            result = (content or True)
+            result = True if content is None else content
 
         SystemSettings.logger.exitMethod(methodName, str(result))
         return result
