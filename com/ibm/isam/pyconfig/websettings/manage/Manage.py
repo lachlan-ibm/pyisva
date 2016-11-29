@@ -14,6 +14,7 @@ class Manage(RestClient):
     PDADMIN = "/isam/pdadmin"
     REVERSEPROXY = "/wga/reverseproxy"
     RUNTIME_COMPONENT = "/isam/runtime_components"
+    USER_REGISTRY = "/mga/user_registry"
     WGA_DEFAULTS = "/isam/wga_templates/defaults"
 
     logger = Logger("Manage")
@@ -257,6 +258,45 @@ class Manage(RestClient):
     # Runtime Components
     #
 
+    # Administering the Security Access Manager Base
+
+    def doPdadminCommands(self, adminId, adminPwd, commands=[]):
+        methodName = "doPdadminCommands()"
+        Manage.logger.enterMethod(methodName)
+        result = None
+
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "admin_id", adminId)
+        Utils.addOnStringValue(jsonObj, "admin_pwd", adminPwd)
+        Utils.addOnValue(jsonObj, "commands", commands)
+
+        statusCode, content = self.httpPostJson(Manage.PDADMIN, jsonObj)
+
+        if statusCode == 200:
+            result = True if content is None else content
+
+        Manage.logger.exitMethod(methodName, str(result))
+        return result
+
+    def updateUserPasswordInRegistry(self, username, password):
+        methodName = "updateUserPasswordInRegistry()"
+        Manage.logger.enterMethod(methodName)
+        result = None
+
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "password", password)
+
+        endpoint = "%s/users/%s/v1" % (Manage.USER_REGISTRY, str(username))
+        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+
+        if statusCode == 204:
+            result = True if content is None else content
+
+        Manage.logger.exitMethod(methodName, str(result))
+        return result
+
+    # Managing the Security Access Manager Runtime
+
     def configureRuntimeEnvironment(self, psMode, userRegistry, adminPassword, ldapPassword=None, adminCertLiftime=None, \
             sslCompliance=None, ldapHost=None, ldapPort=None, isamDomain=None, ldapDn=None, ldapSuffix=None, \
             ldapSslDb=None, ldapSslLabel=None, isamHost=None, isamPort=None):
@@ -287,28 +327,6 @@ class Manage(RestClient):
             result = True if content is None else content
         elif statusCode == 500 and content.get("message", "") == "Error: WGAWA0262E   The runtime environment has already been configured.":
             Manage.logger.log(methodName, "The runtime environment has already been configured.")
-            result = True if content is None else content
-
-        Manage.logger.exitMethod(methodName, str(result))
-        return result
-
-    #
-    # Policy Administration
-    #
-
-    def doPdAdminCommands(self, adminId, adminPwd, commands=[]):
-        methodName = "doPdAdminCommands()"
-        Manage.logger.enterMethod(methodName)
-        result = None
-
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "admin_id", adminId)
-        Utils.addOnStringValue(jsonObj, "admin_pwd", adminPwd)
-        Utils.addOnValue(jsonObj, "commands", commands)
-
-        statusCode, content = self.httpPostJson(Manage.PDADMIN, jsonObj)
-
-        if statusCode == 200:
             result = True if content is None else content
 
         Manage.logger.exitMethod(methodName, str(result))
