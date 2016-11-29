@@ -45,8 +45,8 @@ class RestClient(object):
         RestClient.logger.exitMethod(methodName, (statusCode, content))
         return statusCode, content
 
-    def httpGetJson(self, endpoint):
-        statusCode, content = self.httpGet(endpoint, RestClient.APPLICATION_JSON)
+    def httpGetJson(self, endpoint, parameters=None):
+        statusCode, content = self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON, parameters=parameters)
         return statusCode, self._decodeJson(content)
 
     def httpPost(self, endpoint, acceptType=ALL, data="", contentType=APPLICATION_JSON):
@@ -84,7 +84,7 @@ class RestClient(object):
         return statusCode, content
 
     def httpPostJson(self, endpoint, jsonObj=""):
-        statusCode, content = self.httpPost(endpoint, RestClient.APPLICATION_JSON, json.dumps(jsonObj))
+        statusCode, content = self.httpPost(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(jsonObj))
         return statusCode, self._decodeJson(content)
 
     def httpPut(self, endpoint, acceptType=ALL, data="", contentType=APPLICATION_JSON):
@@ -105,14 +105,14 @@ class RestClient(object):
         return statusCode, content
 
     def httpPutJson(self, endpoint, jsonObj=""):
-        statusCode, content = self.httpPut(endpoint, RestClient.APPLICATION_JSON, json.dumps(jsonObj))
+        statusCode, content = self.httpPut(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(jsonObj))
         return statusCode, self._decodeJson(content)
 
     def httpDelete(self, endpoint, acceptType=ALL):
         methodName = "httpDelete()"
         RestClient.logger.enterMethod(methodName, (endpoint))
 
-        headers = self._getHeaders(acceptType, RestClient.APPLICATION_JSON)
+        headers = self._getHeaders(acceptType)
 
         url = self.baseUrl + endpoint
         response = requests.delete(url=url, params=None, headers=headers, verify=False)
@@ -126,7 +126,7 @@ class RestClient(object):
         return statusCode, content
 
     def httpDeleteJson(self, endpoint):
-        statusCode, content = self.httpDelete(endpoint, RestClient.APPLICATION_JSON)
+        statusCode, content = self.httpDelete(endpoint, acceptType=RestClient.APPLICATION_JSON)
         return statusCode, self._decodeJson(content)
 
     def _decodeJson(self, content):
