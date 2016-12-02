@@ -1,4 +1,14 @@
-"""
+MMFA_CONFIG = "/iam/access/v8/mmfa-config"
+OVERRIDE_CONFIGS = "/iam/access/v8/override-configs"
+SCIM_CONFIGURATION = "/mga/scim/configuration"
+SCIM_CONFIGURATION_ISAM = "/mga/scim/configuration/urn:ietf:params:scim:schemas:extension:isam:1.0:User"
+SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap/v1"
+SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws/v1"
+ATTRIBUTE_MATCHERS = "/iam/access/v8/attribute-matchers"
+ATTRIBUTES = "/iam/access/v8/attributes"
+POLICIES = "/iam/access/v8/policies"
+POLICY_ATTACHEMENTS = "/iam/access/v8/policyattachments"
+RISK_PROFILES = "/iam/access/v8/risk/profiles""""
 Created on Nov 22, 2016
 
 @copyright: IBM
@@ -111,6 +121,25 @@ class SystemSettings(RestClient):
     # Advanced Tuning Parameters
     #
 
+    def createAdvancedTuningParameter(self, key=None, value=None, comment=None):
+        methodName = "createAdvancedTuningParameter()"
+        SystemSettings.logger.enterMethod(methodName)
+        result = None
+
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "key", key)
+        Utils.addOnStringValue(jsonObj, "value", value)
+        Utils.addOnStringValue(jsonObj, "comment", comment)
+        Utils.addOnValue(jsonObj, "_isNew", True)
+
+        statusCode, content = self.httpPostJson(SystemSettings.ADVANCED_PARAMETERS, jsonObj)
+
+        if statusCode == 201:
+            result = True if content is None else content
+
+        SystemSettings.logger.exitMethod(methodName, str(result))
+        return result
+
     def getAdvancedTuningParameters(self):
         methodName = "getAdvancedTuningParameters()"
         SystemSettings.logger.enterMethod(methodName)
@@ -124,7 +153,7 @@ class SystemSettings(RestClient):
         SystemSettings.logger.exitMethod(methodName, str(result))
         return result
 
-    def getAdvancedTuningParameter(self, key, default=None):
+    def getAdvancedTuningParameter(self, key):
         methodName = "getAdvancedTuningParameter()"
         SystemSettings.logger.enterMethod(methodName)
         result = None
@@ -134,7 +163,20 @@ class SystemSettings(RestClient):
         if parameters is not None:
             for index in range(len(parameters)):
                 if parameters[index].get("key", "") == key:
-                    result = parameters[index].get("value", default)
+                    result = parameters[index]
+
+        SystemSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getAdvancedTuningParameterValue(self, key, default=None):
+        methodName = "getAdvancedTuningParameterValue()"
+        SystemSettings.logger.enterMethod(methodName)
+        result = None
+
+        parameter = self.getAdvancedTuningParameter(key)
+
+        if parameter is not None:
+            result = parameter.get("value", default)
 
         SystemSettings.logger.exitMethod(methodName, str(result))
         return result
