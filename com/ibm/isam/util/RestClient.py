@@ -26,7 +26,12 @@ class RestClient(object):
         self.username = username
         self.password = password
 
+        self.dumpJson = False
+
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+    def enableJsonDump(self, enable=True):
+        self.dumpJson = enable
 
     def httpGet(self, endpoint, acceptType=ALL, parameters=None, contentType=APPLICATION_JSON):
         methodName = "httpGet()"
@@ -49,14 +54,14 @@ class RestClient(object):
         statusCode, content = self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON, parameters=parameters)
         return statusCode, self._decodeJson(content)
 
-    def httpPost(self, endpoint, acceptType=ALL, data="", contentType=APPLICATION_JSON):
+    def httpPost(self, endpoint, acceptType=ALL, data="", contentType=APPLICATION_JSON, parameters=None):
         methodName = "httpPost()"
         RestClient.logger.enterMethod(methodName, (endpoint, data))
 
         headers = self._getHeaders(acceptType, contentType)
 
         url = self.baseUrl + endpoint
-        response = requests.post(url=url, params=None, data=data, headers=headers, verify=False)
+        response = requests.post(url=url, params=parameters, data=data, headers=headers, verify=False)
 
         statusCode = response.status_code
         content = response._content
@@ -129,9 +134,32 @@ class RestClient(object):
         statusCode, content = self.httpDelete(endpoint, acceptType=RestClient.APPLICATION_JSON)
         return statusCode, self._decodeJson(content)
 
+    def waitOnHttpGet(self, endpoint, successCode, sleepInterval=3):
+        methodName = "waitOnHttpGet()"
+        RestClient.logger.enterMethod(methodName, (endpoint))
+
+        statusCode = 0
+
+        while statusCode != successCode:
+            try:
+                statusCode, content = self.httpGet(endpoint, acceptType=None, contentType=None)
+            except: # Ignore this
+                pass
+
+            if statusCode != successCode:
+                RestClient.logger.trace(methodName, "Waiting for a [%s] response from [%s]" % (str(successCode), str(endpoint)))
+                time.sleep(sleepInterval)
+
+        RestClient.logger.exitMethod(methodName)
+
     def _decodeJson(self, content):
         try:
-            return json.loads(content)
+            jsonObj = json.loads(content)
+
+            if self.dumpJson:
+                print(json.dumps(jsonObj, sort_keys=True, indent=4, separators=(',', ': ')))
+
+            return jsonObj
         except:
             return None
 
