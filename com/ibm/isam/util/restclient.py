@@ -3,10 +3,16 @@ Created on Nov 17, 2016
 
 @copyright: IBM
 """
-from .Logger import Logger
+
+import json
+import logging
 from base64 import b64encode
-import json, logging, requests
+
+import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+from .logger import Logger
+
 
 class RestClient(object):
 
@@ -20,26 +26,24 @@ class RestClient(object):
     logger = Logger("RestClient")
 
     def __init__(self, baseUrl, username=None, password=None, logLevel=logging.NOTSET):
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         RestClient.logger.setLevel(logLevel)
 
-        self.baseUrl = baseUrl
-        self.username = username
-        self.password = password
-
-        self.dumpJson = False
-
-        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        self.__dumpJson = False
+        self._baseUrl = baseUrl
+        self._username = username
+        self._password = password
 
     def enableJsonDump(self, enable=True):
-        self.dumpJson = enable
+        self.__dumpJson = enable
 
-    def httpGet(self, endpoint, acceptType=ALL, parameters=None, contentType=APPLICATION_JSON):
+    def httpGet(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, parameters=None):
         methodName = "httpGet()"
         RestClient.logger.enterMethod(methodName, (endpoint, parameters))
 
-        headers = self._getHeaders(acceptType, contentType)
+        url = self._baseUrl + endpoint
+        headers = self.__getHeaders(acceptType, contentType)
 
-        url = self.baseUrl + endpoint
         response = requests.get(url=url, params=parameters, headers=headers, verify=False)
 
         statusCode = response.status_code
@@ -51,17 +55,18 @@ class RestClient(object):
         return statusCode, content
 
     def httpGetJson(self, endpoint, parameters=None):
-        statusCode, content = self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON, parameters=parameters)
-        return statusCode, self._decodeJson(content)
+        statusCode, content = self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON,
+                                           parameters=parameters)
+        return statusCode, self.__decodeJson(content)
 
-    def httpPost(self, endpoint, acceptType=ALL, data="", contentType=APPLICATION_JSON, parameters=None):
+    def httpPost(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, parameters=None, data=""):
         methodName = "httpPost()"
         RestClient.logger.enterMethod(methodName, (endpoint, data))
 
-        headers = self._getHeaders(acceptType, contentType)
+        url = self._baseUrl + endpoint
+        headers = self.__getHeaders(acceptType, contentType)
 
-        url = self.baseUrl + endpoint
-        response = requests.post(url=url, params=parameters, data=data, headers=headers, verify=False)
+        response = requests.post(url=url, headers=headers, params=parameters, data=data, verify=False)
 
         statusCode = response.status_code
         content = response._content
@@ -75,10 +80,10 @@ class RestClient(object):
         methodName = "httpPostFile()"
         RestClient.logger.enterMethod(methodName, (endpoint, data))
 
-        headers = self._getHeaders(acceptType)
+        url = self._baseUrl + endpoint
+        headers = self.__getHeaders(acceptType)
 
-        url = self.baseUrl + endpoint
-        response = requests.post(url=url, data=data, headers=headers, verify=False, files=files)
+        response = requests.post(url=url, headers=headers, data=data, files=files, verify=False)
 
         statusCode = response.status_code
         content = response._content
@@ -88,18 +93,19 @@ class RestClient(object):
         RestClient.logger.exitMethod(methodName, (statusCode, content))
         return statusCode, content
 
-    def httpPostJson(self, endpoint, jsonObj=""):
-        statusCode, content = self.httpPost(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(jsonObj))
-        return statusCode, self._decodeJson(content)
+    def httpPostJson(self, endpoint, data=""):
+        statusCode, content = self.httpPost(endpoint, acceptType=RestClient.APPLICATION_JSON,
+                                            data=json.dumps(data))
+        return statusCode, self.__decodeJson(content)
 
-    def httpPut(self, endpoint, acceptType=ALL, data="", contentType=APPLICATION_JSON):
+    def httpPut(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, data=""):
         methodName = "httpPut()"
         RestClient.logger.enterMethod(methodName, (endpoint, data))
 
-        headers = self._getHeaders(acceptType, contentType)
+        url = self._baseUrl + endpoint
+        headers = self.__getHeaders(acceptType, contentType)
 
-        url = self.baseUrl + endpoint
-        response = requests.put(url=url, params=None, data=data, headers=headers, verify=False)
+        response = requests.put(url=url, headers=headers, params=None, data=data, verify=False)
 
         statusCode = response.status_code
         content = response._content
@@ -109,18 +115,19 @@ class RestClient(object):
         RestClient.logger.exitMethod(methodName, (statusCode, content))
         return statusCode, content
 
-    def httpPutJson(self, endpoint, jsonObj=""):
-        statusCode, content = self.httpPut(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(jsonObj))
-        return statusCode, self._decodeJson(content)
+    def httpPutJson(self, endpoint, data=""):
+        statusCode, content = self.httpPut(endpoint, acceptType=RestClient.APPLICATION_JSON,
+                                           data=json.dumps(data))
+        return statusCode, self.__decodeJson(content)
 
     def httpDelete(self, endpoint, acceptType=ALL):
         methodName = "httpDelete()"
         RestClient.logger.enterMethod(methodName, (endpoint))
 
-        headers = self._getHeaders(acceptType)
+        url = self._baseUrl + endpoint
+        headers = self.__getHeaders(acceptType)
 
-        url = self.baseUrl + endpoint
-        response = requests.delete(url=url, params=None, headers=headers, verify=False)
+        response = requests.delete(url=url, headers=headers, params=None, verify=False)
 
         statusCode = response.status_code
         content = response._content
@@ -132,14 +139,15 @@ class RestClient(object):
 
     def httpDeleteJson(self, endpoint):
         statusCode, content = self.httpDelete(endpoint, acceptType=RestClient.APPLICATION_JSON)
-        return statusCode, self._decodeJson(content)
+        return statusCode, self.__decodeJson(content)
 
-    def waitOnHttpGet(self, endpoint, successCode, sleepInterval=3):
+    def waitOnHttpGet(self, endpoint, successCode=200, sleepInterval=3):
         methodName = "waitOnHttpGet()"
         RestClient.logger.enterMethod(methodName, (endpoint))
 
-        statusCode = 0
+        message = "Waiting for a [%s] response from [%s]" % (str(successCode), str(endpoint))
 
+        statusCode = 0
         while statusCode != successCode:
             try:
                 statusCode, content = self.httpGet(endpoint, acceptType=None, contentType=None)
@@ -147,23 +155,23 @@ class RestClient(object):
                 pass
 
             if statusCode != successCode:
-                RestClient.logger.trace(methodName, "Waiting for a [%s] response from [%s]" % (str(successCode), str(endpoint)))
+                RestClient.logger.trace(methodName, message)
                 time.sleep(sleepInterval)
 
         RestClient.logger.exitMethod(methodName)
 
-    def _decodeJson(self, content):
+    def __decodeJson(self, content):
         try:
             jsonObj = json.loads(content)
 
-            if self.dumpJson:
+            if self.__dumpJson:
                 print(json.dumps(jsonObj, sort_keys=True, indent=4, separators=(',', ': ')))
 
             return jsonObj
         except:
             return None
 
-    def _getHeaders(self, acceptType=None, contentType=None):
+    def __getHeaders(self, acceptType=None, contentType=None):
         headers = {}
 
         if acceptType is not None:
@@ -172,8 +180,8 @@ class RestClient(object):
         if contentType is not None:
             headers[RestClient.CONTENT_TYPE] = contentType
 
-        if self.username is not None and self.password is not None:
-            credential = "%s:%s" % (self.username, self.password)
+        if self._username is not None and self._password is not None:
+            credential = "%s:%s" % (self._username, self._password)
             credential_encode = b64encode(credential.encode())
             headers[RestClient.AUTHORIZATION] = "Basic " + str(credential_encode.decode()).rstrip()
 

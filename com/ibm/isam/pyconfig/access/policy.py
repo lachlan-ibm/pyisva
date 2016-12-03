@@ -3,14 +3,15 @@ Created on Nov 22, 2016
 
 @copyright: IBM
 """
-from com.ibm.isam.pyconfig.Factory import Factory
-from com.ibm.isam.util.RestClient import RestClient
-from com.ibm.isam.util.Logger import Logger
-import com.ibm.isam.util.Utils as Utils
-import abc, logging
 
-class Policy(RestClient):
-    __metaclass__ = abc.ABCMeta
+import logging
+
+from com.ibm.isam.util.logger import Logger
+from com.ibm.isam.util.restclient import RestClient
+import com.ibm.isam.util.utils as Utils
+
+
+class _Policy(RestClient):
 
     ATTRIBUTE_MATCHERS = "/iam/access/v8/attribute-matchers"
     ATTRIBUTES = "/iam/access/v8/attributes"
@@ -28,12 +29,8 @@ class Policy(RestClient):
     logger = Logger("Policy")
 
     def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(Policy, self).__init__(baseUrl, username, password, logLevel)
-        Policy.logger.setLevel(logLevel)
-
-    @abc.abstractmethod
-    def getIsamVersion(self):
-        pass
+        super(_Policy, self).__init__(baseUrl, username, password, logLevel)
+        _Policy.logger.setLevel(logLevel)
 
     #
     # Access Control
@@ -41,9 +38,10 @@ class Policy(RestClient):
 
     # Policies
 
-    def createPolicy(self, name=None, description=None, dialect=None, policy=None, attributesrequired=None):
-        methodName = "createPolicy()"
-        Policy.logger.enterMethod(methodName)
+    def createAccessControlPolicy(self, name=None, description=None, dialect=None, policy=None,
+                     attributesrequired=None):
+        methodName = "createAccessControlPolicy()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         jsonObj = {}
@@ -54,36 +52,36 @@ class Policy(RestClient):
         Utils.addOnValue(jsonObj, "attributesrequired", attributesrequired)
         Utils.addOnValue(jsonObj, "predefined", False)
 
-        statusCode, content = self.httpPostJson(Policy.POLICIES, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.POLICIES, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def getPolicies(self, sortBy=None, filter=None):
-        methodName = "getPolicies()"
-        Policy.logger.enterMethod(methodName)
+    def getAccessControlPolicies(self, sortBy=None, filter=None):
+        methodName = "getAccessControlPolicies()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         parameters = {}
         Utils.addOnStringValue(parameters, "sortBy", sortBy)
         Utils.addOnStringValue(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(Policy.POLICIES, parameters=parameters)
+        statusCode, content = self.httpGetJson(_Policy.POLICIES, parameters=parameters)
 
         if statusCode == 200 and content is not None:
             result = content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     # Policy Attachments
 
     def authenticateSecurityAccessManager(self, username, password, domain=""):
         methodName = "authenticateSecurityAccessManager()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         jsonObj = {}
@@ -92,17 +90,18 @@ class Policy(RestClient):
         Utils.addOnStringValue(jsonObj, "domain", domain)
         Utils.addOnStringValue(jsonObj, "command", "setCredential")
 
-        statusCode, content = self.httpPostJson(Policy.POLICY_ATTACHMENTS_PDADMIN, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.POLICY_ATTACHMENTS_PDADMIN, data=jsonObj)
 
         if statusCode == 200:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def createPolicyAttachment(self, server=None, resourceUri=None, policyCombiningAlgorithm=None, policies=None):
-        methodName = "createPolicyAttachment()"
-        Policy.logger.enterMethod(methodName)
+    def createAccessControlPolicyAttachment(self, server=None, resourceUri=None, policyCombiningAlgorithm=None,
+                               policies=None):
+        methodName = "createAccessControlPolicyAttachment()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         jsonObj = {}
@@ -111,113 +110,57 @@ class Policy(RestClient):
         Utils.addOnStringValue(jsonObj, "policyCombiningAlgorithm", policyCombiningAlgorithm)
         Utils.addOnValue(jsonObj, "policies", policies)
 
-        statusCode, content = self.httpPostJson(Policy.POLICY_ATTACHEMENTS, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.POLICY_ATTACHEMENTS, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def getPolicyAttachment(self, sortBy=None, filter=None):
-        methodName = "getPolicyAttachment()"
-        Policy.logger.enterMethod(methodName)
+    def getAccessControlPolicyAttachment(self, sortBy=None, filter=None):
+        methodName = "getAccessControlPolicyAttachment()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         parameters = {}
         Utils.addOnStringValue(parameters, "sortBy", sortBy)
         Utils.addOnStringValue(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(Policy.POLICY_ATTACHEMENTS, parameters=parameters)
+        statusCode, content = self.httpGetJson(_Policy.POLICY_ATTACHEMENTS, parameters=parameters)
 
         if statusCode == 200 and content is not None:
             result = content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def publishPolicyAttachment(self, id):
-        methodName = "publishPolicyAttachment()"
-        Policy.logger.enterMethod(methodName)
+    def publishAccessControlPolicyAttachment(self, id):
+        methodName = "publishAccessControlPolicyAttachment()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
-        endpoint = "%s/deployment/%s" % (Policy.POLICY_ATTACHEMENTS, str(id))
+        endpoint = "%s/deployment/%s" % (_Policy.POLICY_ATTACHEMENTS, str(id))
         statusCode, content = self.httpPutJson(endpoint)
 
         if statusCode == 204:
-            result = True if content is None else content
+            result = True
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     #
     # API Protection
     #
 
-    # Mapping Rules
+    # Clients
 
-    def createMappingRule(self, name, category, fileName, content=""):
-        methodName = "createMappingRule()"
-        Policy.logger.enterMethod(methodName)
-        result = None
-
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "name", name)
-        Utils.addOnStringValue(jsonObj, "category", category)
-        Utils.addOnStringValue(jsonObj, "fileName", fileName)
-        Utils.addOnStringValue(jsonObj, "content", content)
-
-        statusCode, content = self.httpPostJson(Policy.MAPPING_RULES, jsonObj)
-
-        if statusCode == 200:
-            result = True if content is None else content
-
-        Policy.logger.exitMethod(methodName, str(result))
-        return result
-
-    def getMappingRules(self, sortBy=None, count=None, start=None, filter=None):
-        methodName = "getMappingRules()"
-        Policy.logger.enterMethod(methodName)
-        result = None
-
-        parameters = {}
-        Utils.addOnStringValue(parameters, "sortBy", sortBy)
-        Utils.addOnStringValue(parameters, "count", count)
-        Utils.addOnStringValue(parameters, "start", start)
-        Utils.addOnStringValue(parameters, "filter", filter)
-
-        statusCode, content = self.httpGetJson(Policy.MAPPING_RULES, parameters=parameters)
-
-        if statusCode == 200 and content is not None:
-            result = content
-
-        Policy.logger.exitMethod(methodName, str(result))
-        return result
-
-    def updateMappingRule(self, id, content=""):
-        methodName = "updateMappingRule()"
-        Policy.logger.enterMethod(methodName)
-        result = None
-
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "content", content)
-
-        endpoint = "%s/%s" % (Policy.MAPPING_RULES, str(id))
-        statusCode, content = self.httpPutJson(endpoint, jsonObj)
-
-        if statusCode == 204:
-            result = True if content is None else content
-
-        Policy.logger.exitMethod(methodName, str(result))
-        return result
-
-    # OAuth 2.0 Support
-
-    def createApiProtectionClient(self, name=None, redirectUri=None, companyName=None, companyUrl=None, \
-            contactPerson=None, contactType=None, email=None, phone=None, otherInfo=None, definition=None, \
-            clientId=None, clientSecret=None):
+    def createApiProtectionClient(self, name=None, redirectUri=None, companyName=None,
+                                  companyUrl=None, contactPerson=None, contactType=None,
+                                  email=None, phone=None, otherInfo=None, definition=None,
+                                  clientId=None, clientSecret=None):
         methodName = "createApiProtectionClient()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         jsonObj = {}
@@ -234,21 +177,27 @@ class Policy(RestClient):
         Utils.addOnStringValue(jsonObj, "clientId", clientId)
         Utils.addOnStringValue(jsonObj, "clientSecret", clientSecret)
 
-        statusCode, content = self.httpPostJson(Policy.CLIENTS, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.CLIENTS, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def createApiProtectionDefinition(self, name=None, description=None, tcmBehavior=None, tokenCharSet=None, \
-            accessTokenLifetime=None, accessTokenLength=None, authorizationCodeLifetime=None, \
-            authorizationCodeLength=None, refreshTokenLength=None, maxAuthorizationGrantLifetime=None, pinLength=None, \
-            enforceSingleUseAuthorizationGrant=None, issueRefreshToken=None, enforceSingleAccessTokenPerGrant=None, \
-            enableMultipleRefreshTokensForFaultTolerance=None, pinPolicyEnabled=None, grantTypes=[]):
+    # Definitions
+
+    def createApiProtectionDefinition(self, name=None, description=None, tcmBehavior=None,
+                                      tokenCharSet=None, accessTokenLifetime=None,
+                                      accessTokenLength=None, authorizationCodeLifetime=None,
+                                      authorizationCodeLength=None, refreshTokenLength=None,
+                                      maxAuthorizationGrantLifetime=None, pinLength=None,
+                                      enforceSingleUseAuthorizationGrant=None, issueRefreshToken=None,
+                                      enforceSingleAccessTokenPerGrant=None,
+                                      enableMultipleRefreshTokensForFaultTolerance=None,
+                                      pinPolicyEnabled=None, grantTypes=[]):
         methodName = "createApiProtectionDefinition()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         jsonObj = {}
@@ -263,24 +212,27 @@ class Policy(RestClient):
         Utils.addOnValue(jsonObj, "refreshTokenLength", refreshTokenLength)
         Utils.addOnValue(jsonObj, "maxAuthorizationGrantLifetime", maxAuthorizationGrantLifetime)
         Utils.addOnValue(jsonObj, "pinLength", pinLength)
-        Utils.addOnValue(jsonObj, "enforceSingleUseAuthorizationGrant", enforceSingleUseAuthorizationGrant)
+        Utils.addOnValue(jsonObj, "enforceSingleUseAuthorizationGrant",
+                         enforceSingleUseAuthorizationGrant)
         Utils.addOnValue(jsonObj, "issueRefreshToken", issueRefreshToken)
-        Utils.addOnValue(jsonObj, "enforceSingleAccessTokenPerGrant", enforceSingleAccessTokenPerGrant)
-        Utils.addOnValue(jsonObj, "enableMultipleRefreshTokensForFaultTolerance", enableMultipleRefreshTokensForFaultTolerance)
+        Utils.addOnValue(jsonObj, "enforceSingleAccessTokenPerGrant",
+                         enforceSingleAccessTokenPerGrant)
+        Utils.addOnValue(jsonObj, "enableMultipleRefreshTokensForFaultTolerance",
+                         enableMultipleRefreshTokensForFaultTolerance)
         Utils.addOnValue(jsonObj, "pinPolicyEnabled", pinPolicyEnabled)
         Utils.addOnValue(jsonObj, "grantTypes", grantTypes)
 
-        statusCode, content = self.httpPostJson(Policy.DEFINITIONS, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.DEFINITIONS, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     def getApiProtectionDefinitions(self, sortBy=None, count=None, start=None, filter=None):
         methodName = "getApiProtectionDefinitions()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         parameters = {}
@@ -289,56 +241,82 @@ class Policy(RestClient):
         Utils.addOnStringValue(parameters, "start", start)
         Utils.addOnStringValue(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(Policy.DEFINITIONS, parameters=parameters)
+        statusCode, content = self.httpGetJson(_Policy.DEFINITIONS, parameters=parameters)
 
         if statusCode == 200 and content is not None:
             result = content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    #
-    # Attributes
-    #
+    # Mapping Rules
 
-    # Attribute Matchers
-
-    def getAttributeMatcherByUri(self, uri):
-        methodName = "getAttributeMatcherByUri()"
-        Policy.logger.enterMethod(methodName)
+    def createApiProtectionMappingRule(self, name, category, fileName, content=""):
+        methodName = "createApiProtectionMappingRule()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
-        uriEquals = "uri equals %s" % str(uri)
-        matchers = self.getAttributeMatchers(filter=uriEquals)
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "name", name)
+        Utils.addOnStringValue(jsonObj, "category", category)
+        Utils.addOnStringValue(jsonObj, "fileName", fileName)
+        Utils.addOnStringValue(jsonObj, "content", content)
 
-        if matchers is not None and len(matchers) > 0:
-            result = matchers[0]
+        statusCode, content = self.httpPostJson(_Policy.MAPPING_RULES, data=jsonObj)
 
+        if statusCode == 200:
+            result = True if content is None else content
+
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def getAttributeMatchers(self, sortBy=None, filter=None):
-        methodName = "getAttributeMatchers()"
-        Policy.logger.enterMethod(methodName)
+    def getApiProtectionMappingRules(self, sortBy=None, count=None, start=None, filter=None):
+        methodName = "getApiProtectionMappingRules()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         parameters = {}
         Utils.addOnStringValue(parameters, "sortBy", sortBy)
+        Utils.addOnStringValue(parameters, "count", count)
+        Utils.addOnStringValue(parameters, "start", start)
         Utils.addOnStringValue(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(Policy.ATTRIBUTE_MATCHERS, parameters=parameters)
+        statusCode, content = self.httpGetJson(_Policy.MAPPING_RULES, parameters=parameters)
 
         if statusCode == 200 and content is not None:
             result = content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
+
+    def updateApiProtectionMappingRule(self, id, content=""):
+        methodName = "updateApiProtectionMappingRule()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "content", content)
+
+        endpoint = "%s/%s" % (_Policy.MAPPING_RULES, str(id))
+        statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
+
+        if statusCode == 204:
+            result = True if content is None else content
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    #
+    # Attributes
+    #
 
     # Attributes
 
-    def createAttribute(self, category=None, matcher=None, issuer=None, description=None, name=None, datatype=None, \
-            uri=None, sessionStorage=None, behaviorStorage=None, deviceStorage=None, riskType=None, policyType=None):
+    def createAttribute(self, category=None, matcher=None, issuer=None, description=None, name=None,
+                        datatype=None, uri=None, sessionStorage=None, behaviorStorage=None,
+                        deviceStorage=None, riskType=None, policyType=None):
         methodName = "createAttribute()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         storageObj = {}
@@ -362,31 +340,31 @@ class Policy(RestClient):
         Utils.addOnValue(jsonObj, "storageDomain", storageObj)
         Utils.addOnValue(jsonObj, "type", typeObj)
 
-        statusCode, content = self.httpPostJson(Policy.ATTRIBUTES, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.ATTRIBUTES, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     def getAttributeByUri(self, uri):
         methodName = "getAttributeByUri()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         uriEquals = "uri equals %s" % str(uri)
-        attributes = self.getAttributes(filter=uriEquals)
+        content = self.getAttributes(filter=uriEquals)
 
-        if attributes is not None and len(attributes) > 0:
-            result = attributes[0]
+        if content is not None and len(content) > 0:
+            result = content[0]
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     def getAttributes(self, sortBy=None, count=None, start=None, filter=None):
         methodName = "getAttributes()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         parameters = {}
@@ -395,44 +373,57 @@ class Policy(RestClient):
         Utils.addOnStringValue(parameters, "start", start)
         Utils.addOnStringValue(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(Policy.ATTRIBUTES, parameters=parameters)
+        statusCode, content = self.httpGetJson(_Policy.ATTRIBUTES, parameters=parameters)
 
         if statusCode == 200 and content is not None:
             result = content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    # Matchers
+
+    def getAttributeMatcherByUri(self, uri):
+        methodName = "getAttributeMatcherByUri()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        uriEquals = "uri equals %s" % str(uri)
+        content = self.getAttributeMatchers(filter=uriEquals)
+
+        if content is not None and len(content) > 0:
+            result = content[0]
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getAttributeMatchers(self, sortBy=None, filter=None):
+        methodName = "getAttributeMatchers()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        parameters = {}
+        Utils.addOnStringValue(parameters, "sortBy", sortBy)
+        Utils.addOnStringValue(parameters, "filter", filter)
+
+        statusCode, content = self.httpGetJson(_Policy.ATTRIBUTE_MATCHERS, parameters=parameters)
+
+        if statusCode == 200 and content is not None:
+            result = content
+
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     #
     # Authentication
     #
 
-    # Authentication Mechanism Types
+    # Mechanisms
 
-    def getAuthenticationMechanismTypes(self, sortBy=None, count=None, start=None, filter=None):
-        methodName = "getAuthenticationMechanismTypes()"
-        Policy.logger.enterMethod(methodName)
-        result = None
-
-        parameters = {}
-        Utils.addOnStringValue(parameters, "sortBy", sortBy)
-        Utils.addOnStringValue(parameters, "count", count)
-        Utils.addOnStringValue(parameters, "start", start)
-        Utils.addOnStringValue(parameters, "filter", filter)
-
-        statusCode, content = self.httpGetJson(Policy.AUTHENTICATION_MECHANISM_TYPES, parameters=parameters)
-
-        if statusCode == 200 and content is not None:
-            result = content
-
-        Policy.logger.exitMethod(methodName, str(result))
-        return result
-
-    # Authentication Mechanisms
-
-    def createAuthenticationMechanism(self, description=None, name=None, uri=None, typeId=None, properties=None, attributes=None, jsonObj=None):
+    def createAuthenticationMechanism(self, description=None, name=None, uri=None, typeId=None,
+                                      properties=None, attributes=None, jsonObj=None):
         methodName = "createAuthenticationMechanism()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         if jsonObj is None:
@@ -444,17 +435,17 @@ class Policy(RestClient):
             Utils.addOnValue(jsonObj, "properties", properties)
             Utils.addOnValue(jsonObj, "attributes", attributes)
 
-        statusCode, content = self.httpPostJson(Policy.AUTHENTICATION_MECHANISMS, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.AUTHENTICATION_MECHANISMS, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     def getAuthenticationMechanismByUri(self, uri):
         methodName = "getAuthenticationMechanismByUri()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         uriEquals = "uri equals %s" % str(uri)
@@ -463,12 +454,12 @@ class Policy(RestClient):
         if mechanisms is not None and len(mechanisms) > 0:
             result = mechanisms[0]
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def getAuthenticationMechanisms(self, sortBy=None, count=None, start=None, filter=None):
-        methodName = "getAuthenticationMechanisms()"
-        Policy.logger.enterMethod(methodName)
+    def getAuthenticationMechanismTypes(self, sortBy=None, count=None, start=None, filter=None):
+        methodName = "getAuthenticationMechanismTypes()"
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         parameters = {}
@@ -477,17 +468,39 @@ class Policy(RestClient):
         Utils.addOnStringValue(parameters, "start", start)
         Utils.addOnStringValue(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(Policy.AUTHENTICATION_MECHANISMS, parameters=parameters)
+        statusCode, content = self.httpGetJson(_Policy.AUTHENTICATION_MECHANISM_TYPES,
+                                               parameters=parameters)
 
         if statusCode == 200 and content is not None:
             result = content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    def updateAuthenticationMechanism(self, id, description=None, name=None, uri=None, typeId=None, predefined=None, properties=None, attributes=None, jsonObj=None):
+    def getAuthenticationMechanisms(self, sortBy=None, count=None, start=None, filter=None):
+        methodName = "getAuthenticationMechanisms()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        parameters = {}
+        Utils.addOnStringValue(parameters, "sortBy", sortBy)
+        Utils.addOnStringValue(parameters, "count", count)
+        Utils.addOnStringValue(parameters, "start", start)
+        Utils.addOnStringValue(parameters, "filter", filter)
+
+        statusCode, content = self.httpGetJson(_Policy.AUTHENTICATION_MECHANISMS,
+                                               parameters=parameters)
+
+        if statusCode == 200 and content is not None:
+            result = content
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    def updateAuthenticationMechanism(self, id, description=None, name=None, uri=None, typeId=None,
+                                      predefined=None, properties=None, attributes=None, jsonObj=None):
         methodName = "updateAuthenticationMechanism()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         if jsonObj is None:
@@ -501,21 +514,22 @@ class Policy(RestClient):
             Utils.addOnValue(jsonObj, "properties", properties)
             Utils.addOnValue(jsonObj, "attributes", attributes)
 
-        endpoint = "%s/%s" % (Policy.AUTHENTICATION_MECHANISMS, str(id))
-        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+        endpoint = "%s/%s" % (_Policy.AUTHENTICATION_MECHANISMS, str(id))
+        statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
 
         if statusCode == 204:
-            result = True if content is None else content
+            result = True
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
-    # Authentication Policies
+    # Policies
 
-    def createAuthenticationPolicies(self, name=None, policy=None, uri=None, description=None, dialect=None, id=None, \
-            userlastmodified=None, lastmodified=None, datecreated=None, jsonObj=None):
+    def createAuthenticationPolicies(self, name=None, policy=None, uri=None, description=None,
+                                     dialect=None, id=None, userlastmodified=None, lastmodified=None,
+                                     datecreated=None, jsonObj=None):
         methodName = "createAuthenticationPolicies()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         if jsonObj is None:
@@ -530,12 +544,12 @@ class Policy(RestClient):
             Utils.addOnStringValue(jsonObj, "lastmodified", lastmodified)
             Utils.addOnStringValue(jsonObj, "datecreated", datecreated)
 
-        statusCode, content = self.httpPostJson(Policy.AUTHENTICATION_POLICIES, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.AUTHENTICATION_POLICIES, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
 
     #
@@ -544,7 +558,7 @@ class Policy(RestClient):
 
     def createRiskProfile(self, description=None, name=None, active=None, attributes=None, jsonObj=None):
         methodName = "createRiskProfile()"
-        Policy.logger.enterMethod(methodName)
+        _Policy.logger.enterMethod(methodName)
         result = None
 
         if jsonObj is None:
@@ -555,10 +569,19 @@ class Policy(RestClient):
             Utils.addOnValue(jsonObj, "attributes", attributes)
             Utils.addOnValue(jsonObj, "predefined", False)
 
-        statusCode, content = self.httpPostJson(Policy.RISK_PROFILES, jsonObj)
+        statusCode, content = self.httpPostJson(_Policy.RISK_PROFILES, data=jsonObj)
 
         if statusCode == 201:
             result = True if content is None else content
 
-        Policy.logger.exitMethod(methodName, str(result))
+        _Policy.logger.exitMethod(methodName, str(result))
         return result
+
+
+class Policy9020(_Policy):
+
+    logger = Logger("Policy9020")
+
+    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
+        super(Policy9020, self).__init__(baseUrl, username, password, logLevel)
+        Policy9020.logger.setLevel(logLevel)
