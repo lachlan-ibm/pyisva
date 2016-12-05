@@ -35,8 +35,7 @@ class _NetworkSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_NetworkSettings.NET_DNS)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -60,8 +59,7 @@ class _NetworkSettings(RestClient):
 
         statusCode, content = self.httpPutJson(_NetworkSettings.NET_DNS, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -81,8 +79,7 @@ class _NetworkSettings(RestClient):
         endpoint = "%s/%s/hostnames" % (_NetworkSettings.HOST_RECORDS, address)
         statusCode, content = self.httpPostJson(endpoint, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -100,8 +97,7 @@ class _NetworkSettings(RestClient):
 
         statusCode, content = self.httpPostJson(_NetworkSettings.HOST_RECORDS, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -114,8 +110,7 @@ class _NetworkSettings(RestClient):
         endpoint = "%s/%s/hostnames" % (_NetworkSettings.HOST_RECORDS, address)
         statusCode, content = self.httpGetJson(ipv4HostEndpoint)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -129,9 +124,9 @@ class _NetworkSettings(RestClient):
         _NetworkSettings.logger.enterMethod(methodName)
         result = None
 
-        content = self.getInterfaces()
+        success, statusCode, content = self.getInterfaces()
 
-        if content is not None:
+        if success:
             for index in range(len(content.get("interfaces", []))):
                 if content["interfaces"][index].get("label") == str(interfaceLabel):
                     jsonObj = content["interfaces"][index]
@@ -148,8 +143,12 @@ class _NetworkSettings(RestClient):
                     endpoint = "%s/%s" % (_NetworkSettings.NET_INTERFACES, str(jsonObj.get("uuid")))
                     statusCode, content = self.httpPutJson(endpoint, jsonObj)
 
-                    if statusCode == 200:
-                        result = True if content is None else content
+                    result = (statusCode == 200, statusCode, content)
+
+            if result is None:
+                result = (False, statusCode, content)
+        else:
+            result = (success, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -161,8 +160,7 @@ class _NetworkSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_NetworkSettings.NET_INTERFACES)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _NetworkSettings.logger.exitMethod(methodName, str(result))
         return result

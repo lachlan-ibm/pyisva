@@ -169,7 +169,7 @@ class RestClient(object):
 
             return jsonObj
         except:
-            return None
+            return content
 
     def __getHeaders(self, acceptType=None, contentType=None):
         headers = {}

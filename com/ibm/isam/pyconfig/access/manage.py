@@ -36,8 +36,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpGetJson(_Manage.SCIM_CONFIGURATION)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -49,8 +48,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpPutJson(_Manage.SCIM_CONFIGURATION, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -69,8 +67,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpPutJson(_Manage.SCIM_CONFIGURATION_ISAM, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -93,8 +90,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpPostJson(_Manage.MMFA_CONFIG, data=jsonObj)
 
-        if statusCode == 204:
-            result = True
+        result = (statusCode == 204, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result

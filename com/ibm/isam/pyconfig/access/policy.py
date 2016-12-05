@@ -54,8 +54,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.POLICIES, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -71,8 +70,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpGetJson(_Policy.POLICIES, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -92,8 +90,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.POLICY_ATTACHMENTS_PDADMIN, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -112,8 +109,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.POLICY_ATTACHEMENTS, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -129,8 +125,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpGetJson(_Policy.POLICY_ATTACHEMENTS, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -143,8 +138,7 @@ class _Policy(RestClient):
         endpoint = "%s/deployment/%s" % (_Policy.POLICY_ATTACHEMENTS, str(id))
         statusCode, content = self.httpPutJson(endpoint)
 
-        if statusCode == 204:
-            result = True
+        result = (statusCode == 204, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -179,8 +173,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.CLIENTS, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -224,8 +217,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.DEFINITIONS, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -243,8 +235,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpGetJson(_Policy.DEFINITIONS, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -264,8 +255,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.MAPPING_RULES, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -283,8 +273,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpGetJson(_Policy.MAPPING_RULES, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -300,8 +289,7 @@ class _Policy(RestClient):
         endpoint = "%s/%s" % (_Policy.MAPPING_RULES, str(id))
         statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
 
-        if statusCode == 204:
-            result = True if content is None else content
+        result = (statusCode == 204, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -342,8 +330,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.ATTRIBUTES, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -354,10 +341,12 @@ class _Policy(RestClient):
         result = None
 
         uriEquals = "uri equals %s" % str(uri)
-        content = self.getAttributes(filter=uriEquals)
+        success, statusCode, content = self.getAttributes(filter=uriEquals)
 
-        if content is not None and len(content) > 0:
-            result = content[0]
+        if success and len(content) > 0:
+            result = (success, statusCode, content[0])
+        else:
+            result = (success, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -375,8 +364,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpGetJson(_Policy.ATTRIBUTES, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -389,10 +377,12 @@ class _Policy(RestClient):
         result = None
 
         uriEquals = "uri equals %s" % str(uri)
-        content = self.getAttributeMatchers(filter=uriEquals)
+        success, statusCode, content = self.getAttributeMatchers(filter=uriEquals)
 
-        if content is not None and len(content) > 0:
-            result = content[0]
+        if success and len(content) > 0:
+            result = (success, statusCode, content[0])
+        else:
+            result = (success, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -408,8 +398,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpGetJson(_Policy.ATTRIBUTE_MATCHERS, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -437,8 +426,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.AUTHENTICATION_MECHANISMS, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -449,10 +437,12 @@ class _Policy(RestClient):
         result = None
 
         uriEquals = "uri equals %s" % str(uri)
-        mechanisms = self.getAuthenticationMechanisms(filter=uriEquals)
+        success, statusCode, content = self.getAuthenticationMechanisms(filter=uriEquals)
 
-        if mechanisms is not None and len(mechanisms) > 0:
-            result = mechanisms[0]
+        if success and len(content) > 0:
+            result = (success, statusCode, content[0])
+        else:
+            result = (success, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -471,8 +461,7 @@ class _Policy(RestClient):
         statusCode, content = self.httpGetJson(_Policy.AUTHENTICATION_MECHANISM_TYPES,
                                                parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -491,8 +480,7 @@ class _Policy(RestClient):
         statusCode, content = self.httpGetJson(_Policy.AUTHENTICATION_MECHANISMS,
                                                parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -517,8 +505,7 @@ class _Policy(RestClient):
         endpoint = "%s/%s" % (_Policy.AUTHENTICATION_MECHANISMS, str(id))
         statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
 
-        if statusCode == 204:
-            result = True
+        result = (statusCode == 204, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -546,8 +533,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.AUTHENTICATION_POLICIES, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
@@ -571,8 +557,7 @@ class _Policy(RestClient):
 
         statusCode, content = self.httpPostJson(_Policy.RISK_PROFILES, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result

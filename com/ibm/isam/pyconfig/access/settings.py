@@ -35,10 +35,12 @@ class _GlobalSettings(RestClient):
         result = None
 
         keyEquals = "key equals " + str(key)
-        content = self.getAdvancedConfigurations(filter=keyEquals)
+        success, statusCode, content = self.getAdvancedConfigurations(filter=keyEquals)
 
-        if content is not None and len(content) > 0:
-            result = content[0]
+        if success and len(content) > 0:
+            result = (success, statusCode, content[0])
+        else:
+            result = (success, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -56,8 +58,7 @@ class _GlobalSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_GlobalSettings.OVERRIDE_CONFIGS, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, result)
         return result
@@ -74,8 +75,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s" % (_GlobalSettings.OVERRIDE_CONFIGS, str(id))
         statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
 
-        if statusCode == 204:
-            result = True
+        result = (statusCode == 204, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -85,12 +85,14 @@ class _GlobalSettings(RestClient):
         _GlobalSettings.logger.enterMethod(methodName)
         result = None
 
-        content = self.getAdvancedConfigurationByKey(key)
+        success, statusCode, content = self.getAdvancedConfigurationByKey(key)
 
-        if content is not None:
+        if success:
             id = content.get("id", None)
 
             result = self.updateAdvancedConfiguration(id, value, sensitive)
+        else:
+            result = (success, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -110,8 +112,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s/v1" % (_GlobalSettings.RUNTIME_TUNING, str(parameter))
         statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -155,8 +156,7 @@ class _GlobalSettings(RestClient):
 
         statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_LDAP, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -188,8 +188,7 @@ class _GlobalSettings(RestClient):
 
         statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE, data=jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -199,12 +198,17 @@ class _GlobalSettings(RestClient):
         _GlobalSettings.logger.enterMethod(methodName)
         result = None
 
-        content = self.getWebServiceServerConnections()
+        success, statusCode, content = self.getWebServiceServerConnections()
 
-        if content is not None:
+        if success:
             for index in range(len(content)):
                 if content[index].get("name", "") == name:
-                    result = content[index]
+                    result = (success, statusCode, content[index])
+
+            if result is None:
+                result = (False, 404, content)
+        else:
+            result = (success, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -216,8 +220,7 @@ class _GlobalSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -240,8 +243,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path))
         statusCode, content = self.httpPostJson(endpoint, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -257,8 +259,13 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path))
         statusCode, content = self.httpGetJson(endpoint, parameters=parameters)
 
-        if statusCode == 200 and content is not None:
-            result = content if isinstance(content, list) else content.get("contents")
+        if statusCode == 200:
+            if isinstance(content, list):
+                result = (True, statusCode, content)
+            else:
+                result = (True, statusCode, content.get("contents"))
+        else:
+            result = (False, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -278,8 +285,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path))
         statusCode, content = self.httpPostJson(endpoint, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -292,8 +298,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
         statusCode, content = self.httpDeleteJson(endpoint)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -306,8 +311,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
         statusCode, content = self.httpGetJson(endpoint)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -324,10 +328,10 @@ class _GlobalSettings(RestClient):
                 endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
                 statusCode, content = self.httpPostFile(endpoint, files=files)
 
-                if statusCode == 200:
-                    result = True if content is None else content
+                result = (statusCode == 200, statusCode, content)
         except IOError as ioe:
             _GlobalSettings.logger.error(methodName, str(ioe))
+            result = (False, None, None)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -344,8 +348,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
         statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -367,8 +370,7 @@ class _GlobalSettings(RestClient):
         endpoint = "%s/users/%s/v1" % (_GlobalSettings.USER_REGISTRY, str(username))
         statusCode, content = self.httpPutJson(endpoint, jsonObj)
 
-        if statusCode == 204:
-            result = True if content is None else content
+        result = (statusCode == 204, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result

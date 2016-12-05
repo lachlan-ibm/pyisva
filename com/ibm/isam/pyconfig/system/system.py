@@ -37,8 +37,7 @@ class _SystemSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_SystemSettings.ADMIN_CONFIG)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -74,8 +73,7 @@ class _SystemSettings(RestClient):
 
         statusCode, content = self.httpPutJson(_SystemSettings.ADMIN_CONFIG, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -85,9 +83,9 @@ class _SystemSettings(RestClient):
         _SystemSettings.logger.enterMethod(methodName)
         result = None
 
-        content = self.getAdministratorSettings()
+        success, statusCode, content = self.getAdministratorSettings()
 
-        if content is not None:
+        if success:
             sessionTimeout = content.get("sessionTimeout", -1)
 
             if sessionTimeout > 0:
@@ -97,6 +95,9 @@ class _SystemSettings(RestClient):
                                                           confirmPassword=newPassword)
             else:
                 _SystemSettings.logger.error(methodName, "An invalid session timeout was retrieved.")
+                result = (False, statusCode, content)
+        else:
+            result = (success, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -118,8 +119,7 @@ class _SystemSettings(RestClient):
 
         statusCode, content = self.httpPostJson(_SystemSettings.ADVANCED_PARAMETERS, jsonObj)
 
-        if statusCode == 201:
-            result = True if content is None else content
+        result = (statusCode == 201, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -131,8 +131,10 @@ class _SystemSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_SystemSettings.ADVANCED_PARAMETERS)
 
-        if statusCode == 200 and content is not None:
-            result = content.get("tuningParameters", [])
+        if statusCode == 200:
+            result = (True, statusCode, content.get("tuningParameters", []))
+        else:
+            result = (False, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -142,25 +144,32 @@ class _SystemSettings(RestClient):
         _SystemSettings.logger.enterMethod(methodName)
         result = None
 
-        content = self.getAdvancedTuningParameters()
+        success, statusCode, content = self.getAdvancedTuningParameters()
 
-        if content is not None:
+        if success:
             for index in range(len(content)):
                 if content[index].get("key", "") == key:
-                    result = content[index]
+                    result = (success, statusCode, content[index])
+
+            if result is None:
+                result = (False, 404, content)
+        else:
+            result = (success, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
 
-    def getAdvancedTuningParameterValue(self, key, default=None):
+    def getAdvancedTuningParameterValue(self, key):
         methodName = "getAdvancedTuningParameterValue()"
         _SystemSettings.logger.enterMethod(methodName)
         result = default
 
-        content = self.getAdvancedTuningParameter(key)
+        success, statusCode, content = self.getAdvancedTuningParameter(key)
 
-        if content is not None:
-            result = content.get("value", default)
+        if success:
+            result = (success, statusCode, content.get("value"))
+        else:
+            result = (success, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -183,8 +192,7 @@ class _SystemSettings(RestClient):
 
         statusCode, content = self.httpPutJson(_SystemSettings.TIME_CONFIG, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -200,8 +208,7 @@ class _SystemSettings(RestClient):
 
         statusCode, content = self.httpGetJson(_SystemSettings.LMI)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -213,27 +220,30 @@ class _SystemSettings(RestClient):
 
         lastStartTime = -1
 
-        content = self.getLmiStatus()
+        success, statusCode, content = self.getLmiStatus()
 
-        if content is not None:
+        if success:
             lastStartTime = content[0].get("start_time", -1)
 
         if lastStartTime > 0:
             statusCode, content = self.httpPostJson(_SystemSettings.LMI_RESTART)
 
-            if statusCode == 200 and content is not None and content.get("restart", False) == True:
+            if statusCode == 200 and content.get("restart", False) == True:
                 _SystemSettings.logger.log(methodName, "Waiting for LMI to restart...")
-                self.waitForLmi(lastStartTime)
-                result = True
+                self._waitForLmi(lastStartTime)
+                result = (True, statusCode, content)
+            else:
+                result = (False, statusCode, content)
         else:
             message = "An invalid start time was retrieved [%s]" % str(lastStartTime)
             _SystemSettings.logger.error(methodName, message)
+            result = (False, statusCode, content)
 
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
 
-    def waitForLmi(self, lastStartTime, sleepInterval=3):
-        methodName = "waitForLmi()"
+    def _waitForLmi(self, lastStartTime, sleepInterval=3):
+        methodName = "_waitForLmi()"
         _SystemSettings.logger.enterMethod(methodName)
 
         if lastStartTime > 0:

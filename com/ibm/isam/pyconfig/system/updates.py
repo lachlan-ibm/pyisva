@@ -36,8 +36,7 @@ class _UpdatesLicensing(RestClient):
 
         statusCode, content = self.httpPostJson(_UpdatesLicensing.CAPABILITIES_V1, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _UpdatesLicensing.logger.exitMethod(methodName, str(result))
         return result
@@ -50,8 +49,7 @@ class _UpdatesLicensing(RestClient):
         endpoint = "%s/%s/v1" % (_UpdatesLicensing.CAPABILITIES, str(id))
         statusCode, content = self.httpGetJson(endpoint)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _UpdatesLicensing.logger.exitMethod(methodName, str(result))
         return result
@@ -63,8 +61,7 @@ class _UpdatesLicensing(RestClient):
 
         statusCode, content = self.httpGetJson(_UpdatesLicensing.CAPABILITIES_V1)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _UpdatesLicensing.logger.exitMethod(methodName, str(result))
         return result

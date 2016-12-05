@@ -61,8 +61,7 @@ class _Manage(RestClient):
 
             statusCode, content = self.httpPostJson(_Manage.REVERSEPROXY, jsonObj)
 
-            if statusCode == 200:
-                result = True if content is None else content
+            result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -74,8 +73,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpGetJson(_Manage.REVERSEPROXY)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -87,8 +85,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpGetJson(_Manage.WGA_DEFAULTS)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -106,8 +103,7 @@ class _Manage(RestClient):
                                                                  str(websealId), str(stanzaId))
         statusCode, content = self.httpPostJson(endpoint, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -124,8 +120,7 @@ class _Manage(RestClient):
             endpoint = "%s/value/%s" % (endpoint, str(value))
         statusCode, content = self.httpDeleteJson(endpoint)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -143,8 +138,7 @@ class _Manage(RestClient):
                                                                     str(entryName))
         statusCode, content = self.httpPutJson(endpoint, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -221,8 +215,7 @@ class _Manage(RestClient):
         endpoint = "%s/%s/junctions" % (_Manage.REVERSEPROXY, str(websealId))
         statusCode, content = self.httpPostJson(endpoint, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -235,8 +228,7 @@ class _Manage(RestClient):
         endpoint = "%s/%s/junctions" % (_Manage.REVERSEPROXY, str(websealId))
         statusCode, content = self.httpGetJson(endpoint)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -255,8 +247,7 @@ class _Manage(RestClient):
         endpoint = "%s/%s/management_root/%s" % (_Manage.REVERSEPROXY, str(websealId), str(pageId))
         statusCode, content = self.httpPutJson(endpoint, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -292,8 +283,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpPostJson(_Manage.RUNTIME_COMPONENT, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
@@ -314,8 +304,7 @@ class _Manage(RestClient):
 
         statusCode, content = self.httpPostJson(_Manage.PDADMIN, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result

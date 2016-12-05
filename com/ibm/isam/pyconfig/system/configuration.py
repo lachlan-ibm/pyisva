@@ -32,14 +32,16 @@ class _Configuration(RestClient):
         _Configuration.logger.enterMethod(methodName)
         result = None
 
-        content = self.getPendingChanges()
+        success, statusCode, content = self.getPendingChanges()
 
-        if content is not None:
-            if len(content.get("changes", 0)) > 0:
+        if success:
+            if len(content.get("changes", [])) > 0:
                 result = self._deployPendingChanges()
             else:
                 _Configuration.logger.log(methodName, "No pending changes to be deployed.")
-                result = True
+                result = (True, statusCode, content)
+        else:
+            result = (False, statusCode, content)
 
         _Configuration.logger.exitMethod(methodName, str(result))
         return result
@@ -51,8 +53,7 @@ class _Configuration(RestClient):
 
         statusCode, content = self.httpGetJson(_Configuration.PENDING_CHANGES)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _Configuration.logger.exitMethod(methodName, str(result))
         return result
@@ -66,17 +67,17 @@ class _Configuration(RestClient):
 
         if statusCode == 200 and content is not None and content.get("result", -1) == 0:
             status = content.get("status")
-            result = True
+            result = (True, statusCode, content)
 
             if status == 0:
                 _Configuration.logger.log(methodName, "Successful operation. No further action needed.")
             else:
                 if (status & 1) != 0:
                     _Configuration.logger.error(methodName, "Deployment of changes resulted in good result but failure status [%s]" % str(status))
-                    result = None
+                    result = (False, statusCode, content)
                 if (status & 2) != 0:
                     _Configuration.logger.error(methodName, "Appliance restart required - halting [%s]" % str(status))
-                    result = None
+                    result = (False, statusCode, content)
                 if (status & 4) != 0 or (status & 8) != 0:
                     _Configuration.logger.log(methodName, "Restarting LMI as required for status [%s]" % str(status))
                     self._restartLmi()
@@ -85,6 +86,8 @@ class _Configuration(RestClient):
                 if (status & 32) != 0:
                     _Configuration.logger.log(methodName, "Runtime restart was performed for status [%s]" % str(status))
                     # TODO: Wait for Runtime to restart...
+        else:
+            result = (False, statusCode, content)
 
         _Configuration.logger.exitMethod(methodName, str(result))
         return result

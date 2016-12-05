@@ -43,10 +43,10 @@ class _SecureSettings(RestClient):
                 endpoint = _SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/personal_cert"
                 statusCode, content = self.httpPostFile(endpoint, data=jsonObj, files=files)
 
-                if statusCode == 200:
-                    result = True if content is None else content
+                result = (statusCode == 200, statusCode, content)
         except IOError as ioe:
             _SecureSettings.logger.error(methodName, str(ioe))
+            result = (False, None, None)
 
         _SecureSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -68,10 +68,10 @@ class _SecureSettings(RestClient):
                 endpoint = _SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/signer_cert"
                 statusCode, content = self.httpPostFile(endpoint, data=jsonObj, files=files)
 
-                if statusCode == 200:
-                    result = True if content is None else content
+                result = (statusCode == 200, statusCode, content)
         except IOError as ioe:
             _SecureSettings.logger.error(methodName, str(ioe))
+            result = (False, None, None)
 
         _SecureSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -90,8 +90,7 @@ class _SecureSettings(RestClient):
         endpoint = _SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/signer_cert"
         statusCode, content = self.httpPostJson(endpoint, jsonObj)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _SecureSettings.logger.exitMethod(methodName, str(result))
         return result

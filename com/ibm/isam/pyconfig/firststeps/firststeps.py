@@ -32,8 +32,7 @@ class _FirstSteps(RestClient):
 
         statusCode, content = self.httpGetJson(_FirstSteps.SETUP_COMPLETE)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _FirstSteps.logger.exitMethod(methodName, result)
         return result
@@ -45,8 +44,7 @@ class _FirstSteps(RestClient):
 
         statusCode, content = self.httpPutJson(_FirstSteps.SETUP_COMPLETE)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _FirstSteps.logger.exitMethod(methodName, result)
         return result
@@ -62,8 +60,7 @@ class _FirstSteps(RestClient):
 
         statusCode, content = self.httpGetJson(_FirstSteps.SERVICE_AGREEMENTS_ACCEPTED)
 
-        if statusCode == 200 and content is not None:
-            result = content
+        result = (statusCode == 200, statusCode, content)
 
         _FirstSteps.logger.exitMethod(methodName, result)
         return result
@@ -76,8 +73,7 @@ class _FirstSteps(RestClient):
         jsonData = {"accepted":accept}
         statusCode, content = self.httpPutJson(_FirstSteps.SERVICE_AGREEMENTS_ACCEPTED, jsonData)
 
-        if statusCode == 200:
-            result = True if content is None else content
+        result = (statusCode == 200, statusCode, content)
 
         _FirstSteps.logger.exitMethod(methodName, result)
         return result
