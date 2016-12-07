@@ -78,8 +78,8 @@ class _SystemSettings(RestClient):
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
 
-    def updateAdministratorSettingsAdminPassword(self, password):
-        methodName = "updateAdministratorSettingsAdminPassword()"
+    def updateAdministratorPassword(self, password):
+        methodName = "updateAdministratorPassword()"
         _SystemSettings.logger.enterMethod(methodName)
         result = None
 

@@ -13,6 +13,7 @@ import com.ibm.isam.util.utils as Utils
 
 class _Manage(RestClient):
 
+    EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
     PDADMIN = "/isam/pdadmin"
     REVERSEPROXY = "/wga/reverseproxy"
     RUNTIME_COMPONENT = "/isam/runtime_components"
@@ -256,10 +257,11 @@ class _Manage(RestClient):
     # Runtime Component
     #
 
-    def configureRuntimeComponent(self, psMode, userRegistry, adminPassword, ldapPassword=None,
-                                  adminCertLiftime=None, sslCompliance=None, ldapHost=None,
-                                  ldapPort=None, isamDomain=None, ldapDn=None, ldapSuffix=None,
-                                  ldapSslDb=None, ldapSslLabel=None, isamHost=None, isamPort=None):
+    def configureRuntimeComponent(self, psMode=None, userRegistry=None, adminPassword=None,
+                                  ldapPassword=None, adminCertLiftime=None, sslCompliance=None,
+                                  ldapHost=None, ldapPort=None, isamDomain=None, ldapDn=None,
+                                  ldapSuffix=None, ldapSslDb=None, ldapSslLabel=None, isamHost=None,
+                                  isamPort=None):
         methodName = "configureRuntimeComponent()"
         _Manage.logger.enterMethod(methodName)
         result = None
@@ -282,6 +284,21 @@ class _Manage(RestClient):
         Utils.addOnValue(jsonObj, "isam_port", isamPort)
 
         statusCode, content = self.httpPostJson(_Manage.RUNTIME_COMPONENT, jsonObj)
+
+        result = (statusCode == 200, statusCode, content)
+
+        _Manage.logger.exitMethod(methodName, str(result))
+        return result
+
+    def updateRuntimeComponentEmbeddedLdapPassword(self, password):
+        methodName = "updateRuntimeComponentEmbeddedLdapPassword()"
+        _Manage.logger.enterMethod(methodName)
+        result = None
+
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "password", password)
+
+        statusCode, content = self.httpPostJson(_Manage.EMBEDDED_LDAP_PASSWORD, jsonObj)
 
         result = (statusCode == 200, statusCode, content)
 

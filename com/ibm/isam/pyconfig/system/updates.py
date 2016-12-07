@@ -66,6 +66,29 @@ class _UpdatesLicensing(RestClient):
         _UpdatesLicensing.logger.exitMethod(methodName, str(result))
         return result
 
+    def importActivationCode(self, filePath):
+        methodName = "importActivationCode()"
+        _UpdatesLicensing.logger.enterMethod(methodName)
+        result = None
+
+        try:
+            with open(filePath, 'rb') as code:
+                jsonObj = {}
+                Utils.addOnStringValue(jsonObj, "name", "activation")
+
+                files = {"filename": code}
+
+                statusCode, content = self.httpPostFile(_UpdatesLicensing.CAPABILITIES_V1,
+                                                        data=jsonObj, files=files)
+
+                result = (statusCode == 200, statusCode, content)
+        except IOError as ioe:
+            _SecureSettings.logger.error(methodName, str(ioe))
+            result = (False, None, None)
+
+        _UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        return result
+
 
 class UpdatesLicensing9020(_UpdatesLicensing):
 
