@@ -47,7 +47,7 @@ class RestClient(object):
         response = requests.get(url=url, params=parameters, headers=headers, verify=False)
 
         statusCode = response.status_code
-        content = response._content
+        content = self.__decodeJson(response._content)
 
         response.close()
 
@@ -55,9 +55,7 @@ class RestClient(object):
         return statusCode, content
 
     def httpGetJson(self, endpoint, parameters=None):
-        statusCode, content = self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON,
-                                           parameters=parameters)
-        return statusCode, self.__decodeJson(content)
+        return self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON, parameters=parameters)
 
     def httpPost(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, parameters=None, data=""):
         methodName = "httpPost()"
@@ -69,7 +67,7 @@ class RestClient(object):
         response = requests.post(url=url, headers=headers, params=parameters, data=data, verify=False)
 
         statusCode = response.status_code
-        content = response._content
+        content = self.__decodeJson(response._content)
 
         response.close()
 
@@ -86,7 +84,7 @@ class RestClient(object):
         response = requests.post(url=url, headers=headers, data=data, files=files, verify=False)
 
         statusCode = response.status_code
-        content = response._content
+        content = self.__decodeJson(response._content)
 
         response.close()
 
@@ -94,9 +92,7 @@ class RestClient(object):
         return statusCode, content
 
     def httpPostJson(self, endpoint, data=""):
-        statusCode, content = self.httpPost(endpoint, acceptType=RestClient.APPLICATION_JSON,
-                                            data=json.dumps(data))
-        return statusCode, self.__decodeJson(content)
+        return self.httpPost(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(data))
 
     def httpPut(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, data=""):
         methodName = "httpPut()"
@@ -108,7 +104,7 @@ class RestClient(object):
         response = requests.put(url=url, headers=headers, params=None, data=data, verify=False)
 
         statusCode = response.status_code
-        content = response._content
+        content = self.__decodeJson(response._content)
 
         response.close()
 
@@ -116,9 +112,7 @@ class RestClient(object):
         return statusCode, content
 
     def httpPutJson(self, endpoint, data=""):
-        statusCode, content = self.httpPut(endpoint, acceptType=RestClient.APPLICATION_JSON,
-                                           data=json.dumps(data))
-        return statusCode, self.__decodeJson(content)
+        return self.httpPut(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(data))
 
     def httpDelete(self, endpoint, acceptType=ALL):
         methodName = "httpDelete()"
@@ -130,7 +124,7 @@ class RestClient(object):
         response = requests.delete(url=url, headers=headers, params=None, verify=False)
 
         statusCode = response.status_code
-        content = response._content
+        content = self.__decodeJson(response._content)
 
         response.close()
 
@@ -138,8 +132,7 @@ class RestClient(object):
         return statusCode, content
 
     def httpDeleteJson(self, endpoint):
-        statusCode, content = self.httpDelete(endpoint, acceptType=RestClient.APPLICATION_JSON)
-        return statusCode, self.__decodeJson(content)
+        return self.httpDelete(endpoint, acceptType=RestClient.APPLICATION_JSON)
 
     def waitOnHttpGet(self, endpoint, successCode=200, sleepInterval=3):
         methodName = "waitOnHttpGet()"
