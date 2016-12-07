@@ -29,7 +29,9 @@ com -
 
 **Subcategory Module:** a module that contains all REST API functionality for a given subcategory (e.g. Policy). These modules will contain multiple classes, a base class implementing all methods, and additional classes specific to a version of ISAM which override any functionality that has been changed in that version.
 
-**Factory:** the master module/class of the framework. Discovery of the ISAM appliance's version and enforcement of supported versions are handled here, along with dynamic instantiation of version specific classes.
+**Factory:** the master module/class of the framework. This module handles the discovery and enforcement of supported ISAM versions, along with dynamic instantiation of version specific classes.
+
+Discovery of the ISAM appliance's version and enforcement of supported versions are handled here, along with dynamic instantiation of version specific classes.
 
 **Utilities:** all functionality that is not a ISAM REST API is stored within modules under the `util` directory.
 
