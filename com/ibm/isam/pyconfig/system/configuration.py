@@ -105,6 +105,6 @@ class Configuration9020(_Configuration):
         Configuration9020.logger.setLevel(logLevel)
 
     def _restartLmi(self):
-        systemSettings = SystemSettings9020(self.baseUrl, self.username, self.password,
-                                            Configuration9020.logger.getLeve())
+        systemSettings = SystemSettings9020(self._baseUrl, self._username, self._password,
+                                            Configuration9020.logger.getLevel())
         systemSettings.restartLmi()

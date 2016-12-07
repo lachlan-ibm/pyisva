@@ -108,7 +108,7 @@ class _NetworkSettings(RestClient):
         result = None
 
         endpoint = "%s/%s/hostnames" % (_NetworkSettings.HOST_RECORDS, address)
-        statusCode, content = self.httpGetJson(ipv4HostEndpoint)
+        statusCode, content = self.httpGetJson(endpoint)
 
         result = (statusCode == 200, statusCode, content)
 

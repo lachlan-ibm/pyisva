@@ -256,9 +256,9 @@ class _SystemSettings(RestClient):
                 time.sleep(sleepInterval)
 
                 try:
-                    content = self.getLmiStatus()
+                    success, statusCode, content = self.getLmiStatus()
 
-                    if content is not None:
+                    if success:
                         restartTime = content[0].get("start_time", -1)
                 except:
                     restartTime = -1
