@@ -71,7 +71,7 @@ class Factory(object):
             raise Exception("Failed to retrieve the ISAM firmware version.")
 
     def __getVersion(self):
-        if Factory.VERSIONS.has_key(self.__version):
+        if self.__version in Factory.VERSIONS:
             return Factory.VERSIONS.get(self.__version)
         else:
             raise Exception(self.__version + " is not supported.")

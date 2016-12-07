@@ -78,7 +78,7 @@ class _SystemSettings(RestClient):
         _SystemSettings.logger.exitMethod(methodName, str(result))
         return result
 
-    def updateAdministratorSettingsAdminPassword(self, newPassword):
+    def updateAdministratorSettingsAdminPassword(self, password):
         methodName = "updateAdministratorSettingsAdminPassword()"
         _SystemSettings.logger.enterMethod(methodName)
         result = None
@@ -90,9 +90,9 @@ class _SystemSettings(RestClient):
 
             if sessionTimeout > 0:
                 result = self.updateAdministratorSettings(sessionTimeout=sessionTimeout,
-                                                          oldPassword=self.password,
-                                                          newPassword=newPassword,
-                                                          confirmPassword=newPassword)
+                                                          oldPassword=self._password,
+                                                          newPassword=password,
+                                                          confirmPassword=password)
             else:
                 _SystemSettings.logger.error(methodName, "An invalid session timeout was retrieved.")
                 result = (False, statusCode, content)
