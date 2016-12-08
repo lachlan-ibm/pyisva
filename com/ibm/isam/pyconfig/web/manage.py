@@ -36,11 +36,11 @@ class _Manage(RestClient):
         _Manage.logger.enterMethod(methodName)
         result = None
 
-        defaults = self.getWGADefaults()
+        success, statusCode, content = self.getWGADefaults()
 
-        if defaults is not None:
-            listeningPort = defaults.get("listening_port")
-            domain = defaults.get("domain")
+        if success:
+            listeningPort = content.get("listening_port")
+            domain = content.get("domain")
 
             jsonObj = {}
             Utils.addOnStringValue(jsonObj, "inst_name", instName)
@@ -63,6 +63,26 @@ class _Manage(RestClient):
             statusCode, content = self.httpPostJson(_Manage.REVERSEPROXY, jsonObj)
 
             result = (statusCode == 200, statusCode, content)
+        else:
+            result = (False, statusCode, content)
+
+        _Manage.logger.exitMethod(methodName, str(result))
+        return result
+
+    def deleteReverseProxy(self, id, adminId=None, adminPwd=None):
+        methodName = "deleteReverseProxy()"
+        _Manage.logger.enterMethod(methodName)
+        result = None
+
+        jsonObj = {}
+        Utils.addOnStringValue(jsonObj, "admin_id", adminId)
+        Utils.addOnStringValue(jsonObj, "admin_pwd", adminPwd)
+        Utils.addOnStringValue(jsonObj, "operation", "unconfigure")
+
+        endpoint = "%s/%s" % (_Manage.REVERSEPROXY, str(id))
+        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+
+        result = (statusCode == 200, statusCode, content)
 
         _Manage.logger.exitMethod(methodName, str(result))
         return result
