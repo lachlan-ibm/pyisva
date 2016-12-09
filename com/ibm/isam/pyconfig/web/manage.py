@@ -111,6 +111,43 @@ class _Manage(RestClient):
         _Manage.logger.exitMethod(methodName, str(result))
         return result
 
+    # Auto Configuration
+
+    def configureReverseProxyMmfa(self, websealId, lmiHostname=None, lmiPort=None, lmiUsername=None,
+                                  lmiPassword=None, runtimeHostname=None, runtimePort=None,
+                                  runtimeUsername=None, runtimePassword=None, reuseCerts=None,
+                                  reuseAcls=None, reusePops=None):
+        methodName = "configureReverseProxyMmfa()"
+        _Manage.logger.enterMethod(methodName)
+        result = None
+
+        lmiObj = {}
+        Utils.addOnStringValue(lmiObj, "hostname", lmiHostname)
+        Utils.addOnStringValue(lmiObj, "username", lmiUsername)
+        Utils.addOnStringValue(lmiObj, "password", lmiPassword)
+        Utils.addOnValue(lmiObj, "port", lmiPort)
+
+        runtimeObj = {}
+        Utils.addOnStringValue(runtimeObj, "hostname", runtimeHostname)
+        Utils.addOnStringValue(runtimeObj, "username", runtimeUsername)
+        Utils.addOnStringValue(runtimeObj, "password", runtimePassword)
+        Utils.addOnValue(runtimeObj, "port", runtimePort)
+
+        jsonObj = {}
+        Utils.addOnValue(jsonObj, "lmi", lmiObj)
+        Utils.addOnValue(jsonObj, "runtime", runtimeObj)
+        Utils.addOnValue(jsonObj, "reuse_certs", reuseCerts)
+        Utils.addOnValue(jsonObj, "reuse_acls", reuseAcls)
+        Utils.addOnValue(jsonObj, "reuse_pops", reusePops)
+
+        endpoint = "%s/%s/mmfa_config" % (_Manage.REVERSEPROXY, str(websealId))
+        statusCode, content = self.httpPostJson(endpoint, jsonObj)
+
+        result = (statusCode == 204, statusCode, content)
+
+        _Manage.logger.exitMethod(methodName, str(result))
+        return result
+
     # Configuration
 
     def addReverseProxyConfigurationStanzaEntry(self, websealId, stanzaId, entryName, value):
