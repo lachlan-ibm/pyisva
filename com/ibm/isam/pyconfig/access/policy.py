@@ -178,6 +178,53 @@ class _Policy(RestClient):
         _Policy.logger.exitMethod(methodName, str(result))
         return result
 
+    def deleteApiProtectionClient(self, id):
+        methodName = "deleteApiProtectionClient()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        endpoint = "%s/%s" % (_Policy.CLIENTS, str(id))
+        statusCode, content = self.httpDeleteJson(endpoint)
+
+        result = (statusCode == 204, statusCode, content)
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getApiProtectionClientByClientId(self, clientId):
+        methodName = "getApiProtectionClientByClientId()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        clientIdEquals = "clientId equals " + str(clientId)
+        success, statusCode, content = self.getApiProtectionClients(filter=clientIdEquals)
+
+        if success and len(content) > 0:
+            result = (success, statusCode, content[0])
+        else:
+            result = (False, statusCode, content)
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getApiProtectionClients(self, sortBy=None, count=None, start=None, filter=None):
+        methodName = "getApiProtectionClients()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        parameters = {}
+        Utils.addOnStringValue(parameters, "sortBy", sortBy)
+        Utils.addOnStringValue(parameters, "count", count)
+        Utils.addOnStringValue(parameters, "start", start)
+        Utils.addOnStringValue(parameters, "filter", filter)
+
+        statusCode, content = self.httpGetJson(_Policy.CLIENTS, parameters=parameters)
+
+        result = (statusCode == 200, statusCode, content)
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
     # Definitions
 
     def createApiProtectionDefinition(self, name=None, description=None, tcmBehavior=None,
@@ -218,6 +265,35 @@ class _Policy(RestClient):
         statusCode, content = self.httpPostJson(_Policy.DEFINITIONS, data=jsonObj)
 
         result = (statusCode == 201, statusCode, content)
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    def deleteApiProtectionDefinition(self, id):
+        methodName = "deleteApiProtectionDefinition()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        endpoint = "%s/%s" % (_Policy.DEFINITIONS, str(id))
+        statusCode, content = self.httpDeleteJson(endpoint)
+
+        result = (statusCode == 204, statusCode, content)
+
+        _Policy.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getApiProtectionDefinitionByName(self, name):
+        methodName = "getApiProtectionDefinitionByName()"
+        _Policy.logger.enterMethod(methodName)
+        result = None
+
+        nameEquals = "name equals " + str(name)
+        success, statusCode, content = self.getApiProtectionDefinitions(filter=nameEquals)
+
+        if success and len(content) > 0:
+            result = (success, statusCode, content[0])
+        else:
+            result = (False, statusCode, content)
 
         _Policy.logger.exitMethod(methodName, str(result))
         return result
