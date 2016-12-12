@@ -14,8 +14,8 @@ class _GlobalSettings(RestClient):
 
     OVERRIDE_CONFIGS = "/iam/access/v8/override-configs"
     RUNTIME_TUNING = "/mga/runtime_tuning"
-    SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap/v1"
-    SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws/v1"
+    SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap"
+    SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws"
     TEMPLATE_FILES = "/mga/template_files"
     USER_REGISTRY = "/mga/user_registry"
 
@@ -154,9 +154,55 @@ class _GlobalSettings(RestClient):
         Utils.addOnValue(jsonObj, "connectionGlobalSettingsr", connectionGlobalSettingsrObj)
         Utils.addOnValue(jsonObj, "servers", servers)
 
-        statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_LDAP, data=jsonObj)
+        statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_LDAP+"/v1",
+                                                data=jsonObj)
 
         result = (statusCode == 201, statusCode, content)
+
+        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    def deleteServerConnectionLdap(self, uuid):
+        methodName = "deleteServerConnectionLdap()"
+        _GlobalSettings.logger.enterMethod(methodName)
+        result = None
+
+        endpoint = "%s/%s/v1" % (_GlobalSettings.SERVER_CONNECTION_LDAP, str(uuid))
+        statusCode, content = self.httpDeleteJson(endpoint)
+
+        result = (statusCode == 204, statusCode, content)
+
+        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getServerConnectionLdapByName(self, name):
+        methodName = "getServerConnectionLdapByName()"
+        _GlobalSettings.logger.enterMethod(methodName)
+        result = None
+
+        success, statusCode, content = self.getServerConnectionsLdap()
+
+        if success:
+            for entry in content:
+                if entry.get("name", "") == name:
+                    result = (success, statusCode, entry)
+
+            if result is None:
+                result = (False, 404, content)
+        else:
+            result = (success, statusCode, content)
+
+        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        return result
+
+    def getServerConnectionsLdap(self):
+        methodName = "getServerConnectionsLdap()"
+        _GlobalSettings.logger.enterMethod(methodName)
+        result = None
+
+        statusCode, content = self.httpGetJson(_GlobalSettings.SERVER_CONNECTION_LDAP+"/v1")
+
+        result = (statusCode == 200, statusCode, content)
 
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
@@ -186,7 +232,8 @@ class _GlobalSettings(RestClient):
         Utils.addOnValue(jsonObj, "locked", locked)
         Utils.addOnValue(jsonObj, "connection", connectionObj)
 
-        statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE, data=jsonObj)
+        statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE+"/v1",
+                                                data=jsonObj)
 
         result = (statusCode == 201, statusCode, content)
 
@@ -198,7 +245,7 @@ class _GlobalSettings(RestClient):
         _GlobalSettings.logger.enterMethod(methodName)
         result = None
 
-        success, statusCode, content = self.getWebServiceServerConnections()
+        success, statusCode, content = self.getServerConnectionsWebService()
 
         if success:
             for index in range(len(content)):
@@ -213,12 +260,12 @@ class _GlobalSettings(RestClient):
         _GlobalSettings.logger.exitMethod(methodName, str(result))
         return result
 
-    def getServerConnectionWebServices(self):
-        methodName = "getServerConnectionWebServices()"
+    def getServerConnectionsWebService(self):
+        methodName = "getServerConnectionsWebService()"
         _GlobalSettings.logger.enterMethod(methodName)
         result = None
 
-        statusCode, content = self.httpGetJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE)
+        statusCode, content = self.httpGetJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE+"/v1")
 
         result = (statusCode == 200, statusCode, content)
 
