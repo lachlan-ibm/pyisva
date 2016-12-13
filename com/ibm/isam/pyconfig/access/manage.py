@@ -1,6 +1,4 @@
 """
-Created on Nov 22, 2016
-
 @copyright: IBM
 """
 
@@ -11,17 +9,18 @@ from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
 
-class _Manage(RestClient):
+MMFA_CONFIG = "/iam/access/v8/mmfa-config"
+SCHEMA_ISAM_USER = "urn:ietf:params:scim:schemas:extension:isam:1.0:User"
+SCIM_CONFIGURATION = "/mga/scim/configuration"
 
-    MMFA_CONFIG = "/iam/access/v8/mmfa-config"
-    SCIM_CONFIGURATION = "/mga/scim/configuration"
-    SCIM_CONFIGURATION_ISAM = "/mga/scim/configuration/urn:ietf:params:scim:schemas:extension:isam:1.0:User"
+
+class _Manage(RestClient):
 
     logger = Logger("Manage")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_Manage, self).__init__(baseUrl, username, password, logLevel)
-        _Manage.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_Manage, self).__init__(base_url, username, password, log_level)
+        _Manage.logger.set_level(log_level)
 
     #
     # SCIM Configuration
@@ -29,70 +28,75 @@ class _Manage(RestClient):
 
     # General
 
-    def getScimConfiguration(self):
-        methodName = "getScimConfiguration()"
-        _Manage.logger.enterMethod(methodName)
+    def get_scim_configuration(self):
+        method_name = "get_scim_configuration()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_Manage.SCIM_CONFIGURATION)
+        status_code, content = self.http_get_json(SCIM_CONFIGURATION)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def updateScimConfiguration(self, jsonObj):
-        methodName = "updateScimConfiguration()"
-        _Manage.logger.enterMethod(methodName)
+    def update_scim_configuration(self, data):
+        method_name = "update_scim_configuration()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpPutJson(_Manage.SCIM_CONFIGURATION, data=jsonObj)
+        status_code, content = self.http_put_json(SCIM_CONFIGURATION, data=data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     # ISAM User
 
-    def updateScimConfigurationIsamUser(self, ldapConnection=None, isamDomain=None, updateNativeUsers=None):
-        methodName = "updateScimConfigurationIsamUser()"
-        _Manage.logger.enterMethod(methodName)
+    def update_scim_configuration_isam_user(
+            self, ldap_connection=None, isam_domain=None,
+            update_native_users=None):
+        method_name = "update_scim_configuration_isam_user()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "ldap_connection", ldapConnection)
-        Utils.addOnStringValue(jsonObj, "isam_domain", isamDomain)
-        Utils.addOnValue(jsonObj, "update_native_users", updateNativeUsers)
+        data = {}
+        Utils.add_string_value(data, "ldap_connection", ldap_connection)
+        Utils.add_string_value(data, "isam_domain", isam_domain)
+        Utils.add_value(data, "update_native_users", update_native_users)
 
-        statusCode, content = self.httpPutJson(_Manage.SCIM_CONFIGURATION_ISAM, data=jsonObj)
+        endpoint = ("%s/%s" % (SCIM_CONFIGURATION, SCHEMA_ISAM_USER))
+        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     #
     # MMFA Configuration
     #
 
-    def updateMmfaConfiguration(self, clientId=None, hostname=None, junction=None, options=None, port=None):
-        methodName = "updateMmfaConfiguration()"
-        _Manage.logger.enterMethod(methodName)
+    def update_mmfa_configuration(
+            self, client_id=None, hostname=None, junction=None, options=None,
+            port=None):
+        method_name = "update_mmfa_configuration()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "client_id", clientId)
-        Utils.addOnStringValue(jsonObj, "hostname", hostname)
-        Utils.addOnStringValue(jsonObj, "junction", junction)
-        Utils.addOnStringValue(jsonObj, "options", options)
-        Utils.addOnValue(jsonObj, "port", port)
+        data = {}
+        Utils.add_string_value(data, "client_id", client_id)
+        Utils.add_string_value(data, "hostname", hostname)
+        Utils.add_string_value(data, "junction", junction)
+        Utils.add_string_value(data, "options", options)
+        Utils.add_value(data, "port", port)
 
-        statusCode, content = self.httpPostJson(_Manage.MMFA_CONFIG, data=jsonObj)
+        status_code, content = self.http_post_json(MMFA_CONFIG, data=data)
 
-        result = (statusCode == 204, statusCode, content)
+        result = (status_code == 204, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
 
@@ -100,6 +104,7 @@ class Manage9020(_Manage):
 
     logger = Logger("Manage9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(Manage9020, self).__init__(baseUrl, username, password, logLevel)
-        Manage9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(Manage9020, self).__init__(
+            base_url, username, password, log_level)
+        Manage9020.logger.set_level(log_level)

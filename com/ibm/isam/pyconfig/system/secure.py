@@ -1,6 +1,4 @@
 """
-Created on Nov 25, 2016
-
 @copyright: IBM
 """
 
@@ -11,15 +9,17 @@ from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
 
-class _SecureSettings(RestClient):
+SSL_CERTIFICATES = "/isam/ssl_certificates"
 
-    SSL_CERTIFICATES = "/isam/ssl_certificates"
+
+class _SecureSettings(RestClient):
 
     logger = Logger("SecureSettings")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_SecureSettings, self).__init__(baseUrl, username, password, logLevel)
-        _SecureSettings.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_SecureSettings, self).__init__(
+            base_url, username, password, log_level)
+        _SecureSettings.logger.set_level(log_level)
 
     #
     # SSL Certificates
@@ -27,72 +27,75 @@ class _SecureSettings(RestClient):
 
     # Personal
 
-    def importSslCertificatePersonal(self, kdbId, password, filePath):
-        methodName = "importSslCertificatePersonal()"
-        _SecureSettings.logger.enterMethod(methodName)
+    def import_ssl_certificate_personal(self, kdb_id, file_path, password=None):
+        method_name = "import_ssl_certificate_personal()"
+        _SecureSettings.logger.enter_method(method_name)
         result = None
 
         try:
-            with open(filePath, 'rb') as certificate:
-                jsonObj = {}
-                Utils.addOnStringValue(jsonObj, "operation", "import")
-                Utils.addOnStringValue(jsonObj, "password", password)
+            with open(file_path, 'rb') as certificate:
+                data = {}
+                Utils.add_string_value(data, "operation", "import")
+                Utils.add_string_value(data, "password", password)
 
                 files = {"cert": certificate}
 
-                endpoint = _SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/personal_cert"
-                statusCode, content = self.httpPostFile(endpoint, data=jsonObj, files=files)
+                endpoint = ("%s/%s/personal_cert" % (SSL_CERTIFICATES, kdb_id))
+                status_code, content = self.http_post_file(
+                    endpoint, data=data, files=files)
 
-                result = (statusCode == 200, statusCode, content)
-        except IOError as ioe:
-            _SecureSettings.logger.error(methodName, str(ioe))
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            _SecureSettings.logger.error(method_name, e)
             result = (False, None, None)
 
-        _SecureSettings.logger.exitMethod(methodName, str(result))
+        _SecureSettings.logger.exit_method(method_name, result)
         return result
 
     # Signer
 
-    def importSslCertificateSigner(self, kdbId, label, filePath):
-        methodName = "importSslCertificateSigner()"
-        _SecureSettings.logger.enterMethod(methodName)
+    def import_ssl_certificate_signer(self, kdb_id, file_path, label=None):
+        method_name = "import_ssl_certificate_signer()"
+        _SecureSettings.logger.enter_method(method_name)
         result = None
 
         try:
-            with open(filePath, 'rb') as certificate:
-                jsonObj = {}
-                Utils.addOnStringValue(jsonObj, "label", label)
+            with open(file_path, 'rb') as certificate:
+                data = {}
+                Utils.add_string_value(data, "label", label)
 
                 files = {"cert": certificate}
 
-                endpoint = _SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/signer_cert"
-                statusCode, content = self.httpPostFile(endpoint, data=jsonObj, files=files)
+                endpoint = ("%s/%s/signer_cert" % (SSL_CERTIFICATES, kdb_id))
+                status_code, content = self.http_post_file(
+                    endpoint, data=data, files=files)
 
-                result = (statusCode == 200, statusCode, content)
-        except IOError as ioe:
-            _SecureSettings.logger.error(methodName, str(ioe))
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            _SecureSettings.logger.error(method_name, e)
             result = (False, None, None)
 
-        _SecureSettings.logger.exitMethod(methodName, str(result))
+        _SecureSettings.logger.exit_method(method_name, result)
         return result
 
-    def loadSslCertificateSigner(self, kdbId, server, port, label):
-        methodName = "loadSslCertificateSigner()"
-        _SecureSettings.logger.enterMethod(methodName)
+    def load_ssl_certificate_signer(
+            self, kdb_id, server=None, port=None, label=None):
+        method_name = "load_ssl_certificate_signer()"
+        _SecureSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "operation", "load")
-        Utils.addOnStringValue(jsonObj, "label", label)
-        Utils.addOnStringValue(jsonObj, "server", server)
-        Utils.addOnValue(jsonObj, "port", port)
+        data = {}
+        Utils.add_string_value(data, "operation", "load")
+        Utils.add_string_value(data, "label", label)
+        Utils.add_string_value(data, "server", server)
+        Utils.add_value(data, "port", port)
 
-        endpoint = _SecureSettings.SSL_CERTIFICATES + "/" + str(kdbId) + "/signer_cert"
-        statusCode, content = self.httpPostJson(endpoint, jsonObj)
+        endpoint = ("%s/%s/signer_cert" % (SSL_CERTIFICATES, kdb_id))
+        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _SecureSettings.logger.exitMethod(methodName, str(result))
+        _SecureSettings.logger.exit_method(method_name, result)
         return result
 
 
@@ -100,6 +103,7 @@ class SecureSettings9020(_SecureSettings):
 
     logger = Logger("SecureSettings9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(SecureSettings9020, self).__init__(baseUrl, username, password, logLevel)
-        SecureSettings9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(SecureSettings9020, self).__init__(
+            base_url, username, password, log_level)
+        SecureSettings9020.logger.set_level(log_level)

@@ -1,6 +1,4 @@
 """
-Created on Nov 22, 2016
-
 @copyright: IBM
 """
 
@@ -11,82 +9,86 @@ from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
 
-class _UpdatesLicensing(RestClient):
+CAPABILITIES = "/isam/capabilities"
 
-    CAPABILITIES = "/isam/capabilities"
-    CAPABILITIES_V1 = CAPABILITIES + "/v1"
+
+class _UpdatesLicensing(RestClient):
 
     logger = Logger("UpdatesLicensing")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_UpdatesLicensing, self).__init__(baseUrl, username, password, logLevel)
-        _UpdatesLicensing.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_UpdatesLicensing, self).__init__(
+            base_url, username, password, log_level)
+        _UpdatesLicensing.logger.set_level(log_level)
 
     #
     # Licensing and Activation
     #
 
-    def activateModule(self, code):
-        methodName = "activateModule()"
-        _UpdatesLicensing.logger.enterMethod(methodName)
+    def activate_module(self, code):
+        method_name = "activate_module()"
+        _UpdatesLicensing.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "code", code)
+        data = {}
+        Utils.add_string_value(data, "code", code)
 
-        statusCode, content = self.httpPostJson(_UpdatesLicensing.CAPABILITIES_V1, jsonObj)
+        endpoint = CAPABILITIES + "/v1"
+        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        _UpdatesLicensing.logger.exit_method(method_name, result)
         return result
 
-    def getActivatedModule(self, id):
-        methodName = "getActivatedModule()"
-        _UpdatesLicensing.logger.enterMethod(methodName)
+    def get_activated_module(self, id):
+        method_name = "get_activated_module()"
+        _UpdatesLicensing.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/v1" % (_UpdatesLicensing.CAPABILITIES, str(id))
-        statusCode, content = self.httpGetJson(endpoint)
+        endpoint = "%s/%s/v1" % (CAPABILITIES, id)
+        status_code, content = self.http_get_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        _UpdatesLicensing.logger.exit_method(method_name, result)
         return result
 
-    def getActivatedModules(self):
-        methodName = "getActivatedModules()"
-        _UpdatesLicensing.logger.enterMethod(methodName)
+    def get_activated_modules(self):
+        method_name = "get_activated_modules()"
+        _UpdatesLicensing.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_UpdatesLicensing.CAPABILITIES_V1)
+        endpoint = CAPABILITIES + "/v1"
+        status_code, content = self.httpGetJson(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        _UpdatesLicensing.logger.exit_method(method_name, result)
         return result
 
-    def importActivationCode(self, filePath):
-        methodName = "importActivationCode()"
-        _UpdatesLicensing.logger.enterMethod(methodName)
+    def import_activation_code(self, file_path):
+        method_name = "import_activation_code()"
+        _UpdatesLicensing.logger.enter_method(method_name)
         result = None
 
         try:
-            with open(filePath, 'rb') as code:
-                jsonObj = {}
-                Utils.addOnStringValue(jsonObj, "name", "activation")
+            with open(file_path, 'rb') as code:
+                data = {}
+                Utils.add_string_value(data, "name", "activation")
 
                 files = {"filename": code}
 
-                statusCode, content = self.httpPostFile(_UpdatesLicensing.CAPABILITIES_V1,
-                                                        data=jsonObj, files=files)
+                endpoint = CAPABILITIES + "/v1"
+                status_code, content = self.http_post_file(
+                    endpoint, data=data, files=files)
 
-                result = (statusCode == 200, statusCode, content)
-        except IOError as ioe:
-            _SecureSettings.logger.error(methodName, str(ioe))
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            _SecureSettings.logger.error(method_name, e)
             result = (False, None, None)
 
-        _UpdatesLicensing.logger.exitMethod(methodName, str(result))
+        _UpdatesLicensing.logger.exit_method(method_name, result)
         return result
 
 
@@ -94,6 +96,7 @@ class UpdatesLicensing9020(_UpdatesLicensing):
 
     logger = Logger("UpdatesLicensing9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(UpdatesLicensing9020, self).__init__(baseUrl, username, password, logLevel)
-        UpdatesLicensing9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(UpdatesLicensing9020, self).__init__(
+            base_url, username, password, log_level)
+        UpdatesLicensing9020.logger.set_level(log_level)

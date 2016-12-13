@@ -1,6 +1,4 @@
 """
-Created on Dec 02, 2016
-
 @copyright: IBM
 """
 
@@ -15,11 +13,13 @@ from .system import SystemSettings9020 as SysSettings9020
 from .updates import UpdatesLicensing9020
 
 
-class SystemSettings9020(Configuration9020, NetworkSettings9020, SecureSettings9020, SysSettings9020,
-                         UpdatesLicensing9020):
+class SystemSettings9020(
+        Configuration9020, NetworkSettings9020, SecureSettings9020,
+        SysSettings9020, UpdatesLicensing9020):
 
     logger = Logger("SystemSettings9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(SystemSettings9020, self).__init__(baseUrl, username, password, logLevel)
-        SystemSettings9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(SystemSettings9020, self).__init__(
+            base_url, username, password, log_level)
+        SystemSettings9020.logger.set_level(log_level)

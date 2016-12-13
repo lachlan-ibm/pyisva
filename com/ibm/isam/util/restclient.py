@@ -1,6 +1,4 @@
 """
-Created on Nov 17, 2016
-
 @copyright: IBM
 """
 
@@ -14,168 +12,189 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from .logger import Logger
 
 
-class RestClient(object):
+ACCEPT = "Accept"
+ALL = "*/*"
+APPLICATION_JSON = "application/json"
+AUTHORIZATION = "Authorization"
+CONTENT_TYPE = "Content-type"
 
-    ACCEPT = "Accept"
-    ALL = "*/*"
-    APPLICATION_JSON = "application/json"
-    AUTHORIZATION = "Authorization"
-    CONTENT_TYPE = "Content-type"
-    MULTIPART_FORM = "multipart/form-data"
+
+class RestClient(object):
 
     logger = Logger("RestClient")
 
-    def __init__(self, baseUrl, username=None, password=None, logLevel=logging.NOTSET):
+    def __init__(
+            self, base_url, username=None, password=None,
+            log_level=logging.NOTSET):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-        RestClient.logger.setLevel(logLevel)
+        RestClient.logger.set_level(log_level)
 
-        self.__dumpJson = False
-        self._baseUrl = baseUrl
+        self._dump_json = False
+        self._base_url = base_url
         self._username = username
         self._password = password
 
     def enableJsonDump(self, enable=True):
-        self.__dumpJson = enable
+        self._dump_json = enable
 
-    def httpGet(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, parameters=None):
-        methodName = "httpGet()"
-        RestClient.logger.enterMethod(methodName, (endpoint, parameters))
+    def http_get(
+            self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
+            parameters=None):
+        method_name = "http_get()"
+        RestClient.logger.enter_method(method_name, (endpoint, parameters))
 
-        url = self._baseUrl + endpoint
-        headers = self.__getHeaders(acceptType, contentType)
+        url = self._base_url + endpoint
+        headers = self._get_headers(accept_type, content_type)
 
-        response = requests.get(url=url, params=parameters, headers=headers, verify=False)
+        response = requests.get(
+            url=url, params=parameters, headers=headers, verify=False)
 
-        statusCode = response.status_code
-        content = self.__decodeJson(response._content)
-
-        response.close()
-
-        RestClient.logger.exitMethod(methodName, (statusCode, content))
-        return statusCode, content
-
-    def httpGetJson(self, endpoint, parameters=None):
-        return self.httpGet(endpoint, acceptType=RestClient.APPLICATION_JSON, parameters=parameters)
-
-    def httpPost(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, parameters=None, data=""):
-        methodName = "httpPost()"
-        RestClient.logger.enterMethod(methodName, (endpoint, data))
-
-        url = self._baseUrl + endpoint
-        headers = self.__getHeaders(acceptType, contentType)
-
-        response = requests.post(url=url, headers=headers, params=parameters, data=data, verify=False)
-
-        statusCode = response.status_code
-        content = self.__decodeJson(response._content)
+        status_code = response.status_code
+        content = self._decode_json(response._content)
 
         response.close()
 
-        RestClient.logger.exitMethod(methodName, (statusCode, content))
-        return statusCode, content
+        RestClient.logger.exit_method(method_name, (status_code, content))
+        return (status_code, content)
 
-    def httpPostFile(self, endpoint, acceptType=APPLICATION_JSON, data="", files={}):
-        methodName = "httpPostFile()"
-        RestClient.logger.enterMethod(methodName, (endpoint, data))
+    def http_get_json(self, endpoint, parameters=None):
+        return self.http_get(
+            endpoint, accept_type=APPLICATION_JSON, parameters=parameters)
 
-        url = self._baseUrl + endpoint
-        headers = self.__getHeaders(acceptType)
+    def http_post(
+            self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
+            parameters=None, data=""):
+        method_name = "http_post()"
+        RestClient.logger.enter_method(method_name, (endpoint, data))
 
-        response = requests.post(url=url, headers=headers, data=data, files=files, verify=False)
+        url = self._base_url + endpoint
+        headers = self._get_headers(accept_type, content_type)
 
-        statusCode = response.status_code
-        content = self.__decodeJson(response._content)
+        response = requests.post(
+            url=url, headers=headers, params=parameters, data=data,
+            verify=False)
 
-        response.close()
-
-        RestClient.logger.exitMethod(methodName, (statusCode, content))
-        return statusCode, content
-
-    def httpPostJson(self, endpoint, data=""):
-        return self.httpPost(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(data))
-
-    def httpPut(self, endpoint, acceptType=ALL, contentType=APPLICATION_JSON, data=""):
-        methodName = "httpPut()"
-        RestClient.logger.enterMethod(methodName, (endpoint, data))
-
-        url = self._baseUrl + endpoint
-        headers = self.__getHeaders(acceptType, contentType)
-
-        response = requests.put(url=url, headers=headers, params=None, data=data, verify=False)
-
-        statusCode = response.status_code
-        content = self.__decodeJson(response._content)
+        status_code = response.status_code
+        content = self._decode_json(response._content)
 
         response.close()
 
-        RestClient.logger.exitMethod(methodName, (statusCode, content))
-        return statusCode, content
+        RestClient.logger.exit_method(method_name, (status_code, content))
+        return (status_code, content)
 
-    def httpPutJson(self, endpoint, data=""):
-        return self.httpPut(endpoint, acceptType=RestClient.APPLICATION_JSON, data=json.dumps(data))
+    def http_post_file(
+            self, endpoint, accept_type=APPLICATION_JSON, data="", files={}):
+        method_name = "http_post_file()"
+        RestClient.logger.enter_method(method_name, (endpoint, data))
 
-    def httpDelete(self, endpoint, acceptType=ALL):
-        methodName = "httpDelete()"
-        RestClient.logger.enterMethod(methodName, (endpoint))
+        url = self._base_url + endpoint
+        headers = self._get_headers(accept_type)
 
-        url = self._baseUrl + endpoint
-        headers = self.__getHeaders(acceptType)
+        response = requests.post(
+            url=url, headers=headers, data=data, files=files, verify=False)
 
-        response = requests.delete(url=url, headers=headers, params=None, verify=False)
-
-        statusCode = response.status_code
-        content = self.__decodeJson(response._content)
+        status_code = response.status_code
+        content = self._decode_json(response._content)
 
         response.close()
 
-        RestClient.logger.exitMethod(methodName, (statusCode, content))
-        return statusCode, content
+        RestClient.logger.exit_method(method_name, (status_code, content))
+        return (status_code, content)
 
-    def httpDeleteJson(self, endpoint):
-        return self.httpDelete(endpoint, acceptType=RestClient.APPLICATION_JSON)
+    def http_post_json(self, endpoint, data=""):
+        return self.http_post(
+            endpoint, accept_type=APPLICATION_JSON, data=json.dumps(data))
 
-    def waitOnHttpGet(self, endpoint, successCode=200, sleepInterval=3):
-        methodName = "waitOnHttpGet()"
-        RestClient.logger.enterMethod(methodName, (endpoint))
+    def http_put(
+            self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
+            data=""):
+        method_name = "http_put()"
+        RestClient.logger.enter_method(method_name, (endpoint, data))
 
-        message = "Waiting for a [%s] response from [%s]" % (str(successCode), str(endpoint))
+        url = self._base_url + endpoint
+        headers = self._get_headers(accept_type, content_type)
 
-        statusCode = 0
-        while statusCode != successCode:
+        response = requests.put(
+            url=url, headers=headers, params=None, data=data, verify=False)
+
+        status_code = response.status_code
+        content = self._decode_json(response._content)
+
+        response.close()
+
+        RestClient.logger.exit_method(method_name, (status_code, content))
+        return (status_code, content)
+
+    def http_put_json(self, endpoint, data=""):
+        return self.http_put(
+            endpoint, accept_type=APPLICATION_JSON, data=json.dumps(data))
+
+    def http_delete(self, endpoint, accept_type=ALL):
+        method_name = "http_delete()"
+        RestClient.logger.enter_method(method_name, (endpoint))
+
+        url = self._base_url + endpoint
+        headers = self._get_headers(accept_type)
+
+        response = requests.delete(
+            url=url, headers=headers, params=None, verify=False)
+
+        status_code = response.status_code
+        content = self._decode_json(response._content)
+
+        response.close()
+
+        RestClient.logger.exit_method(method_name, (status_code, content))
+        return (status_code, content)
+
+    def http_delete_json(self, endpoint):
+        return self.http_delete(endpoint, accept_type=APPLICATION_JSON)
+
+    def wait_on_http_get(self, endpoint, success_code=200, sleep_interval=3):
+        method_name = "wait_on_http_get()"
+        RestClient.logger.enter_method(method_name, (endpoint))
+
+        message = "Waiting for a %s response from %s" % (success_code, endpoint)
+
+        status_code = 0
+        while status_code != success_code:
             try:
-                statusCode, content = self.httpGet(endpoint, acceptType=None, contentType=None)
+                status_code, content = self.http_get(
+                    endpoint, accept_type=None, content_type=None)
             except: # Ignore this
                 pass
 
-            if statusCode != successCode:
-                RestClient.logger.trace(methodName, message)
-                time.sleep(sleepInterval)
+            if status_code != success_code:
+                RestClient.logger.trace(method_name, message)
+                time.sleep(sleep_interval)
 
-        RestClient.logger.exitMethod(methodName)
+        RestClient.logger.exit_method(method_name)
 
-    def __decodeJson(self, content):
+    def _decode_json(self, content):
         try:
-            jsonObj = json.loads(content)
+            data = json.loads(content)
 
-            if self.__dumpJson:
-                print(json.dumps(jsonObj, sort_keys=True, indent=4, separators=(',', ': ')))
+            if self._dump_json:
+                print(json.dumps(
+                    data, sort_keys=True, indent=4, separators=(',', ': ')))
 
-            return jsonObj
+            return data
         except:
             return content
 
-    def __getHeaders(self, acceptType=None, contentType=None):
+    def _get_headers(self, accept_type=None, content_type=None):
         headers = {}
 
-        if acceptType is not None:
-            headers[RestClient.ACCEPT] = acceptType
+        if accept_type:
+            headers[ACCEPT] = accept_type
 
-        if contentType is not None:
-            headers[RestClient.CONTENT_TYPE] = contentType
+        if content_type:
+            headers[CONTENT_TYPE] = content_type
 
-        if self._username is not None and self._password is not None:
+        if self._username and self._password:
             credential = "%s:%s" % (self._username, self._password)
             credential_encode = b64encode(credential.encode())
-            headers[RestClient.AUTHORIZATION] = "Basic " + str(credential_encode.decode()).rstrip()
+            authorization = "Basic " + str(credential_encode.decode()).rstrip()
+            headers[AUTHORIZATION] = authorization
 
         return headers

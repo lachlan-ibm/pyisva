@@ -4,7 +4,7 @@ ISAM PyConfig is a Python framework for issuing configuration based web service 
 
 ## Requirements
 
-[Python Requests](http://docs.python-requests.org/en/master)
+[Requests](http://docs.python-requests.org/en/master)
 
 ## Structure
 
@@ -36,5 +36,9 @@ Discovery of the ISAM appliance's version and enforcement of supported versions 
 **Utilities:** all functionality that is not a ISAM REST API is stored within modules under the `util` directory.
 
 ## Style Guide
+
+[Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008)
+
+[Idiomatic Python](http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html)
 
 *To be documented...*

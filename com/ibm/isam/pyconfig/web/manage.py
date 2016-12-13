@@ -1,6 +1,4 @@
 """
-Created on Nov 22, 2016
-
 @copyright: IBM
 """
 
@@ -11,376 +9,392 @@ from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
 
-class _Manage(RestClient):
+EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
+PDADMIN = "/isam/pdadmin"
+REVERSEPROXY = "/wga/reverseproxy"
+RUNTIME_COMPONENT = "/isam/runtime_components"
+WGA_DEFAULTS = "/isam/wga_templates/defaults"
 
-    EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
-    PDADMIN = "/isam/pdadmin"
-    REVERSEPROXY = "/wga/reverseproxy"
-    RUNTIME_COMPONENT = "/isam/runtime_components"
-    WGA_DEFAULTS = "/isam/wga_templates/defaults"
+
+class _Manage(RestClient):
 
     logger = Logger("Manage")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_Manage, self).__init__(baseUrl, username, password, logLevel)
-        _Manage.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_Manage, self).__init__(base_url, username, password, log_level)
+        _Manage.logger.set_level(log_level)
 
     #
     # Reverse Proxy
     #
 
-    def createReverseProxy(self, instName=None, host=None, adminId=None, adminPwd=None, sslYn=None,
-                           keyFile=None, certLabel=None, sslPort=None, httpYn=None, httpPort=None,
-                           httpsYn=None, httpsPort=None, nwInterfaceYn=None, ipAddress=None):
-        methodName = "createReverseProxy()"
-        _Manage.logger.enterMethod(methodName)
+    def create_reverse_proxy(
+            self, inst_name=None, host=None, admin_id=None, admin_pwd=None,
+            ssl_yn=None, key_file=None, cert_label=None, ssl_port=None,
+            http_yn=None, http_port=None, https_yn=None, https_port=None,
+            nw_interface_yn=None, ip_address=None):
+        method_name = "create_reverse_proxy()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getWGADefaults()
+        success, status_code, content = self.get_wga_defaults()
 
         if success:
-            listeningPort = content.get("listening_port")
+            listening_port = content.get("listening_port")
             domain = content.get("domain")
 
-            jsonObj = {}
-            Utils.addOnStringValue(jsonObj, "inst_name", instName)
-            Utils.addOnStringValue(jsonObj, "host", host)
-            Utils.addOnStringValue(jsonObj, "listening_port", listeningPort)
-            Utils.addOnStringValue(jsonObj, "domain", domain)
-            Utils.addOnStringValue(jsonObj, "admin_id", adminId)
-            Utils.addOnStringValue(jsonObj, "admin_pwd", adminPwd)
-            Utils.addOnStringValue(jsonObj, "ssl_yn", sslYn)
-            Utils.addOnStringValue(jsonObj, "key_file", keyFile)
-            Utils.addOnStringValue(jsonObj, "cert_label", certLabel)
-            Utils.addOnStringValue(jsonObj, "ssl_port", sslPort)
-            Utils.addOnStringValue(jsonObj, "http_yn", httpYn)
-            Utils.addOnStringValue(jsonObj, "http_port", httpPort)
-            Utils.addOnStringValue(jsonObj, "https_yn", httpsYn)
-            Utils.addOnStringValue(jsonObj, "https_port", httpsPort)
-            Utils.addOnStringValue(jsonObj, "nw_interface_yn", nwInterfaceYn)
-            Utils.addOnStringValue(jsonObj, "ip_address", ipAddress)
+            data = {}
+            Utils.add_string_value(data, "inst_name", inst_name)
+            Utils.add_string_value(data, "host", host)
+            Utils.add_string_value(data, "listening_port", listening_port)
+            Utils.add_string_value(data, "domain", domain)
+            Utils.add_string_value(data, "admin_id", admin_id)
+            Utils.add_string_value(data, "admin_pwd", admin_pwd)
+            Utils.add_string_value(data, "ssl_yn", ssl_yn)
+            Utils.add_string_value(data, "key_file", key_file)
+            Utils.add_string_value(data, "cert_label", cert_label)
+            Utils.add_string_value(data, "ssl_port", ssl_port)
+            Utils.add_string_value(data, "http_yn", http_yn)
+            Utils.add_string_value(data, "http_port", http_port)
+            Utils.add_string_value(data, "https_yn", https_yn)
+            Utils.add_string_value(data, "https_port", https_port)
+            Utils.add_string_value(data, "nw_interface_yn", nw_interface_yn)
+            Utils.add_string_value(data, "ip_address", ip_address)
 
-            statusCode, content = self.httpPostJson(_Manage.REVERSEPROXY, jsonObj)
+            status_code, content = self.http_post_json(REVERSEPROXY, data)
 
-            result = (statusCode == 200, statusCode, content)
+            result = (status_code == 200, status_code, content)
         else:
-            result = (False, statusCode, content)
+            result = (False, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def deleteReverseProxy(self, id, adminId=None, adminPwd=None):
-        methodName = "deleteReverseProxy()"
-        _Manage.logger.enterMethod(methodName)
+    def delete_reverse_proxy(self, id, admin_id, admin_pwd):
+        method_name = "delete_reverse_proxy()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "admin_id", adminId)
-        Utils.addOnStringValue(jsonObj, "admin_pwd", adminPwd)
-        Utils.addOnStringValue(jsonObj, "operation", "unconfigure")
+        data = {}
+        Utils.add_string_value(data, "admin_id", admin_id)
+        Utils.add_string_value(data, "admin_pwd", admin_pwd)
+        Utils.add_string_value(data, "operation", "unconfigure")
 
-        endpoint = "%s/%s" % (_Manage.REVERSEPROXY, str(id))
-        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+        endpoint = "%s/%s" % (REVERSEPROXY, id)
+        status_code, content = self.http_put_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def getReverseProxies(self):
-        methodName = "getReverseProxies()"
-        _Manage.logger.enterMethod(methodName)
+    def get_reverse_proxies(self):
+        method_name = "get_reverse_proxies()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_Manage.REVERSEPROXY)
+        status_code, content = self.http_get_json(REVERSEPROXY)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def getWGADefaults(self):
-        methodName = "getWGADefaults()"
-        _Manage.logger.enterMethod(methodName)
+    def get_wga_defaults(self):
+        method_name = "get_wga_defaults()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_Manage.WGA_DEFAULTS)
+        status_code, content = self.http_get_json(WGA_DEFAULTS)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     # Auto Configuration
 
-    def configureReverseProxyMmfa(self, websealId, lmiHostname=None, lmiPort=None, lmiUsername=None,
-                                  lmiPassword=None, runtimeHostname=None, runtimePort=None,
-                                  runtimeUsername=None, runtimePassword=None, reuseCerts=None,
-                                  reuseAcls=None, reusePops=None):
-        methodName = "configureReverseProxyMmfa()"
-        _Manage.logger.enterMethod(methodName)
+    def configure_reverse_proxy_mmfa(
+            self, webseal_id, lmi_hostname=None, lmi_port=None,
+            lmi_username=None, lmi_password=None, runtime_hostname=None,
+            runtime_port=None, runtime_username=None, runtime_password=None,
+            reuse_certs=None,reuse_acls=None, reuse_pops=None):
+        method_name = "configure_reverse_proxy_mmfa()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        lmiObj = {}
-        Utils.addOnStringValue(lmiObj, "hostname", lmiHostname)
-        Utils.addOnStringValue(lmiObj, "username", lmiUsername)
-        Utils.addOnStringValue(lmiObj, "password", lmiPassword)
-        Utils.addOnValue(lmiObj, "port", lmiPort)
+        lmi_data = {}
+        Utils.add_string_value(lmi_data, "hostname", lmi_hostname)
+        Utils.add_string_value(lmi_data, "username", lmi_username)
+        Utils.add_string_value(lmi_data, "password", lmi_password)
+        Utils.add_value(lmi_data, "port", lmi_port)
 
-        runtimeObj = {}
-        Utils.addOnStringValue(runtimeObj, "hostname", runtimeHostname)
-        Utils.addOnStringValue(runtimeObj, "username", runtimeUsername)
-        Utils.addOnStringValue(runtimeObj, "password", runtimePassword)
-        Utils.addOnValue(runtimeObj, "port", runtimePort)
+        runtime_data = {}
+        Utils.add_string_value(runtime_data, "hostname", runtime_hostname)
+        Utils.add_string_value(runtime_data, "username", runtime_username)
+        Utils.add_string_value(runtime_data, "password", runtime_password)
+        Utils.add_value(runtime_data, "port", runtime_port)
 
-        jsonObj = {}
-        Utils.addOnValue(jsonObj, "lmi", lmiObj)
-        Utils.addOnValue(jsonObj, "runtime", runtimeObj)
-        Utils.addOnValue(jsonObj, "reuse_certs", reuseCerts)
-        Utils.addOnValue(jsonObj, "reuse_acls", reuseAcls)
-        Utils.addOnValue(jsonObj, "reuse_pops", reusePops)
+        data = {}
+        Utils.add_value(data, "lmi", lmi_data)
+        Utils.add_value(data, "runtime", runtime_data)
+        Utils.add_value(data, "reuse_certs", reuse_certs)
+        Utils.add_value(data, "reuse_acls", reuse_acls)
+        Utils.add_value(data, "reuse_pops", reuse_pops)
 
-        endpoint = "%s/%s/mmfa_config" % (_Manage.REVERSEPROXY, str(websealId))
-        statusCode, content = self.httpPostJson(endpoint, jsonObj)
+        endpoint = "%s/%s/mmfa_config" % (REVERSEPROXY, webseal_id)
+        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (statusCode == 204, statusCode, content)
+        result = (status_code == 204, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     # Configuration
 
-    def addReverseProxyConfigurationStanzaEntry(self, websealId, stanzaId, entryName, value):
-        methodName = "addReverseProxyConfigurationStanzaEntry()"
-        _Manage.logger.enterMethod(methodName)
+    def add_reverse_proxy_configuration_stanza_entry(
+            self, webseal_id, stanza_id, entry_name, value):
+        method_name = "add_reverse_proxy_configuration_stanza_entry()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {"entries": [[str(entryName), str(value)]]}
+        data = {"entries": [[str(entry_name), str(value)]]}
 
-        endpoint = "%s/%s/configuration/stanza/%s/entry_name" % (_Manage.REVERSEPROXY,
-                                                                 str(websealId), str(stanzaId))
-        statusCode, content = self.httpPostJson(endpoint, jsonObj)
+        endpoint = ("%s/%s/configuration/stanza/%s/entry_name"
+                    % (REVERSEPROXY, webseal_id, stanza_id))
+        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def deleteReverseProxyConfigurationStanzaEntry(self, websealId, stanzaId, entryName, value=None):
-        methodName = "deleteReverseProxyConfigurationStanzaEntry()"
-        _Manage.logger.enterMethod(methodName)
+    def delete_reverse_proxy_configuration_stanza_entry(
+            self, webseal_id, stanza_id, entry_name, value=None):
+        method_name = "delete_reverse_proxy_configuration_stanza_entry()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/configuration/stanza/%s/entry_name/%s" % (_Manage.REVERSEPROXY,
-                                                                    str(websealId), str(stanzaId),
-                                                                    str(entryName))
-        if value is not None:
-            endpoint = "%s/value/%s" % (endpoint, str(value))
-        statusCode, content = self.httpDeleteJson(endpoint)
+        endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
+                    % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
+        if value:
+            endpoint = "%s/value/%s" % (endpoint, value)
+        status_code, content = self.http_delete_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def updateReverseProxyConfigurationStanzaEntry(self, websealId, stanzaId, entryName, value):
-        methodName = "updateReverseProxyConfigurationStanzaEntry()"
-        _Manage.logger.enterMethod(methodName)
+    def update_reverse_proxy_configuration_stanza_entry(
+            self, webseal_id, stanza_id, entry_name, value):
+        method_name = "update_reverse_proxy_configuration_stanza_entry()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "value", value)
+        data = {}
+        Utils.add_string_value(data, "value", value)
 
-        endpoint = "%s/%s/configuration/stanza/%s/entry_name/%s" % (_Manage.REVERSEPROXY,
-                                                                    str(websealId), str(stanzaId),
-                                                                    str(entryName))
-        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+        endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
+                    % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
+        status_code, content = self.http_put_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     # Junction Management
 
-    def createReverseProxyJunction(self, websealId, serverHostname=None, junctionPoint=None,
-                                   junctionType=None, basicAuthMode=None, tfimSso=None,
-                                   statefulJunction=None, preserveCookie=None, cookieIncludePath=None,
-                                   transparentPathJunction=None, mutualAuth=None,
-                                   insertLtpaCookies=None, insertSessionCookies=None,
-                                   requestEncoding=None, enableBasicAuth=None, keyLabel=None,
-                                   gsoResourceGroup=None, junctionCookieJavascriptBlock=None,
-                                   clientIpHttp=None, versionTwoCookies=None, ltpaKeyfile=None,
-                                   authzRules=None, fssoConfigFile=None, username=None, password=None,
-                                   serverUuid=None, virtualHostname=None, serverDn=None, localIp=None,
-                                   queryContents=None, caseSensitiveUrl=None, windowsStyleUrl=None,
-                                   ltpaKeyfilePassword=None, proxyHostname=None, smsEnvironment=None,
-                                   vhostLabel=None, force=None, delegationSupport=None,
-                                   scriptingSupport=None, junctionHardLimit=None,
-                                   junctionSoftLimit=None, serverPort=None, httpsPort=None,
-                                   httpPort=None, proxyPort=None, remoteHttpHeader=[]):
-        methodName = "createReverseProxyJunction()"
-        _Manage.logger.enterMethod(methodName)
+    def create_reverse_proxy_junction(
+            self, webseal_id, server_hostname=None, junction_point=None,
+            junction_type=None, basic_auth_mode=None, tfim_sso=None,
+            stateful_junction=None, preserve_cookie=None,
+            cookie_include_path=None, transparent_path_junction=None,
+            mutual_auth=None, insert_ltpa_cookies=None,
+            insert_session_cookies=None, request_encoding=None,
+            enable_basic_auth=None, key_label=None, gso_resource_group=None,
+            junction_cookie_javascript_block=None, client_ip_http=None,
+            version_two_cookies=None, ltpa_keyfile=None, authz_rules=None,
+            fsso_config_file=None, username=None, password=None,
+            server_uuid=None, virtual_hostname=None, server_dn=None,
+            local_ip=None, query_contents=None, case_sensitive_url=None,
+            windows_style_url=None, ltpa_keyfile_password=None,
+            proxy_hostname=None, sms_environment=None, vhost_label=None,
+            force=None, delegation_support=None, scripting_support=None,
+            junction_hard_limit=None, junction_soft_limit=None,
+            server_port=None, https_port=None, http_port=None, proxy_port=None,
+            remote_http_header=None):
+        method_name = "create_reverse_proxy_junction()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "server_hostname", serverHostname)
-        Utils.addOnStringValue(jsonObj, "junction_point", junctionPoint)
-        Utils.addOnStringValue(jsonObj, "junction_type", junctionType)
-        Utils.addOnStringValue(jsonObj, "basic_auth_mode", basicAuthMode)
-        Utils.addOnStringValue(jsonObj, "tfim_sso", tfimSso)
-        Utils.addOnStringValue(jsonObj, "stateful_junction", statefulJunction)
-        Utils.addOnStringValue(jsonObj, "preserve_cookie", preserveCookie)
-        Utils.addOnStringValue(jsonObj, "cookie_include_path", cookieIncludePath)
-        Utils.addOnStringValue(jsonObj, "transparent_path_junction", transparentPathJunction)
-        Utils.addOnStringValue(jsonObj, "mutual_auth", mutualAuth)
-        Utils.addOnStringValue(jsonObj, "insert_ltpa_cookies", insertLtpaCookies)
-        Utils.addOnStringValue(jsonObj, "insert_session_cookies", insertSessionCookies)
-        Utils.addOnStringValue(jsonObj, "request_encoding", requestEncoding)
-        Utils.addOnStringValue(jsonObj, "enable_basic_auth", enableBasicAuth)
-        Utils.addOnStringValue(jsonObj, "key_label", keyLabel)
-        Utils.addOnStringValue(jsonObj, "gso_resource_group", gsoResourceGroup)
-        Utils.addOnStringValue(jsonObj, "junction_cookie_javascript_block", junctionCookieJavascriptBlock)
-        Utils.addOnStringValue(jsonObj, "client_ip_http", clientIpHttp)
-        Utils.addOnStringValue(jsonObj, "version_two_cookies", versionTwoCookies)
-        Utils.addOnStringValue(jsonObj, "ltpa_keyfile", ltpaKeyfile)
-        Utils.addOnStringValue(jsonObj, "authz_rules", authzRules)
-        Utils.addOnStringValue(jsonObj, "fsso_config_file", fssoConfigFile)
-        Utils.addOnStringValue(jsonObj, "username", username)
-        Utils.addOnStringValue(jsonObj, "password", password)
-        Utils.addOnStringValue(jsonObj, "server_uuid", serverUuid)
-        Utils.addOnStringValue(jsonObj, "virtual_hostname", virtualHostname)
-        Utils.addOnStringValue(jsonObj, "server_dn", serverDn)
-        Utils.addOnStringValue(jsonObj, "local_ip", localIp)
-        Utils.addOnStringValue(jsonObj, "query_contents", queryContents)
-        Utils.addOnStringValue(jsonObj, "case_sensitive_url", caseSensitiveUrl)
-        Utils.addOnStringValue(jsonObj, "windows_style_url", windowsStyleUrl)
-        Utils.addOnStringValue(jsonObj, "ltpa_keyfile_password", ltpaKeyfilePassword)
-        Utils.addOnStringValue(jsonObj, "proxy_hostname", proxyHostname)
-        Utils.addOnStringValue(jsonObj, "sms_environment", smsEnvironment)
-        Utils.addOnStringValue(jsonObj, "vhost_label", vhostLabel)
-        Utils.addOnStringValue(jsonObj, "force", force)
-        Utils.addOnStringValue(jsonObj, "delegation_support", delegationSupport)
-        Utils.addOnStringValue(jsonObj, "scripting_support", scriptingSupport)
-        Utils.addOnValue(jsonObj, "junction_hard_limit", junctionHardLimit)
-        Utils.addOnValue(jsonObj, "junction_soft_limit", junctionSoftLimit)
-        Utils.addOnValue(jsonObj, "server_port", serverPort)
-        Utils.addOnValue(jsonObj, "https_port", httpsPort)
-        Utils.addOnValue(jsonObj, "http_port", httpPort)
-        Utils.addOnValue(jsonObj, "proxy_port", proxyPort)
-        Utils.addOnValue(jsonObj, "remote_http_header", remoteHttpHeader)
+        data = {}
+        Utils.add_string_value(data, "server_hostname", server_hostname)
+        Utils.add_string_value(data, "junction_point", junction_point)
+        Utils.add_string_value(data, "junction_type", junction_type)
+        Utils.add_string_value(data, "basic_auth_mode", basic_auth_mode)
+        Utils.add_string_value(data, "tfim_sso", tfim_sso)
+        Utils.add_string_value(data, "stateful_junction", stateful_junction)
+        Utils.add_string_value(data, "preserve_cookie", preserve_cookie)
+        Utils.add_string_value(data, "cookie_include_path", cookie_include_path)
+        Utils.add_string_value(
+            data, "transparent_path_junction", transparent_path_junction)
+        Utils.add_string_value(data, "mutual_auth", mutual_auth)
+        Utils.add_string_value(data, "insert_ltpa_cookies", insert_ltpa_cookies)
+        Utils.add_string_value(
+            data, "insert_session_cookies", insert_session_cookies)
+        Utils.add_string_value(data, "request_encoding", request_encoding)
+        Utils.add_string_value(data, "enable_basic_auth", enable_basic_auth)
+        Utils.add_string_value(data, "key_label", key_label)
+        Utils.add_string_value(data, "gso_resource_group", gso_resource_group)
+        Utils.add_string_value(
+            data, "junction_cookie_javascript_block",
+            junction_cookie_javascript_block)
+        Utils.add_string_value(data, "client_ip_http", client_ip_http)
+        Utils.add_string_value(data, "version_two_cookies", version_two_cookies)
+        Utils.add_string_value(data, "ltpa_keyfile", ltpa_keyfile)
+        Utils.add_string_value(data, "authz_rules", authz_rules)
+        Utils.add_string_value(data, "fsso_config_file", fsso_config_file)
+        Utils.add_string_value(data, "username", username)
+        Utils.add_string_value(data, "password", password)
+        Utils.add_string_value(data, "server_uuid", server_uuid)
+        Utils.add_string_value(data, "virtual_hostname", virtual_hostname)
+        Utils.add_string_value(data, "server_dn", server_dn)
+        Utils.add_string_value(data, "local_ip", local_ip)
+        Utils.add_string_value(data, "query_contents", query_contents)
+        Utils.add_string_value(data, "case_sensitive_url", case_sensitive_url)
+        Utils.add_string_value(data, "windows_style_url", windows_style_url)
+        Utils.add_string_value(
+            data, "ltpa_keyfile_password", ltpa_keyfile_password)
+        Utils.add_string_value(data, "proxy_hostname", proxy_hostname)
+        Utils.add_string_value(data, "sms_environment", sms_environment)
+        Utils.add_string_value(data, "vhost_label", vhost_label)
+        Utils.add_string_value(data, "force", force)
+        Utils.add_string_value(data, "delegation_support", delegation_support)
+        Utils.add_string_value(data, "scripting_support", scripting_support)
+        Utils.add_value(data, "junction_hard_limit", junction_hard_limit)
+        Utils.add_value(data, "junction_soft_limit", junction_soft_limit)
+        Utils.add_value(data, "server_port", server_port)
+        Utils.add_value(data, "https_port", https_port)
+        Utils.add_value(data, "http_port", http_port)
+        Utils.add_value(data, "proxy_port", proxy_port)
+        Utils.add_value(data, "remote_http_header", remote_http_header)
 
-        endpoint = "%s/%s/junctions" % (_Manage.REVERSEPROXY, str(websealId))
-        statusCode, content = self.httpPostJson(endpoint, jsonObj)
+        endpoint = "%s/%s/junctions" % (REVERSEPROXY, str(webseal_id))
+        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def getReverseProxyJunctions(self, websealId):
-        methodName = "getReverseProxyJunctions()"
-        _Manage.logger.enterMethod(methodName)
+    def get_reverse_proxy_junctions(self, webseal_id):
+        method_name = "get_reverse_proxy_junctions()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/junctions" % (_Manage.REVERSEPROXY, str(websealId))
-        statusCode, content = self.httpGetJson(endpoint)
+        endpoint = "%s/%s/junctions" % (REVERSEPROXY, webseal_id)
+        status_code, content = self.http_get_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     # Management Root
 
-    def updateReverseProxyManagementRootFile(self, websealId, pageId, contents=""):
-        methodName = "updateReverseProxyManagementRootFile()"
-        _Manage.logger.enterMethod(methodName)
+    def update_reverse_proxy_management_root_file(
+            self, webseal_id, page_id, contents):
+        method_name = "update_reverse_proxy_management_root_file()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "type", "file")
-        Utils.addOnStringValue(jsonObj, "contents", contents)
+        data = {}
+        Utils.add_string_value(data, "type", "file")
+        Utils.add_string_value(data, "contents", contents)
 
-        endpoint = "%s/%s/management_root/%s" % (_Manage.REVERSEPROXY, str(websealId), str(pageId))
-        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+        endpoint = ("%s/%s/management_root/%s"
+                    % (REVERSEPROXY, websealId, pageId))
+        status_code, content = self.http_put_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     #
     # Runtime Component
     #
 
-    def configureRuntimeComponent(self, psMode=None, userRegistry=None, adminPassword=None,
-                                  ldapPassword=None, adminCertLiftime=None, sslCompliance=None,
-                                  ldapHost=None, ldapPort=None, isamDomain=None, ldapDn=None,
-                                  ldapSuffix=None, ldapSslDb=None, ldapSslLabel=None, isamHost=None,
-                                  isamPort=None):
-        methodName = "configureRuntimeComponent()"
-        _Manage.logger.enterMethod(methodName)
+    def configure_runtime_component(
+            self, ps_mode=None, user_registry=None, admin_password=None,
+            ldap_password=None, admin_cert_lifetime=None, ssl_compliance=None,
+            ldap_host=None, ldap_port=None, isam_domain=None, ldap_dn=None,
+            ldap_suffix=None, ldap_ssl_db=None, ldap_ssl_label=None,
+            isam_host=None, isam_port=None):
+        method_name = "configure_runtime_component()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "ps_mode", psMode)
-        Utils.addOnStringValue(jsonObj, "user_registry", userRegistry)
-        Utils.addOnStringValue(jsonObj, "admin_cert_lifetime", adminCertLiftime)
-        Utils.addOnStringValue(jsonObj, "ssl_compliance", sslCompliance)
-        Utils.addOnStringValue(jsonObj, "admin_pwd", adminPassword)
-        Utils.addOnStringValue(jsonObj, "ldap_pwd", ldapPassword)
-        Utils.addOnStringValue(jsonObj, "ldap_host", ldapHost)
-        Utils.addOnStringValue(jsonObj, "domain", isamDomain)
-        Utils.addOnStringValue(jsonObj, "ldap_dn", ldapDn)
-        Utils.addOnStringValue(jsonObj, "ldap_suffix", ldapSuffix)
-        Utils.addOnStringValue(jsonObj, "ldap_ssl_db", ldapSslDb)
-        Utils.addOnStringValue(jsonObj, "ldap_ssl_label", ldapSslLabel)
-        Utils.addOnStringValue(jsonObj, "isam_host", isamHost)
-        Utils.addOnValue(jsonObj, "ldap_port", ldapPort)
-        Utils.addOnValue(jsonObj, "isam_port", isamPort)
+        data = {}
+        Utils.add_string_value(data, "ps_mode", ps_mode)
+        Utils.add_string_value(data, "user_registry", user_registry)
+        Utils.add_string_value(data, "admin_cert_lifetime", admin_cert_lifetime)
+        Utils.add_string_value(data, "ssl_compliance", ssl_compliance)
+        Utils.add_string_value(data, "admin_pwd", admin_password)
+        Utils.add_string_value(data, "ldap_pwd", ldap_password)
+        Utils.add_string_value(data, "ldap_host", ldap_host)
+        Utils.add_string_value(data, "domain", isam_domain)
+        Utils.add_string_value(data, "ldap_dn", ldap_dn)
+        Utils.add_string_value(data, "ldap_suffix", ldap_suffix)
+        Utils.add_string_value(data, "ldap_ssl_db", ldap_ssl_db)
+        Utils.add_string_value(data, "ldap_ssl_label", ldap_ssl_label)
+        Utils.add_string_value(data, "isam_host", isam_host)
+        Utils.add_value(data, "ldap_port", ldap_port)
+        Utils.add_value(data, "isam_port", isam_port)
 
-        statusCode, content = self.httpPostJson(_Manage.RUNTIME_COMPONENT, jsonObj)
+        status_code, content = self.http_post_json(RUNTIME_COMPONENT, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
-    def updateRuntimeComponentEmbeddedLdapPassword(self, password):
-        methodName = "updateRuntimeComponentEmbeddedLdapPassword()"
-        _Manage.logger.enterMethod(methodName)
+    def update_runtime_component_embedded_ldap_password(self, password):
+        method_name = "update_runtime_component_embedded_ldap_password()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "password", password)
+        data = {}
+        Utils.add_string_value(data, "password", password)
 
-        statusCode, content = self.httpPostJson(_Manage.EMBEDDED_LDAP_PASSWORD, jsonObj)
+        status_code, content = self.http_post_json(EMBEDDED_LDAP_PASSWORD, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
     #
     # Policy Administation
     #
 
-    def doPdadminCommands(self, adminId, adminPwd, commands=[]):
-        methodName = "doPdadminCommands()"
-        _Manage.logger.enterMethod(methodName)
+    def do_pdadmin_commands(self, admin_id, admin_pwd, commands):
+        method_name = "do_pdadmin_commands()"
+        _Manage.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "admin_id", adminId)
-        Utils.addOnStringValue(jsonObj, "admin_pwd", adminPwd)
-        Utils.addOnValue(jsonObj, "commands", commands)
+        data = {}
+        Utils.add_string_value(data, "admin_id", admin_id)
+        Utils.add_string_value(data, "admin_pwd", admin_pwd)
+        Utils.add_value(data, "commands", commands)
 
-        statusCode, content = self.httpPostJson(_Manage.PDADMIN, jsonObj)
+        status_code, content = self.http_post_json(PDADMIN, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Manage.logger.exitMethod(methodName, str(result))
+        _Manage.logger.exit_method(method_name, result)
         return result
 
 
@@ -388,6 +402,7 @@ class Manage9020(_Manage):
 
     logger = Logger("Manage9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(Manage9020, self).__init__(baseUrl, username, password, logLevel)
-        Manage9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(Manage9020, self).__init__(
+            base_url, username, password, log_level)
+        Manage9020.logger.set_level(log_level)

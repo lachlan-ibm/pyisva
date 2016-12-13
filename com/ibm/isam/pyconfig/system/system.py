@@ -1,6 +1,4 @@
 """"
-Created on Nov 22, 2016
-
 @copyright: IBM
 """
 
@@ -12,269 +10,265 @@ from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
 
-class _SystemSettings(RestClient):
+ADMIN_CONFIG = "/core/admin_cfg"
+ADVANCED_PARAMETERS = "/core/adv_params"
+LMI = "/lmi"
+LMI_RESTART = "/restarts/restart_server"
+TIME_CONFIG = "/core/time_cfg"
 
-    ADMIN_CONFIG = "/core/admin_cfg"
-    ADVANCED_PARAMETERS = "/core/adv_params"
-    LMI = "/lmi"
-    LMI_RESTART = "/restarts/restart_server"
-    TIME_CONFIG = "/core/time_cfg"
+
+class _SystemSettings(RestClient):
 
     logger = Logger("SystemSettings")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_SystemSettings, self).__init__(baseUrl, username, password, logLevel)
-        _SystemSettings.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_SystemSettings, self).__init__(
+            base_url, username, password, log_level)
+        _SystemSettings.logger.set_level(log_level)
 
     #
     # Administrator Settings
     #
 
-    def getAdministratorSettings(self):
-        methodName = "getAdministratorSettings()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def get_administrator_settings(self):
+        method_name = "get_administrator_settings()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_SystemSettings.ADMIN_CONFIG)
+        status_code, content = self.http_get_json(ADMIN_CONFIG)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
-    def updateAdministratorSettings(self, oldPassword=None, newPassword=None, confirmPassword=None,
-                                    minHeapSize=None, maxHeapSize=None, sessionTimeout=None,
-                                    httpPort=None, httpsPort=None, minThreads=None, maxThreads=None,
-                                    maxPoolSize=None, lmiDebuggingEnabled=None, consoleLogLevel=None,
-                                    acceptClientCerts=None, validateClientCertIdentity=None,
-                                    excludeCsrfChecking=None, enableSSLv3=None):
-        methodName = "updateAdministratorSettings()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def update_administrator_settings(
+            self, old_password=None, new_password=None, confirm_password=None,
+            min_heap_size=None, max_heap_size=None, session_timeout=None,
+            http_port=None, https_port=None, min_threads=None, max_threads=None,
+            max_pool_size=None, lmi_debugging_enabled=None,
+            console_log_level=None, accept_client_certs=None,
+            validate_client_cert_identity=None, exclude_csrf_checking=None,
+            enable_ss_lv3=None):
+        method_name = "update_administrator_settings()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "oldPassword", oldPassword)
-        Utils.addOnStringValue(jsonObj, "newPassword", newPassword)
-        Utils.addOnStringValue(jsonObj, "confirmPassword", confirmPassword)
-        Utils.addOnStringValue(jsonObj, "consoleLogLevel", consoleLogLevel)
-        Utils.addOnStringValue(jsonObj, "excludeCsrfChecking", excludeCsrfChecking)
-        Utils.addOnValue(jsonObj, "minHeapSize", minHeapSize)
-        Utils.addOnValue(jsonObj, "maxHeapSize", maxHeapSize)
-        Utils.addOnValue(jsonObj, "sessionTimeout", sessionTimeout)
-        Utils.addOnValue(jsonObj, "httpPort", httpPort)
-        Utils.addOnValue(jsonObj, "httpsPort", httpsPort)
-        Utils.addOnValue(jsonObj, "minThreads", minThreads)
-        Utils.addOnValue(jsonObj, "maxThreads", maxThreads)
-        Utils.addOnValue(jsonObj, "maxPoolSize", maxPoolSize)
-        Utils.addOnValue(jsonObj, "lmiDebuggingEnabled", lmiDebuggingEnabled)
-        Utils.addOnValue(jsonObj, "acceptClientCerts", acceptClientCerts)
-        Utils.addOnValue(jsonObj, "validateClientCertIdentity", validateClientCertIdentity)
-        Utils.addOnValue(jsonObj, "enableSSLv3", enableSSLv3)
+        data = {}
+        Utils.add_string_value(data, "oldPassword", old_password)
+        Utils.add_string_value(data, "newPassword", new_password)
+        Utils.add_string_value(data, "confirmPassword", confirm_password)
+        Utils.add_string_value(data, "consoleLogLevel", console_log_level)
+        Utils.add_string_value(data, "excludeCsrfChecking", exclude_csrf_checking)
+        Utils.add_value(data, "minHeapSize", min_heap_size)
+        Utils.add_value(data, "maxHeapSize", max_heap_size)
+        Utils.add_value(data, "sessionTimeout", session_timeout)
+        Utils.add_value(data, "httpPort", http_port)
+        Utils.add_value(data, "httpsPort", https_port)
+        Utils.add_value(data, "minThreads", min_threads)
+        Utils.add_value(data, "maxThreads", max_threads)
+        Utils.add_value(data, "maxPoolSize", max_pool_size)
+        Utils.add_value(data, "lmiDebuggingEnabled", lmi_debugging_enabled)
+        Utils.add_value(data, "acceptClientCerts", accept_client_certs)
+        Utils.add_value(
+            data, "validateClientCertIdentity", validate_client_cert_identity)
+        Utils.add_value(data, "enableSSLv3", enable_ss_lv3)
 
-        statusCode, content = self.httpPutJson(_SystemSettings.ADMIN_CONFIG, jsonObj)
+        status_code, content = self.http_put_json(ADMIN_CONFIG, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
-    def updateAdministratorPassword(self, password):
-        methodName = "updateAdministratorPassword()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def update_administrator_password(self, password):
+        method_name = "update_administrator_password()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getAdministratorSettings()
+        success, status_code, content = self.get_administrator_settings()
 
         if success:
-            sessionTimeout = content.get("sessionTimeout", -1)
+            session_timeout = content.get("sessionTimeout", -1)
 
-            if sessionTimeout > 0:
-                result = self.updateAdministratorSettings(sessionTimeout=sessionTimeout,
-                                                          oldPassword=self._password,
-                                                          newPassword=password,
-                                                          confirmPassword=password)
+            if session_timeout > 0:
+                result = self.update_administrator_settings(
+                    session_timeout=session_timeout,
+                    old_password=self._password, new_password=password,
+                    confirm_password=password)
             else:
-                _SystemSettings.logger.error(methodName, "An invalid session timeout was retrieved.")
-                result = (False, statusCode, content)
+                _SystemSettings.logger.error(
+                    method_name, "An invalid session timeout was retrieved.")
+                result = (False, status_code, content)
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
     #
     # Advanced Tuning Parameters
     #
 
-    def createAdvancedTuningParameter(self, key=None, value=None, comment=None):
-        methodName = "createAdvancedTuningParameter()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def create_advanced_tuning_parameter(
+            self, key=None, value=None, comment=None):
+        method_name = "create_advanced_tuning_parameter()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "key", key)
-        Utils.addOnStringValue(jsonObj, "value", value)
-        Utils.addOnStringValue(jsonObj, "comment", comment)
-        Utils.addOnValue(jsonObj, "_isNew", True)
+        data = {}
+        Utils.add_string_value(data, "key", key)
+        Utils.add_string_value(data, "value", value)
+        Utils.add_string_value(data, "comment", comment)
+        Utils.add_value(data, "_isNew", True)
 
-        statusCode, content = self.httpPostJson(_SystemSettings.ADVANCED_PARAMETERS, jsonObj)
+        status_code, content = self.http_post_json(ADVANCED_PARAMETERS, data)
 
-        result = (statusCode == 201, statusCode, content)
+        result = (status_code == 201, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
-    def getAdvancedTuningParameters(self):
-        methodName = "getAdvancedTuningParameters()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def get_advanced_tuning_parameters(self):
+        method_name = "get_advanced_tuning_parameters()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_SystemSettings.ADVANCED_PARAMETERS)
+        status_code, content = self.http_get_json(ADVANCED_PARAMETERS)
 
-        if statusCode == 200:
-            result = (True, statusCode, content.get("tuningParameters", []))
+        if status_code == 200:
+            result = (True, status_code, content.get("tuningParameters", []))
         else:
-            result = (False, statusCode, content)
+            result = (False, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
-    def getAdvancedTuningParameter(self, key):
-        methodName = "getAdvancedTuningParameter()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def get_advanced_tuning_parameter(self, key):
+        method_name = "get_advanced_tuning_parameter()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getAdvancedTuningParameters()
+        success, status_code, content = self.get_advanced_tuning_parameters()
 
         if success:
-            for index in range(len(content)):
-                if content[index].get("key", "") == key:
-                    result = (success, statusCode, content[index])
+            for entry in content:
+                if entry.get("key", "") == key:
+                    result = (success, status_code, entry)
 
-            if result is None:
+            if not result:
                 result = (False, 404, content)
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
-        return result
-
-    def getAdvancedTuningParameterValue(self, key):
-        methodName = "getAdvancedTuningParameterValue()"
-        _SystemSettings.logger.enterMethod(methodName)
-        result = default
-
-        success, statusCode, content = self.getAdvancedTuningParameter(key)
-
-        if success:
-            result = (success, statusCode, content.get("value"))
-        else:
-            result = (success, statusCode, content)
-
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
     #
     # Date/Time
     #
 
-    def updateDateTime(self, enableNtp=True, ntpServers=None, timeZone=None,
-                       dateTime="0000-00-00 00:00:00"):
-        methodName = "updateDateTime()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def update_date_time(
+            self, enable_ntp=True, ntp_servers=None, time_zone=None,
+            date_time="0000-00-00 00:00:00"):
+        method_name = "update_date_time()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "dateTime", dateTime)
-        Utils.addOnStringValue(jsonObj, "ntpServers", ntpServers)
-        Utils.addOnStringValue(jsonObj, "timeZone", timeZone)
-        Utils.addOnValue(jsonObj, "enableNtp", enableNtp)
+        data = {}
+        Utils.add_string_value(data, "dateTime", date_time)
+        Utils.add_string_value(data, "ntpServers", ntp_servers)
+        Utils.add_string_value(data, "timeZone", time_zone)
+        Utils.add_value(data, "enableNtp", enable_ntp)
 
-        statusCode, content = self.httpPutJson(_SystemSettings.TIME_CONFIG, jsonObj)
+        status_code, content = self.http_put_json(TIME_CONFIG, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
     #
     # Restart or Shutdown
     #
 
-    def getLmiStatus(self):
-        methodName = "getLmiStatus()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def get_lmi_status(self):
+        method_name = "get_lmi_status()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_SystemSettings.LMI)
+        status_code, content = self.http_get_json(LMI)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
-    def restartLmi(self):
-        methodName = "restartLmi()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def restart_lmi(self):
+        method_name = "restart_lmi()"
+        _SystemSettings.logger.enter_method(method_name)
         result = None
 
-        lastStartTime = -1
+        last_start_time = -1
 
-        success, statusCode, content = self.getLmiStatus()
+        success, status_code, content = self.get_lmi_status()
 
         if success:
-            lastStartTime = content[0].get("start_time", -1)
+            last_start_time = content[0].get("start_time", -1)
 
-        if lastStartTime > 0:
-            statusCode, content = self.httpPostJson(_SystemSettings.LMI_RESTART)
+        if last_start_time > 0:
+            status_code, content = self.http_post_json(LMI_RESTART)
 
-            if statusCode == 200 and content.get("restart", False) == True:
-                _SystemSettings.logger.log(methodName, "Waiting for LMI to restart...")
-                self._waitForLmi(lastStartTime)
-                result = (True, statusCode, content)
+            if status_code == 200 and content.get("restart", False) == True:
+                _SystemSettings.logger.log(
+                    method_name, "Waiting for LMI to restart...")
+                self._wait_for_lmi(last_start_time)
+                result = (True, status_code, content)
             else:
-                result = (False, statusCode, content)
+                result = (False, status_code, content)
         else:
-            message = "An invalid start time was retrieved [%s]" % str(lastStartTime)
-            _SystemSettings.logger.error(methodName, message)
-            result = (False, statusCode, content)
+            message = ("An invalid start time was retrieved: %s"
+                       % last_start_time)
+            _SystemSettings.logger.error(method_name, message)
+            result = (False, status_code, content)
 
-        _SystemSettings.logger.exitMethod(methodName, str(result))
+        _SystemSettings.logger.exit_method(method_name, result)
         return result
 
-    def _waitForLmi(self, lastStartTime, sleepInterval=3):
-        methodName = "_waitForLmi()"
-        _SystemSettings.logger.enterMethod(methodName)
+    def _wait_for_lmi(self, last_start_time, sleep_interval=3):
+        method_name = "_wait_for_lmi()"
+        _SystemSettings.logger.enter_method(method_name)
 
-        if lastStartTime > 0:
-            restartTime = lastStartTime
+        if last_start_time > 0:
+            restart_time = last_start_time
 
-            while (restartTime <= 0 or restartTime == lastStartTime):
-                message = "Waiting for LMI to restart. lastStartTime [%s] restartTime [%s]" \
-                          % (lastStartTime, restartTime)
-                _SystemSettings.logger.trace(methodName, message)
-                time.sleep(sleepInterval)
+            while (restart_time <= 0 or restart_time == last_start_time):
+                message = ("last_start_time: %s, restart_time: %s"
+                           % (last_start_time, restart_time))
+                _SystemSettings.logger.trace(method_name, message)
+                time.sleep(sleep_interval)
 
                 try:
-                    success, statusCode, content = self.getLmiStatus()
+                    success, status_code, content = self.get_lmi_status()
 
                     if success:
-                        restartTime = content[0].get("start_time", -1)
+                        restart_time = content[0].get("start_time", -1)
                 except:
-                    restartTime = -1
+                    restart_time = -1
 
-            time.sleep(sleepInterval)
+            time.sleep(sleep_interval)
         else:
-            message = "Invalid last start time [%s]" % str(lastStartTime)
-            _SystemSettings.logger.error(methodName, message)
+            message = "Invalid last start time: %s" % last_start_time
+            _SystemSettings.logger.error(method_name, message)
 
-        _SystemSettings.logger.exitMethod(methodName)
+        _SystemSettings.logger.exit_method(method_name)
 
 
 class SystemSettings9020(_SystemSettings):
 
     logger = Logger("SystemSettings9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(SystemSettings9020, self).__init__(baseUrl, username, password, logLevel)
-        SystemSettings9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(SystemSettings9020, self).__init__(
+            base_url, username, password, log_level)
+        SystemSettings9020.logger.set_level(log_level)

@@ -1,6 +1,4 @@
 """
-Created on Nov 22, 2016
-
 @copyright: IBM
 """
 
@@ -12,157 +10,169 @@ from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
 
-class _NetworkSettings(RestClient):
+HOST_RECORDS = "/isam/host_records"
+NET_DNS = "/net/dns"
+NET_INTERFACES = "/net/ifaces"
 
-    HOST_RECORDS = "/isam/host_records"
-    NET_DNS = "/net/dns"
-    NET_INTERFACES = "/net/ifaces/"
+
+class _NetworkSettings(RestClient):
 
     logger = Logger("NetworkSettings")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_NetworkSettings, self).__init__(baseUrl, username, password, logLevel)
-        _NetworkSettings.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_NetworkSettings, self).__init__(
+            base_url, username, password, log_level)
+        _NetworkSettings.logger.set_level(log_level)
 
     #
     # DNS
     #
 
-    def getDns(self):
-        methodName = "getDns()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def get_dns(self):
+        method_name = "get_dns()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_NetworkSettings.NET_DNS)
+        status_code, content = self.http_get_json(NET_DNS)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
-    def updateDns(self, auto=True, autoFromInterface=None, primaryServer=None, secondaryServer=None,
-                  tertiaryServer=None, searchDomains=None):
-        methodName = "updateDns()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def update_dns(
+            self, auto=True, auto_from_interface=None, primary_server=None,
+            secondary_server=None, tertiary_server=None, search_domains=None):
+        method_name = "update_dns()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        content = self.getDns()
+        data = {}
 
-        jsonObj = {} if content is None else content
-        Utils.addOnValue(jsonObj, "auto", auto)
-        if auto is False:
-            Utils.addOnStringValue(jsonObj, "autoFromInterface", autoFromInterface)
-            Utils.addOnStringValue(jsonObj, "primaryServer", primaryServer)
-            Utils.addOnStringValue(jsonObj, "secondaryServer", secondaryServer)
-            Utils.addOnStringValue(jsonObj, "tertiaryServer", tertiaryServer)
-            Utils.addOnStringValue(jsonObj, "searchDomains", searchDomains)
+        success, status_code, content = self.get_dns()
 
-        statusCode, content = self.httpPutJson(_NetworkSettings.NET_DNS, jsonObj)
+        if success:
+            data = content
 
-        result = (statusCode == 200, statusCode, content)
+        Utils.add_value(data, "auto", auto)
+        if not auto:
+            Utils.add_string_value(
+                data, "autoFromInterface", auto_from_interface)
+            Utils.add_string_value(data, "primaryServer", primary_server)
+            Utils.add_string_value(data, "secondaryServer", secondary_server)
+            Utils.add_string_value(data, "tertiaryServer", tertiary_server)
+            Utils.add_string_value(data, "searchDomains", search_domains)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        status_code, content = self.http_put_json(NET_DNS, data)
+
+        result = (status_code == 200, status_code, content)
+
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
     #
     # Hosts File
     #
 
-    def addHostsFileHostname(self, address, hostname):
-        methodName = "addHostsFileHostname()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def add_hosts_file_hostname(self, address, hostname=None):
+        method_name = "add_hosts_file_hostname()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "name", hostname)
+        data = {}
+        Utils.add_string_value(data, "name", hostname)
 
-        endpoint = "%s/%s/hostnames" % (_NetworkSettings.HOST_RECORDS, address)
-        statusCode, content = self.httpPostJson(endpoint, jsonObj)
+        endpoint = "%s/%s/hostnames" % (HOST_RECORDS, address)
+        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
-    def createHostsFileRecord(self, address, hostnames):
-        methodName = "createHostsFileRecord()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def create_hosts_file_record(self, address, hostnames):
+        method_name = "create_hosts_file_record()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "addr", address)
-        jsonObj["hostnames"] = []
-        for index in range(len(hostnames)):
-            jsonObj["hostnames"].append({"name":str(hostnames[index])})
+        data = {}
+        Utils.add_string_value(data, "addr", address)
+        data["hostnames"] = []
+        for entry in hostnames:
+            data["hostnames"].append({"name":str(entry)})
 
-        statusCode, content = self.httpPostJson(_NetworkSettings.HOST_RECORDS, jsonObj)
+        status_code, content = self.http_post_json(HOST_RECORDS, data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
-    def getHostsFileRecord(self, address):
-        methodName = "getHostsFileRecord()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def get_hosts_file_record(self, address):
+        method_name = "get_hosts_file_record()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/hostnames" % (_NetworkSettings.HOST_RECORDS, address)
-        statusCode, content = self.httpGetJson(endpoint)
+        endpoint = "%s/%s/hostnames" % (HOST_RECORDS, address)
+        status_code, content = self.http_get_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
     #
     # Interfaces
     #
 
-    def createInterfaceIpAddress(self, ipv4Address, netmask, interfaceLabel="1.1", enabled=True, management=False):
-        methodName = "createInterfaceIpAddress()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def create_interface_ip_address(
+            self, interface_label, address=None, mask_or_prefix=None,
+            enabled=True, allow_management=False):
+        method_name = "create_interface_ip_address()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getInterfaces()
+        success, status_code, content = self.get_interfaces()
 
         if success:
-            for index in range(len(content.get("interfaces", []))):
-                if content["interfaces"][index].get("label") == str(interfaceLabel):
-                    jsonObj = content["interfaces"][index]
+            for entry in content.get("interfaces", []):
+                if entry.get("label") == interface_label:
+                    data = entry
 
-                    addressObj = {}
-                    Utils.addOnStringValue(addressObj, "maskOrPrefix", netmask)
-                    Utils.addOnStringValue(addressObj, "address", ipv4Address)
-                    Utils.addOnStringValue(addressObj, "uuid", uuid.uuid4())
-                    Utils.addOnValue(addressObj, "enabled", enabled)
-                    Utils.addOnValue(addressObj, "allowManagement", management)
+                    address_data = {}
+                    Utils.add_string_value(address_data, "uuid", uuid.uuid4())
+                    Utils.add_string_value(address_data, "address", address)
+                    Utils.add_string_value(
+                        address_data, "maskOrPrefix", mask_or_prefix)
+                    Utils.add_value(address_data, "enabled", enabled)
+                    Utils.add_value(
+                        address_data, "allowManagement", allow_management)
 
-                    jsonObj["ipv4"]["addresses"].append(addressObj)
+                    data["ipv4"]["addresses"].append(address_data)
 
-                    endpoint = "%s/%s" % (_NetworkSettings.NET_INTERFACES, str(jsonObj.get("uuid")))
-                    statusCode, content = self.httpPutJson(endpoint, jsonObj)
+                    endpoint = ("%s/%s" % (NET_INTERFACES, data.get("uuid")))
+                    status_code, content = self.http_put_json(endpoint, data)
 
-                    result = (statusCode == 200, statusCode, content)
+                    result = (status_code == 200, status_code, content)
 
-            if result is None:
-                result = (False, statusCode, content)
+            if not result:
+                result = (False, status_code, content)
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
-    def getInterfaces(self):
-        methodName = "getInterfaces()"
-        _NetworkSettings.logger.enterMethod(methodName)
+    def get_interfaces(self):
+        method_name = "get_interfaces()"
+        _NetworkSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_NetworkSettings.NET_INTERFACES)
+        status_code, content = self.http_get_json(NET_INTERFACES)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _NetworkSettings.logger.exitMethod(methodName, str(result))
+        _NetworkSettings.logger.exit_method(method_name, result)
         return result
 
 
@@ -170,6 +180,7 @@ class NetworkSettings9020(_NetworkSettings):
 
     logger = Logger("NetworkSettings9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(NetworkSettings9020, self).__init__(baseUrl, username, password, logLevel)
-        NetworkSettings9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(NetworkSettings9020, self).__init__(
+            base_url, username, password, log_level)
+        NetworkSettings9020.logger.set_level(log_level)

@@ -1,6 +1,4 @@
 """
-Created on Dec 02, 2016
-
 @copyright: IBM
 """
 
@@ -10,111 +8,118 @@ from com.ibm.isam.util.logger import Logger
 from com.ibm.isam.util.restclient import RestClient
 import com.ibm.isam.util.utils as Utils
 
-class _GlobalSettings(RestClient):
 
-    OVERRIDE_CONFIGS = "/iam/access/v8/override-configs"
-    RUNTIME_TUNING = "/mga/runtime_tuning"
-    SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap"
-    SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws"
-    TEMPLATE_FILES = "/mga/template_files"
-    USER_REGISTRY = "/mga/user_registry"
+OVERRIDE_CONFIGS = "/iam/access/v8/override-configs"
+RUNTIME_TUNING = "/mga/runtime_tuning"
+SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap"
+SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws"
+TEMPLATE_FILES = "/mga/template_files"
+USER_REGISTRY = "/mga/user_registry"
+
+
+class _GlobalSettings(RestClient):
 
     logger = Logger("GlobalSettings")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_GlobalSettings, self).__init__(baseUrl, username, password, logLevel)
-        _GlobalSettings.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_GlobalSettings, self).__init__(
+            base_url, username, password, log_level)
+        _GlobalSettings.logger.set_level(log_level)
 
     #
     # Advanced Configuration
     #
 
-    def getAdvancedConfigurationByKey(self, key):
-        methodName = "getAdvancedConfigurationByKey()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_advanced_configuration_by_key(self, key):
+        method_name = "get_advanced_configuration_by_key()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        keyEquals = "key equals " + str(key)
-        success, statusCode, content = self.getAdvancedConfigurations(filter=keyEquals)
+        filter = "key equals " + str(key)
+        success, status_code, content = self.get_advanced_configurations(
+            filter=filter)
 
-        if success and len(content) > 0:
-            result = (success, statusCode, content[0])
+        if success and content:
+            result = (success, status_code, content[0])
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getAdvancedConfigurations(self, sortBy=None, count=None, start=None, filter=None):
-        methodName = "getAdvancedConfigurations()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_advanced_configurations(
+            self, sortBy=None, count=None, start=None, filter=None):
+        method_name = "get_advanced_configurations()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.addOnStringValue(parameters, "sortBy", sortBy)
-        Utils.addOnStringValue(parameters, "count", count)
-        Utils.addOnStringValue(parameters, "start", start)
-        Utils.addOnStringValue(parameters, "filter", filter)
+        Utils.add_string_value(parameters, "sortBy", sortBy)
+        Utils.add_string_value(parameters, "count", count)
+        Utils.add_string_value(parameters, "start", start)
+        Utils.add_string_value(parameters, "filter", filter)
 
-        statusCode, content = self.httpGetJson(_GlobalSettings.OVERRIDE_CONFIGS, parameters=parameters)
+        status_code, content = self.http_get_json(
+            OVERRIDE_CONFIGS, parameters=parameters)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, result)
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def updateAdvancedConfiguration(self, id, value, sensitive):
-        methodName = "updateAdvancedConfiguration()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def update_advanced_configuration(self, id, value=None, sensitive=None):
+        method_name = "update_advanced_configuration()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "value", value)
-        Utils.addOnValue(jsonObj, "sensitive", sensitive)
+        data = {}
+        Utils.add_string_value(data, "value", value)
+        Utils.add_value(data, "sensitive", sensitive)
 
-        endpoint = "%s/%s" % (_GlobalSettings.OVERRIDE_CONFIGS, str(id))
-        statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
+        endpoint = "%s/%s" % (OVERRIDE_CONFIGS, id)
+        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (statusCode == 204, statusCode, content)
+        result = (status_code == 204, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def updateAdvancedConfigurationByKey(self, key, value, sensitive):
-        methodName = "updateAdvancedConfigurationByKey()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def update_advanced_configuration_by_key(
+            self, key, value=None, sensitive=None):
+        method_name = "update_advanced_configuration_by_key()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getAdvancedConfigurationByKey(key)
+        success, status_code, content = self.get_advanced_configuration_by_key(
+            key)
 
         if success:
             id = content.get("id", None)
-
-            result = self.updateAdvancedConfiguration(id, value, sensitive)
+            result = self.update_advanced_configuration(id, value, sensitive)
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
     #
     # Runtime Parameters
     #
 
-    def updateRuntimeTuningParameter(self, parameter, value):
-        methodName = "updateRuntimeTuningParameter()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def update_runtime_tuning_parameter(self, parameter, value=None):
+        method_name = "update_runtime_tuning_parameter()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnValue(jsonObj, "value", value)
+        data = {}
+        Utils.add_value(data, "value", value)
 
-        endpoint = "%s/%s/v1" % (_GlobalSettings.RUNTIME_TUNING, str(parameter))
-        statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
+        endpoint = "%s/%s/v1" % (RUNTIME_TUNING, parameter)
+        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
     #
@@ -123,153 +128,162 @@ class _GlobalSettings(RestClient):
 
     # LDAP
 
-    def createServerConnectionLdap(self, name=None, description=None, locked=None,
-                                   connectionHostName=None, connectionBindDN=None,
-                                   connectionBindPwd=None, connectionSslTruststore=None,
-                                   connectionSslAuthKey=None, connectionHostPort=None,
-                                   connectionSsl=None, connectTimeout=None, servers=None):
-        methodName = "createServerConnectionLdap()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def create_server_connection_ldap(
+            self, name=None, description=None, locked=None,
+            connection_host_name=None, connection_bind_dn=None,
+            connection_bind_pwd=None, connection_ssl_truststore=None,
+            connection_ssl_auth_key=None, connection_host_port=None,
+            connection_ssl=None, connect_timeout=None, servers=None):
+        method_name = "create_server_connection_ldap()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        connectionObj = {}
-        Utils.addOnStringValue(connectionObj, "hostName", connectionHostName)
-        Utils.addOnStringValue(connectionObj, "bindDN", connectionBindDN)
-        Utils.addOnStringValue(connectionObj, "bindPwd", connectionBindPwd)
-        Utils.addOnStringValue(connectionObj, "sslTruststore", connectionSslTruststore)
-        Utils.addOnStringValue(connectionObj, "sslAuthKey", connectionSslAuthKey)
-        Utils.addOnValue(connectionObj, "hostPort", connectionHostPort)
-        Utils.addOnValue(connectionObj, "ssl", connectionSsl)
+        connection_data = {}
+        Utils.add_string_value(
+            connection_data, "hostName", connection_host_name)
+        Utils.add_string_value(connection_data, "bindDN", connection_bind_dn)
+        Utils.add_string_value(connection_data, "bindPwd", connection_bind_pwd)
+        Utils.add_string_value(
+            connection_data, "sslTruststore", connection_ssl_truststore)
+        Utils.add_string_value(
+            connection_data, "sslAuthKey", connection_ssl_auth_key)
+        Utils.add_value(connection_data, "hostPort", connection_host_port)
+        Utils.add_value(connection_data, "ssl", connection_ssl)
 
-        connectionGlobalSettingsrObj = None
-        if connectTimeout is not None:
-            connectionGlobalSettingsrObj = {"connectTimeout": connectTimeout}
+        manager_data = None
+        if connect_timeout:
+            manager_data = {"connectTimeout": connectTimeout}
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "name", name)
-        Utils.addOnStringValue(jsonObj, "description", description)
-        Utils.addOnStringValue(jsonObj, "type", "ldap")
-        Utils.addOnValue(jsonObj, "locked", locked)
-        Utils.addOnValue(jsonObj, "connection", connectionObj)
-        Utils.addOnValue(jsonObj, "connectionGlobalSettingsr", connectionGlobalSettingsrObj)
-        Utils.addOnValue(jsonObj, "servers", servers)
+        data = {}
+        Utils.add_string_value(data, "name", name)
+        Utils.add_string_value(data, "description", description)
+        Utils.add_string_value(data, "type", "ldap")
+        Utils.add_value(data, "locked", locked)
+        Utils.add_value(data, "connection", connection_data)
+        Utils.add_value(data, "connectionManager", manager_data)
+        Utils.add_value(data, "servers", servers)
 
-        statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_LDAP+"/v1",
-                                                data=jsonObj)
+        endpoint = SERVER_CONNECTION_LDAP + "/v1"
+        status_code, content = self.http_post_json(endpoint, data=data)
 
-        result = (statusCode == 201, statusCode, content)
+        result = (status_code == 201, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def deleteServerConnectionLdap(self, uuid):
-        methodName = "deleteServerConnectionLdap()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def delete_server_connection_ldap(self, uuid):
+        method_name = "delete_server_connection_ldap()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/v1" % (_GlobalSettings.SERVER_CONNECTION_LDAP, str(uuid))
-        statusCode, content = self.httpDeleteJson(endpoint)
+        endpoint = "%s/%s/v1" % (SERVER_CONNECTION_LDAP, uuid)
+        status_code, content = self.http_delete_json(endpoint)
 
-        result = (statusCode == 204, statusCode, content)
+        result = (status_code == 204, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getServerConnectionLdapByName(self, name):
-        methodName = "getServerConnectionLdapByName()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_server_connection_ldap_by_name(self, name):
+        method_name = "get_server_connection_ldap_by_name()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getServerConnectionsLdap()
+        success, status_code, content = self.get_server_connections_ldap()
 
         if success:
             for entry in content:
                 if entry.get("name", "") == name:
-                    result = (success, statusCode, entry)
+                    result = (success, status_code, entry)
 
-            if result is None:
+            if not result:
                 result = (False, 404, content)
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getServerConnectionsLdap(self):
-        methodName = "getServerConnectionsLdap()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_server_connections_ldap(self):
+        method_name = "get_server_connections_ldap()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_GlobalSettings.SERVER_CONNECTION_LDAP+"/v1")
+        endpoint = SERVER_CONNECTION_LDAP + "/v1"
+        status_code, content = self.http_get_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
     # Web Service
 
-    def createServerConnectionWebService(self, name=None, description=None, locked=None,
-                                         connectionUrl=None, connectionUser=None,
-                                         connectionPassword=None, connectionSslTruststore=None,
-                                         connectionSslAuthKey=None, connectionSsl=None):
-        methodName = "createServerConnectionWebService()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def create_server_connection_web_service(
+            self, name=None, description=None, locked=None, connection_url=None,
+            connection_user=None, connection_password=None,
+            connection_ssl_truststore=None, connection_ssl_auth_key=None,
+            connection_ssl=None):
+        method_name = "create_server_connection_web_service()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        connectionObj = {}
-        Utils.addOnStringValue(connectionObj, "url", connectionUrl)
-        Utils.addOnStringValue(connectionObj, "user", connectionUser)
-        Utils.addOnStringValue(connectionObj, "password", connectionPassword)
-        Utils.addOnStringValue(connectionObj, "sslTruststore", connectionSslTruststore)
-        Utils.addOnStringValue(connectionObj, "sslAuthKey", connectionSslAuthKey)
-        Utils.addOnValue(connectionObj, "ssl", connectionSsl)
+        connection_data = {}
+        Utils.add_string_value(connection_data, "url", connection_url)
+        Utils.add_string_value(connection_data, "user", connection_user)
+        Utils.add_string_value(connection_data, "password", connection_password)
+        Utils.add_string_value(
+            connection_data, "sslTruststore", connection_ssl_truststore)
+        Utils.add_string_value(
+            connection_data, "sslAuthKey", connection_ssl_auth_key)
+        Utils.add_value(connection_data, "ssl", connection_ssl)
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "name", name)
-        Utils.addOnStringValue(jsonObj, "description", description)
-        Utils.addOnStringValue(jsonObj, "type", "ws")
-        Utils.addOnValue(jsonObj, "locked", locked)
-        Utils.addOnValue(jsonObj, "connection", connectionObj)
+        data = {}
+        Utils.add_string_value(data, "name", name)
+        Utils.add_string_value(data, "description", description)
+        Utils.add_string_value(data, "type", "ws")
+        Utils.add_value(data, "locked", locked)
+        Utils.add_value(data, "connection", connection_data)
 
-        statusCode, content = self.httpPostJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE+"/v1",
-                                                data=jsonObj)
+        endpoint = SERVER_CONNECTION_WEB_SERVICE + "/v1"
+        status_code, content = self.http_post_json(endpoint, data=data)
 
-        result = (statusCode == 201, statusCode, content)
+        result = (status_code == 201, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getServerConnectionWebServiceByName(self, name):
-        methodName = "getServerConnectionWebServiceByName()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_server_connection_web_service_by_name(self, name):
+        method_name = "get_server_connection_web_service_by_name()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getServerConnectionsWebService()
+        success, status_code, content = self.get_server_connections_web_service()
 
         if success:
-            for index in range(len(content)):
-                if content[index].get("name", "") == name:
-                    result = (success, statusCode, content[index])
+            for entry in content:
+                if entry.get("name", "") == name:
+                    result = (success, status_code, entry)
 
-            if result is None:
+            if not result:
                 result = (False, 404, content)
         else:
-            result = (success, statusCode, content)
+            result = (success, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getServerConnectionsWebService(self):
-        methodName = "getServerConnectionsWebService()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_server_connections_web_service(self):
+        method_name = "get_server_connections_web_service()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_GlobalSettings.SERVER_CONNECTION_WEB_SERVICE+"/v1")
+        endpoint = SERVER_CONNECTION_WEB_SERVICE + "/v1"
+        status_code, content = self.http_get_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
     #
@@ -278,126 +292,128 @@ class _GlobalSettings(RestClient):
 
     # Directories
 
-    def createTemplateFileDirectory(self, path, dirName):
-        methodName = "createTemplateFileDirectory()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def create_template_file_directory(self, path, dir_name=None):
+        method_name = "create_template_file_directory()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "dir_name", dirName)
-        Utils.addOnStringValue(jsonObj, "type", "dir")
+        data = {}
+        Utils.add_string_value(data, "dir_name", dir_name)
+        Utils.add_string_value(data, "type", "dir")
 
-        endpoint = "%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path))
-        statusCode, content = self.httpPostJson(endpoint, data=jsonObj)
+        endpoint = "%s/%s" % (TEMPLATE_FILES, path)
+        status_code, content = self.http_post_json(endpoint, data=data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getTemplateFileDirectory(self, path, recursive=None):
-        methodName = "getTemplateFileDirectory()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_template_file_directory(self, path, recursive=None):
+        method_name = "get_template_file_directory()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.addOnValue(parameters, "recursive", recursive)
+        Utils.add_value(parameters, "recursive", recursive)
 
-        endpoint = "%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path))
-        statusCode, content = self.httpGetJson(endpoint, parameters=parameters)
+        endpoint = "%s/%s" % (TEMPLATE_FILES, path)
+        status_code, content = self.http_get_json(
+            endpoint, parameters=parameters)
 
-        if statusCode == 200:
+        if status_code == 200:
             if isinstance(content, list):
-                result = (True, statusCode, content)
+                result = (True, status_code, content)
             else:
-                result = (True, statusCode, content.get("contents"))
+                result = (True, status_code, content.get("contents"))
         else:
-            result = (False, statusCode, content)
+            result = (False, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
     # Files
 
-    def createTemplateFile(self, path, fileName, content):
-        methodName = "createTemplateFile()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def create_template_file(self, path, file_name=None, content=None):
+        method_name = "create_template_file()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "file_name", fileName)
-        Utils.addOnStringValue(jsonObj, "content", content)
-        Utils.addOnStringValue(jsonObj, "type", "file")
+        data = {}
+        Utils.add_string_value(data, "file_name", file_name)
+        Utils.add_string_value(data, "content", content)
+        Utils.add_string_value(data, "type", "file")
 
-        endpoint = "%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path))
-        statusCode, content = self.httpPostJson(endpoint, data=jsonObj)
+        endpoint = "%s/%s" % (TEMPLATE_FILES, path)
+        status_code, content = self.http_post_json(endpoint, data=data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def deleteTemplateFile(self, path, fileName):
-        methodName = "deleteTemplateFile()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def delete_template_file(self, path, file_name):
+        method_name = "delete_template_file()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
-        statusCode, content = self.httpDeleteJson(endpoint)
+        endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))
+        status_code, content = self.http_delete_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def getTemplateFile(self, path, fileName):
-        methodName = "getTemplateFile()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def get_template_file(self, path, file_name):
+        method_name = "get_template_file()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
-        statusCode, content = self.httpGetJson(endpoint)
+        endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))
+        status_code, content = self.http_get_json(endpoint)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def importTemplateFile(self, path, fileName, filePath):
-        methodName = "importTemplateFile()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def import_template_file(self, path, file_name, file_path):
+        method_name = "import_template_file()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
         try:
-            with open(filePath, 'rb') as template:
+            with open(file_path, 'rb') as template:
                 files = {"file": template}
 
-                endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
-                statusCode, content = self.httpPostFile(endpoint, files=files)
+                endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))
+                status_code, content = self.http_post_file(
+                    endpoint, files=files)
 
-                result = (statusCode == 200, statusCode, content)
-        except IOError as ioe:
-            _GlobalSettings.logger.error(methodName, str(ioe))
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            _GlobalSettings.logger.error(method_name, e)
             result = (False, None, None)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
-    def updateTemplateFile(self, path, fileName, content=""):
-        methodName = "updateTemplateFile()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def update_template_file(self, path, file_name, content=None):
+        method_name = "update_template_file()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "content", content)
-        Utils.addOnStringValue(jsonObj, "type", "file")
+        data = {}
+        Utils.add_string_value(data, "content", content)
+        Utils.add_string_value(data, "type", "file")
 
-        endpoint = "%s/%s/%s" % (_GlobalSettings.TEMPLATE_FILES, str(path), str(fileName))
-        statusCode, content = self.httpPutJson(endpoint, data=jsonObj)
+        endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))
+        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
     #
@@ -406,20 +422,20 @@ class _GlobalSettings(RestClient):
 
     # Users
 
-    def updateUserRegistryUserPassword(self, username, password):
-        methodName = "updateUserRegistryUserPassword()"
-        _GlobalSettings.logger.enterMethod(methodName)
+    def update_user_registry_user_password(self, username, password=None):
+        method_name = "update_user_registry_user_password()"
+        _GlobalSettings.logger.enter_method(method_name)
         result = None
 
-        jsonObj = {}
-        Utils.addOnStringValue(jsonObj, "password", password)
+        data = {}
+        Utils.add_string_value(data, "password", password)
 
-        endpoint = "%s/users/%s/v1" % (_GlobalSettings.USER_REGISTRY, str(username))
-        statusCode, content = self.httpPutJson(endpoint, jsonObj)
+        endpoint = "%s/users/%s/v1" % (USER_REGISTRY, username)
+        status_code, content = self.http_put_json(endpoint, data)
 
-        result = (statusCode == 204, statusCode, content)
+        result = (status_code == 204, status_code, content)
 
-        _GlobalSettings.logger.exitMethod(methodName, str(result))
+        _GlobalSettings.logger.exit_method(method_name, result)
         return result
 
 
@@ -427,6 +443,7 @@ class GlobalSettings9020(_GlobalSettings):
 
     logger = Logger("GlobalSettings9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(GlobalSettings9020, self).__init__(baseUrl, username, password, logLevel)
-        GlobalSettings9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(GlobalSettings9020, self).__init__(
+            base_url, username, password, log_level)
+        GlobalSettings9020.logger.set_level(log_level)

@@ -1,6 +1,4 @@
 """
-Created on Nov 22, 2016
-
 @copyright: IBM
 """
 
@@ -12,87 +10,102 @@ from com.ibm.isam.util.restclient import RestClient
 from .system import SystemSettings9020
 
 
-class _Configuration(RestClient):
+PENDING_CHANGES = "/isam/pending_changes"
+PENDING_CHANGES_DEPLOY = "/isam/pending_changes/deploy"
 
-    PENDING_CHANGES = "/isam/pending_changes"
-    PENDING_CHANGES_DEPLOY = "/isam/pending_changes/deploy"
+
+class _Configuration(RestClient):
 
     logger = Logger("Configuration")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(_Configuration, self).__init__(baseUrl, username, password, logLevel)
-        _Configuration.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(_Configuration, self).__init__(
+            base_url, username, password, log_level)
+        _Configuration.logger.set_level(log_level)
 
     #
     # Pending Changes
     #
 
-    def deployPendingChanges(self):
-        methodName = "deployPendingChanges()"
-        _Configuration.logger.enterMethod(methodName)
+    def deploy_pending_changes(self):
+        method_name = "deploy_pending_changes()"
+        _Configuration.logger.enter_method(method_name)
         result = None
 
-        success, statusCode, content = self.getPendingChanges()
+        success, status_code, content = self.get_pending_changes()
 
         if success:
-            if len(content.get("changes", [])) > 0:
-                result = self._deployPendingChanges()
+            if content.get("changes", []):
+                result = self.deploy_pending_changes()
             else:
-                _Configuration.logger.log(methodName, "No pending changes to be deployed.")
-                result = (True, statusCode, content)
+                _Configuration.logger.log(
+                    method_name, "No pending changes to be deployed.")
+                result = (True, status_code, content)
         else:
-            result = (False, statusCode, content)
+            result = (False, status_code, content)
 
-        _Configuration.logger.exitMethod(methodName, str(result))
+        _Configuration.logger.exit_method(method_name, result)
         return result
 
-    def getPendingChanges(self):
-        methodName = "getPendingChanges()"
-        _Configuration.logger.enterMethod(methodName)
+    def get_pending_changes(self):
+        method_name = "get_pending_changes()"
+        _Configuration.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_Configuration.PENDING_CHANGES)
+        status_code, content = self.http_get_json(PENDING_CHANGES)
 
-        result = (statusCode == 200, statusCode, content)
+        result = (status_code == 200, status_code, content)
 
-        _Configuration.logger.exitMethod(methodName, str(result))
+        _Configuration.logger.exit_method(method_name, result)
         return result
 
-    def _deployPendingChanges(self):
-        methodName = "_deployPendingChanges()"
-        _Configuration.logger.enterMethod(methodName)
+    def deploy_pending_changes(self):
+        method_name = "deploy_pending_changes()"
+        _Configuration.logger.enter_method(method_name)
         result = None
 
-        statusCode, content = self.httpGetJson(_Configuration.PENDING_CHANGES_DEPLOY)
+        status_code, content = self.http_get_json(PENDING_CHANGES_DEPLOY)
 
-        if statusCode == 200 and content is not None and content.get("result", -1) == 0:
+        if status_code == 200 and content and content.get("result", -1) == 0:
             status = content.get("status")
-            result = (True, statusCode, content)
+            result = (True, status_code, content)
 
             if status == 0:
-                _Configuration.logger.log(methodName, "Successful operation. No further action needed.")
+                _Configuration.logger.log(
+                    method_name,
+                    "Successful operation. No further action needed.")
             else:
                 if (status & 1) != 0:
-                    _Configuration.logger.error(methodName, "Deployment of changes resulted in good result but failure status [%s]" % str(status))
-                    result = (False, statusCode, content)
+                    _Configuration.logger.error(
+                        method_name,
+                        "Deployment of changes resulted in good result but failure status: " + str(status))
+                    result = (False, status_code, content)
                 if (status & 2) != 0:
-                    _Configuration.logger.error(methodName, "Appliance restart required - halting [%s]" % str(status))
-                    result = (False, statusCode, content)
+                    _Configuration.logger.error(
+                        method_name,
+                        "Appliance restart required - halting: " + str(status))
+                    result = (False, status_code, content)
                 if (status & 4) != 0 or (status & 8) != 0:
-                    _Configuration.logger.log(methodName, "Restarting LMI as required for status [%s]" % str(status))
-                    self._restartLmi()
+                    _Configuration.logger.log(
+                        method_name,
+                        "Restarting LMI as required for status: " + str(status))
+                    self._restart_lmi()
                 if (status & 16) != 0:
-                    _Configuration.logger.log(methodName, "Deployment of changes indicates a server needs restarting [%s]" % str(status))
+                    _Configuration.logger.log(
+                        method_name,
+                        "Deployment of changes indicates a server needs restarting: " + str(status))
                 if (status & 32) != 0:
-                    _Configuration.logger.log(methodName, "Runtime restart was performed for status [%s]" % str(status))
+                    _Configuration.logger.log(
+                        method_name,
+                        "Runtime restart was performed for status: " + str(status))
                     # TODO: Wait for Runtime to restart...
         else:
-            result = (False, statusCode, content)
+            result = (False, status_code, content)
 
-        _Configuration.logger.exitMethod(methodName, str(result))
+        _Configuration.logger.exit_method(method_name, result)
         return result
 
-    def _restartLmi(self):
+    def _restart_lmi(self):
         pass
 
 
@@ -100,11 +113,13 @@ class Configuration9020(_Configuration):
 
     logger = Logger("Configuration9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(Configuration9020, self).__init__(baseUrl, username, password, logLevel)
-        Configuration9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(Configuration9020, self).__init__(
+            base_url, username, password, log_level)
+        Configuration9020.logger.set_level(log_level)
 
-    def _restartLmi(self):
-        systemSettings = SystemSettings9020(self._baseUrl, self._username, self._password,
-                                            Configuration9020.logger.getLevel())
-        systemSettings.restartLmi()
+    def _restart_lmi(self):
+        systemSettings = SystemSettings9020(
+            self._base_url, self._username, self._password,
+            Configuration9020.logger.get_level())
+        systemSettings.restart_lmi()

@@ -1,6 +1,4 @@
 """
-Created on Dec 02, 2016
-
 @copyright: IBM
 """
 
@@ -15,6 +13,7 @@ class WebSettings9020(Manage9020):
 
     logger = Logger("WebSettings9020")
 
-    def __init__(self, baseUrl, username, password, logLevel=logging.NOTSET):
-        super(WebSettings9020, self).__init__(baseUrl, username, password, logLevel)
-        WebSettings9020.logger.setLevel(logLevel)
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(WebSettings9020, self).__init__(
+            base_url, username, password, log_level)
+        WebSettings9020.logger.set_level(log_level)
