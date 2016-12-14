@@ -2,6 +2,10 @@
 
 ISAM PyConfig is a Python framework for issuing configuration based web service requests to an ISAM appliance.
 
+**Supported ISAM versions**
+* IBM Security Access Manager 9.0.2.1
+* IBM Security Access Manager 9.0.2.0
+
 ## Requirements
 
 [Requests](http://docs.python-requests.org/en/master)

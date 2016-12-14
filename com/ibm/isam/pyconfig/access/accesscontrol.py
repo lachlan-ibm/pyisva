@@ -6,12 +6,12 @@ import logging
 
 from com.ibm.isam.util.logger import Logger
 
-from .manage import Manage9020
-from .policy import Policy9020
-from .settings import GlobalSettings9020
+from .manage import Manage, Manage9021
+from .policy import Policy
+from .settings import GlobalSettings
 
 
-class AccessControl9020(GlobalSettings9020, Manage9020, Policy9020):
+class AccessControl9020(GlobalSettings, Manage, Policy):
 
     logger = Logger("AccessControl9020")
 
@@ -19,3 +19,13 @@ class AccessControl9020(GlobalSettings9020, Manage9020, Policy9020):
         super(AccessControl9020, self).__init__(
             base_url, username, password, log_level)
         AccessControl9020.logger.set_level(log_level)
+
+
+class AccessControl9021(GlobalSettings, Manage9021, Policy):
+
+    logger = Logger("AccessControl9021")
+
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(AccessControl9021, self).__init__(
+            base_url, username, password, log_level)
+        AccessControl9021.logger.set_level(log_level)

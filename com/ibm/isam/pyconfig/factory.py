@@ -7,8 +7,10 @@ import logging
 
 from com.ibm.isam.util.restclient import RestClient
 
-
+DEVELOPMENT_VERSION = "IBM Security Access Manager Development"
 VERSIONS = {
+    DEVELOPMENT_VERSION: "9021",
+    "IBM Security Access Manager 9.0.2.1": "9021",
     "IBM Security Access Manager 9.0.2.0": "9020"
 }
 
@@ -65,7 +67,10 @@ class Factory(object):
         if status_code == 200:
             for entry in content:
                 if entry.get("active", False):
-                    self._version = entry.get("firmware_version")
+                    if entry.get("name", "").endswith("_nonproduction_dev"):
+                        self._version = DEVELOPMENT_VERSION
+                    else:
+                        self._version = entry.get("firmware_version")
         elif status_code == 403:
             raise AuthenticationError("Authentication failed.")
 

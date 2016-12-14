@@ -23,13 +23,13 @@ POLICY_ATTACHMENTS_PDADMIN = "/iam/access/v8/policyattachments/pdadmin"
 RISK_PROFILES = "/iam/access/v8/risk/profiles"
 
 
-class _Policy(RestClient):
+class Policy(RestClient):
 
     logger = Logger("Policy")
 
     def __init__(self, base_url, username, password, log_level=logging.NOTSET):
-        super(_Policy, self).__init__(base_url, username, password, log_level)
-        _Policy.logger.set_level(log_level)
+        super(Policy, self).__init__(base_url, username, password, log_level)
+        Policy.logger.set_level(log_level)
 
     #
     # Access Control
@@ -41,14 +41,14 @@ class _Policy(RestClient):
             self, name=None, description=None, dialect=None, policy=None,
             attributes_required=None):
         method_name = "create_access_control_policy()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "dialect", dialect)
-        Utils.add_string_value(data, "policy", policy)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "dialect", dialect)
+        Utils.add_value_string(data, "policy", policy)
         Utils.add_value(data, "attributesrequired", attributes_required)
         Utils.add_value(data, "predefined", False)
 
@@ -56,24 +56,24 @@ class _Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_access_control_policies(self, sort_by=None, filter=None):
         method_name = "get_access_control_policies()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             POLICIES, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     # Policy Attachments
@@ -81,34 +81,34 @@ class _Policy(RestClient):
     def authenticate_security_access_manager(
             self, username=None, password=None, domain=None):
         method_name = "authenticate_security_access_manager()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "username", username)
-        Utils.add_string_value(data, "password", password)
-        Utils.add_string_value(data, "domain", domain)
-        Utils.add_string_value(data, "command", "setCredential")
+        Utils.add_value_string(data, "username", username)
+        Utils.add_value_string(data, "password", password)
+        Utils.add_value_string(data, "domain", domain)
+        Utils.add_value_string(data, "command", "setCredential")
 
         status_code, content = self.http_post_json(
             POLICY_ATTACHMENTS_PDADMIN, data=data)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def create_access_control_policy_attachment(
             self, server=None, resource_uri=None,
             policy_combining_algorithm=None, policies=None):
         method_name = "create_access_control_policy_attachment()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "server", server)
-        Utils.add_string_value(data, "resourceUri", resource_uri)
-        Utils.add_string_value(
+        Utils.add_value_string(data, "server", server)
+        Utils.add_value_string(data, "resourceUri", resource_uri)
+        Utils.add_value_string(
             data, "policyCombiningAlgorithm", policy_combining_algorithm)
         Utils.add_value(data, "policies", policies)
 
@@ -117,29 +117,29 @@ class _Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_access_control_policy_attachment(self, sort_by=None, filter=None):
         method_name = "get_access_control_policy_attachment()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             POLICY_ATTACHMENTS, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def publish_access_control_policy_attachment(self, id):
         method_name = "publish_access_control_policy_attachment()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         endpoint = "%s/deployment/%s" % (POLICY_ATTACHMENTS, id)
@@ -147,7 +147,7 @@ class _Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     #
@@ -162,33 +162,33 @@ class _Policy(RestClient):
             email=None, phone=None, other_info=None, definition=None,
             client_id=None, client_secret=None):
         method_name = "create_api_protection_client()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "redirectUri", redirect_uri)
-        Utils.add_string_value(data, "companyName", company_name)
-        Utils.add_string_value(data, "companyUrl", company_url)
-        Utils.add_string_value(data, "contactPerson", contact_person)
-        Utils.add_string_value(data, "contactType", contact_type)
-        Utils.add_string_value(data, "email", email)
-        Utils.add_string_value(data, "phone", phone)
-        Utils.add_string_value(data, "otherInfo", other_info)
-        Utils.add_string_value(data, "definition", definition)
-        Utils.add_string_value(data, "clientId", client_id)
-        Utils.add_string_value(data, "clientSecret", client_secret)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "redirectUri", redirect_uri)
+        Utils.add_value_string(data, "companyName", company_name)
+        Utils.add_value_string(data, "companyUrl", company_url)
+        Utils.add_value_string(data, "contactPerson", contact_person)
+        Utils.add_value_string(data, "contactType", contact_type)
+        Utils.add_value_string(data, "email", email)
+        Utils.add_value_string(data, "phone", phone)
+        Utils.add_value_string(data, "otherInfo", other_info)
+        Utils.add_value_string(data, "definition", definition)
+        Utils.add_value_string(data, "clientId", client_id)
+        Utils.add_value_string(data, "clientSecret", client_secret)
 
         status_code, content = self.http_post_json(CLIENTS, data=data)
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def delete_api_protection_client(self, id):
         method_name = "delete_api_protection_client()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         endpoint = "%s/%s" % (CLIENTS, id)
@@ -196,12 +196,12 @@ class _Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_api_protection_client_by_client_id(self, client_id):
         method_name = "get_api_protection_client_by_client_id()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         filter = "clientId equals " + str(client_id)
@@ -213,27 +213,27 @@ class _Policy(RestClient):
         else:
             result = (False, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_api_protection_clients(
             self, sort_by=None, count=None, start=None, filter=None):
         method_name = "get_api_protection_clients()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "count", count)
-        Utils.add_string_value(parameters, "start", start)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "count", count)
+        Utils.add_value_string(parameters, "start", start)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             CLIENTS, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     # Definitions
@@ -250,14 +250,14 @@ class _Policy(RestClient):
             enable_multiple_refresh_tokens_for_fault_tolerance=None,
             pin_policy_enabled=None, grant_types=None):
         method_name = "create_api_protection_definition()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "tcmBehavior", tcm_behavior)
-        Utils.add_string_value(data, "tokenCharSet", token_char_set)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "tcmBehavior", tcm_behavior)
+        Utils.add_value_string(data, "tokenCharSet", token_char_set)
         Utils.add_value(data, "accessTokenLifetime", access_token_lifetime)
         Utils.add_value(data, "accessTokenLength", access_token_length)
         Utils.add_value(
@@ -286,12 +286,12 @@ class _Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def delete_api_protection_definition(self, id):
         method_name = "delete_api_protection_definition()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         endpoint = "%s/%s" % (DEFINITIONS, id)
@@ -299,12 +299,12 @@ class _Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_api_protection_definition_by_name(self, name):
         method_name = "get_api_protection_definition_by_name()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         filter = "name equals " + name
@@ -316,27 +316,27 @@ class _Policy(RestClient):
         else:
             result = (False, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_api_protection_definitions(
             self, sort_by=None, count=None, start=None, filter=None):
         method_name = "get_api_protection_definitions()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "count", count)
-        Utils.add_string_value(parameters, "start", start)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "count", count)
+        Utils.add_value_string(parameters, "start", start)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             DEFINITIONS, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     # Mapping Rules
@@ -344,56 +344,56 @@ class _Policy(RestClient):
     def create_api_protection_mapping_rule(
             self, name=None, category=None, file_name=None, content=None):
         method_name = "create_api_protection_mapping_rule()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "category", category)
-        Utils.add_string_value(data, "fileName", file_name)
-        Utils.add_string_value(data, "content", content)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "category", category)
+        Utils.add_value_string(data, "fileName", file_name)
+        Utils.add_value_string(data, "content", content)
 
         status_code, content = self.http_post_json(MAPPING_RULES, data=data)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_api_protection_mapping_rules(
             self, sort_by=None, count=None, start=None, filter=None):
         method_name = "get_api_protection_mapping_rules()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "count", count)
-        Utils.add_string_value(parameters, "start", start)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "count", count)
+        Utils.add_value_string(parameters, "start", start)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             MAPPING_RULES, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def update_api_protection_mapping_rule(self, id, content=None):
         method_name = "update_api_protection_mapping_rule()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "content", content)
+        Utils.add_value_string(data, "content", content)
 
         endpoint = "%s/%s" % (MAPPING_RULES, id)
         status_code, content = self.http_put_json(endpoint, data=data)
 
         result = (status_code == 204, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     #
@@ -408,7 +408,7 @@ class _Policy(RestClient):
             storage_behavior=None, storage_device=None, type_risk=None,
             type_policy=None):
         method_name = "create_attribute()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         storage_data = {}
@@ -421,27 +421,27 @@ class _Policy(RestClient):
         Utils.add_value(type_data, "policy", type_policy)
 
         data = {}
-        Utils.add_string_value(data, "category", category)
-        Utils.add_string_value(data, "matcher", matcher)
-        Utils.add_string_value(data, "issuer", issuer)
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "datatype", datatype)
-        Utils.add_string_value(data, "uri", uri)
+        Utils.add_value_string(data, "category", category)
+        Utils.add_value_string(data, "matcher", matcher)
+        Utils.add_value_string(data, "issuer", issuer)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "datatype", datatype)
+        Utils.add_value_string(data, "uri", uri)
         Utils.add_value(data, "predefined", False)
-        Utils.add_value(data, "storageDomain", storage_data)
-        Utils.add_value(data, "type", type_data)
+        Utils.add_value_not_empty(data, "storageDomain", storage_data)
+        Utils.add_value_not_empty(data, "type", type_data)
 
         status_code, content = self.http_post_json(ATTRIBUTES, data=data)
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_attribute_by_uri(self, uri):
         method_name = "get_attribute_by_uri()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         filter = "uri equals %s" % str(uri)
@@ -452,33 +452,33 @@ class _Policy(RestClient):
         else:
             result = (success, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_attributes(self, sort_by=None, count=None, start=None, filter=None):
         method_name = "get_attributes()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "count", count)
-        Utils.add_string_value(parameters, "start", start)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "count", count)
+        Utils.add_value_string(parameters, "start", start)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             ATTRIBUTES, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     # Matchers
 
     def get_attribute_matcher_by_uri(self, uri):
         method_name = "get_attribute_matcher_by_uri()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         filter = "uri equals %s" % str(uri)
@@ -490,24 +490,24 @@ class _Policy(RestClient):
         else:
             result = (success, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_attribute_matchers(self, sort_by=None, filter=None):
         method_name = "get_attribute_matchers()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             ATTRIBUTE_MATCHERS, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     #
@@ -520,14 +520,14 @@ class _Policy(RestClient):
             self, description=None, name=None, uri=None, type_id=None,
             properties=None, attributes=None):
         method_name = "create_authentication_mechanism()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "uri", uri)
-        Utils.add_string_value(data, "typeId", type_id)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "uri", uri)
+        Utils.add_value_string(data, "typeId", type_id)
         Utils.add_value(data, "properties", properties)
         Utils.add_value(data, "attributes", attributes)
 
@@ -536,12 +536,12 @@ class _Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_authentication_mechanism_by_uri(self, uri):
         method_name = "get_authentication_mechanism_by_uri()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         filter = "uri equals %s" % str(uri)
@@ -553,62 +553,62 @@ class _Policy(RestClient):
         else:
             result = (success, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_authentication_mechanism_types(
             self, sort_by=None, count=None, start=None, filter=None):
         method_name = "get_authentication_mechanism_types()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "count", count)
-        Utils.add_string_value(parameters, "start", start)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "count", count)
+        Utils.add_value_string(parameters, "start", start)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             AUTHENTICATION_MECHANISM_TYPES, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def get_authentication_mechanisms(
             self, sort_by=None, count=None, start=None, filter=None):
         method_name = "get_authentication_mechanisms()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         parameters = {}
-        Utils.add_string_value(parameters, "sortBy", sort_by)
-        Utils.add_string_value(parameters, "count", count)
-        Utils.add_string_value(parameters, "start", start)
-        Utils.add_string_value(parameters, "filter", filter)
+        Utils.add_value_string(parameters, "sortBy", sort_by)
+        Utils.add_value_string(parameters, "count", count)
+        Utils.add_value_string(parameters, "start", start)
+        Utils.add_value_string(parameters, "filter", filter)
 
         status_code, content = self.http_get_json(
             AUTHENTICATION_MECHANISMS, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     def update_authentication_mechanism(
             self, id, description=None, name=None, uri=None, type_id=None,
             predefined=None, properties=None, attributes=None):
         method_name = "update_authentication_mechanism()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "id", id)
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "uri", uri)
-        Utils.add_string_value(data, "typeId", type_id)
+        Utils.add_value_string(data, "id", id)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "uri", uri)
+        Utils.add_value_string(data, "typeId", type_id)
         Utils.add_value(data, "predefined", predefined)
         Utils.add_value(data, "properties", properties)
         Utils.add_value(data, "attributes", attributes)
@@ -618,7 +618,7 @@ class _Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     # Policies
@@ -628,26 +628,26 @@ class _Policy(RestClient):
             dialect=None, id=None, user_last_modified=None, last_modified=None,
             date_created=None):
         method_name = "create_authentication_policies()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "name", name)
-        Utils.add_string_value(data, "policy", policy)
-        Utils.add_string_value(data, "uri", uri)
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "dialect", dialect)
-        Utils.add_string_value(data, "id", id)
-        Utils.add_string_value(data, "userlastmodified", user_last_modified)
-        Utils.add_string_value(data, "lastmodified", last_modified)
-        Utils.add_string_value(data, "datecreated", date_created)
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "policy", policy)
+        Utils.add_value_string(data, "uri", uri)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "dialect", dialect)
+        Utils.add_value_string(data, "id", id)
+        Utils.add_value_string(data, "userlastmodified", user_last_modified)
+        Utils.add_value_string(data, "lastmodified", last_modified)
+        Utils.add_value_string(data, "datecreated", date_created)
 
         status_code, content = self.http_post_json(
             AUTHENTICATION_POLICIES, data=data)
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
 
     #
@@ -657,12 +657,12 @@ class _Policy(RestClient):
     def create_risk_profile(
             self, description=None, name=None, active=None, attributes=None):
         method_name = "create_risk_profile()"
-        _Policy.logger.enter_method(method_name)
+        Policy.logger.enter_method(method_name)
         result = None
 
         data = {}
-        Utils.add_string_value(data, "description", description)
-        Utils.add_string_value(data, "name", name)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "name", name)
         Utils.add_value(data, "active", active)
         Utils.add_value(data, "attributes", attributes)
         Utils.add_value(data, "predefined", False)
@@ -671,15 +671,5 @@ class _Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        _Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit_method(method_name, result)
         return result
-
-
-class Policy9020(_Policy):
-
-    logger = Logger("Policy9020")
-
-    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
-        super(Policy9020, self).__init__(
-            base_url, username, password, log_level)
-        Policy9020.logger.set_level(log_level)
