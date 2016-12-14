@@ -85,7 +85,7 @@ class UpdatesLicensing(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            _SecureSettings.logger.error(method_name, e)
+            UpdatesLicensing.logger.error(method_name, e)
             result = (False, None, None)
 
         UpdatesLicensing.logger.exit_method(method_name, result)
