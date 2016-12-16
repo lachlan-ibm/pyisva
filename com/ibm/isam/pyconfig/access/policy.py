@@ -599,7 +599,7 @@ class Policy(RestClient):
     def create_authentication_policies(
             self, name=None, policy=None, uri=None, description=None,
             dialect=None, id=None, user_last_modified=None, last_modified=None,
-            date_created=None, enabled=None):
+            date_created=None):
         Policy.logger.enter()
         result = None
 
@@ -613,7 +613,6 @@ class Policy(RestClient):
         Utils.add_value_string(data, "userlastmodified", user_last_modified)
         Utils.add_value_string(data, "lastmodified", last_modified)
         Utils.add_value_string(data, "datecreated", date_created)
-        Utils.add_value(data, "enabled", enabled)
 
         status_code, content = self.http_post_json(
             AUTHENTICATION_POLICIES, data=data)
@@ -640,6 +639,43 @@ class Policy(RestClient):
         Utils.add_value(data, "predefined", False)
 
         status_code, content = self.http_post_json(RISK_PROFILES, data=data)
+
+        result = (status_code == 201, status_code, content)
+
+        Policy.logger.exit(result)
+        return result
+
+
+class Policy9021(Policy):
+
+    logger = Logger("Policy9021")
+
+    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+        super(Policy9021, self).__init__(
+            base_url, username, password, log_level)
+        Policy9021.logger.set_level(log_level)
+
+    def create_authentication_policies(
+            self, name=None, policy=None, uri=None, description=None,
+            dialect=None, id=None, user_last_modified=None, last_modified=None,
+            date_created=None, enabled=None):
+        Policy.logger.enter()
+        result = None
+
+        data = {}
+        Utils.add_value_string(data, "name", name)
+        Utils.add_value_string(data, "policy", policy)
+        Utils.add_value_string(data, "uri", uri)
+        Utils.add_value_string(data, "description", description)
+        Utils.add_value_string(data, "dialect", dialect)
+        Utils.add_value_string(data, "id", id)
+        Utils.add_value_string(data, "userlastmodified", user_last_modified)
+        Utils.add_value_string(data, "lastmodified", last_modified)
+        Utils.add_value_string(data, "datecreated", date_created)
+        Utils.add_value(data, "enabled", enabled)
+
+        status_code, content = self.http_post_json(
+            AUTHENTICATION_POLICIES, data=data)
 
         result = (status_code == 201, status_code, content)
 

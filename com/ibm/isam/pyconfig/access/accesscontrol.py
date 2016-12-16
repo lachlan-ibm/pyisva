@@ -7,7 +7,7 @@ import logging
 from com.ibm.isam.util.logger import Logger
 
 from .manage import Manage, Manage9021
-from .policy import Policy
+from .policy import Policy, Policy9021
 from .settings import GlobalSettings
 
 
@@ -21,7 +21,7 @@ class AccessControl9020(GlobalSettings, Manage, Policy):
         AccessControl9020.logger.set_level(log_level)
 
 
-class AccessControl9021(GlobalSettings, Manage9021, Policy):
+class AccessControl9021(GlobalSettings, Manage9021, Policy9021):
 
     logger = Logger("AccessControl9021")
 
