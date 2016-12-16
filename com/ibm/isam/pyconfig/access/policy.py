@@ -40,8 +40,7 @@ class Policy(RestClient):
     def create_access_control_policy(
             self, name=None, description=None, dialect=None, policy=None,
             attributes_required=None):
-        method_name = "create_access_control_policy()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -56,12 +55,11 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_access_control_policies(self, sort_by=None, filter=None):
-        method_name = "get_access_control_policies()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -73,15 +71,14 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     # Policy Attachments
 
     def authenticate_security_access_manager(
             self, username=None, password=None, domain=None):
-        method_name = "authenticate_security_access_manager()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -95,14 +92,13 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def create_access_control_policy_attachment(
             self, server=None, resource_uri=None,
             policy_combining_algorithm=None, policies=None):
-        method_name = "create_access_control_policy_attachment()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -117,12 +113,11 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_access_control_policy_attachment(self, sort_by=None, filter=None):
-        method_name = "get_access_control_policy_attachment()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -134,12 +129,11 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def publish_access_control_policy_attachment(self, id):
-        method_name = "publish_access_control_policy_attachment()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         endpoint = "%s/deployment/%s" % (POLICY_ATTACHMENTS, id)
@@ -147,7 +141,7 @@ class Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     #
@@ -161,8 +155,7 @@ class Policy(RestClient):
             company_url=None, contact_person=None, contact_type=None,
             email=None, phone=None, other_info=None, definition=None,
             client_id=None, client_secret=None):
-        method_name = "create_api_protection_client()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -183,12 +176,11 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def delete_api_protection_client(self, id):
-        method_name = "delete_api_protection_client()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         endpoint = "%s/%s" % (CLIENTS, id)
@@ -196,12 +188,11 @@ class Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_api_protection_client_by_client_id(self, client_id):
-        method_name = "get_api_protection_client_by_client_id()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         filter = "clientId equals " + str(client_id)
@@ -213,13 +204,12 @@ class Policy(RestClient):
         else:
             result = (False, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_api_protection_clients(
             self, sort_by=None, count=None, start=None, filter=None):
-        method_name = "get_api_protection_clients()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -233,7 +223,7 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     # Definitions
@@ -249,8 +239,7 @@ class Policy(RestClient):
             enforce_single_access_token_per_grant=None,
             enable_multiple_refresh_tokens_for_fault_tolerance=None,
             pin_policy_enabled=None, grant_types=None):
-        method_name = "create_api_protection_definition()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -286,12 +275,11 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def delete_api_protection_definition(self, id):
-        method_name = "delete_api_protection_definition()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         endpoint = "%s/%s" % (DEFINITIONS, id)
@@ -299,12 +287,11 @@ class Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_api_protection_definition_by_name(self, name):
-        method_name = "get_api_protection_definition_by_name()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         filter = "name equals " + name
@@ -316,13 +303,12 @@ class Policy(RestClient):
         else:
             result = (False, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_api_protection_definitions(
             self, sort_by=None, count=None, start=None, filter=None):
-        method_name = "get_api_protection_definitions()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -336,15 +322,14 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     # Mapping Rules
 
     def create_api_protection_mapping_rule(
             self, name=None, category=None, file_name=None, content=None):
-        method_name = "create_api_protection_mapping_rule()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -357,13 +342,12 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_api_protection_mapping_rules(
             self, sort_by=None, count=None, start=None, filter=None):
-        method_name = "get_api_protection_mapping_rules()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -377,12 +361,11 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def update_api_protection_mapping_rule(self, id, content=None):
-        method_name = "update_api_protection_mapping_rule()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -393,7 +376,7 @@ class Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     #
@@ -407,8 +390,7 @@ class Policy(RestClient):
             name=None, datatype=None, uri=None, storage_session=None,
             storage_behavior=None, storage_device=None, type_risk=None,
             type_policy=None):
-        method_name = "create_attribute()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         storage_data = {}
@@ -436,12 +418,11 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_attribute_by_uri(self, uri):
-        method_name = "get_attribute_by_uri()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         filter = "uri equals %s" % str(uri)
@@ -452,12 +433,11 @@ class Policy(RestClient):
         else:
             result = (success, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_attributes(self, sort_by=None, count=None, start=None, filter=None):
-        method_name = "get_attributes()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -471,14 +451,13 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     # Matchers
 
     def get_attribute_matcher_by_uri(self, uri):
-        method_name = "get_attribute_matcher_by_uri()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         filter = "uri equals %s" % str(uri)
@@ -490,12 +469,11 @@ class Policy(RestClient):
         else:
             result = (success, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_attribute_matchers(self, sort_by=None, filter=None):
-        method_name = "get_attribute_matchers()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -507,7 +485,7 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     #
@@ -519,8 +497,7 @@ class Policy(RestClient):
     def create_authentication_mechanism(
             self, description=None, name=None, uri=None, type_id=None,
             properties=None, attributes=None):
-        method_name = "create_authentication_mechanism()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -536,12 +513,11 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_authentication_mechanism_by_uri(self, uri):
-        method_name = "get_authentication_mechanism_by_uri()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         filter = "uri equals %s" % str(uri)
@@ -553,13 +529,12 @@ class Policy(RestClient):
         else:
             result = (success, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_authentication_mechanism_types(
             self, sort_by=None, count=None, start=None, filter=None):
-        method_name = "get_authentication_mechanism_types()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -573,13 +548,12 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def get_authentication_mechanisms(
             self, sort_by=None, count=None, start=None, filter=None):
-        method_name = "get_authentication_mechanisms()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         parameters = {}
@@ -593,14 +567,13 @@ class Policy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     def update_authentication_mechanism(
             self, id, description=None, name=None, uri=None, type_id=None,
             predefined=None, properties=None, attributes=None):
-        method_name = "update_authentication_mechanism()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -618,7 +591,7 @@ class Policy(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     # Policies
@@ -626,9 +599,8 @@ class Policy(RestClient):
     def create_authentication_policies(
             self, name=None, policy=None, uri=None, description=None,
             dialect=None, id=None, user_last_modified=None, last_modified=None,
-            date_created=None):
-        method_name = "create_authentication_policies()"
-        Policy.logger.enter_method(method_name)
+            date_created=None, enabled=None):
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -641,13 +613,14 @@ class Policy(RestClient):
         Utils.add_value_string(data, "userlastmodified", user_last_modified)
         Utils.add_value_string(data, "lastmodified", last_modified)
         Utils.add_value_string(data, "datecreated", date_created)
+        Utils.add_value(data, "enabled", enabled)
 
         status_code, content = self.http_post_json(
             AUTHENTICATION_POLICIES, data=data)
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result
 
     #
@@ -656,8 +629,7 @@ class Policy(RestClient):
 
     def create_risk_profile(
             self, description=None, name=None, active=None, attributes=None):
-        method_name = "create_risk_profile()"
-        Policy.logger.enter_method(method_name)
+        Policy.logger.enter()
         result = None
 
         data = {}
@@ -671,5 +643,5 @@ class Policy(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        Policy.logger.exit_method(method_name, result)
+        Policy.logger.exit(result)
         return result

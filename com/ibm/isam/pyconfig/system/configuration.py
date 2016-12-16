@@ -28,8 +28,7 @@ class Configuration(RestClient):
     #
 
     def deploy_pending_changes(self):
-        method_name = "deploy_pending_changes()"
-        Configuration.logger.enter_method(method_name)
+        Configuration.logger.enter()
         result = None
 
         success, status_code, content = self.get_pending_changes()
@@ -38,30 +37,27 @@ class Configuration(RestClient):
             if content.get("changes", []):
                 result = self.deploy_pending_changes()
             else:
-                Configuration.logger.log(
-                    method_name, "No pending changes to be deployed.")
+                Configuration.logger.info("No pending changes to be deployed.")
                 result = (True, status_code, content)
         else:
             result = (False, status_code, content)
 
-        Configuration.logger.exit_method(method_name, result)
+        Configuration.logger.exit(result)
         return result
 
     def get_pending_changes(self):
-        method_name = "get_pending_changes()"
-        Configuration.logger.enter_method(method_name)
+        Configuration.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(PENDING_CHANGES)
 
         result = (status_code == 200, status_code, content)
 
-        Configuration.logger.exit_method(method_name, result)
+        Configuration.logger.exit(result)
         return result
 
     def deploy_pending_changes(self):
-        method_name = "deploy_pending_changes()"
-        Configuration.logger.enter_method(method_name)
+        Configuration.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(PENDING_CHANGES_DEPLOY)
@@ -71,38 +67,34 @@ class Configuration(RestClient):
             result = (True, status_code, content)
 
             if status == 0:
-                Configuration.logger.log(
-                    method_name,
+                Configuration.logger.info(
                     "Successful operation. No further action needed.")
             else:
                 if (status & 1) != 0:
                     Configuration.logger.error(
-                        method_name,
-                        "Deployment of changes resulted in good result but failure status: " + str(status))
+                        "Deployment of changes resulted in good result but failure status: %i",
+                        status)
                     result = (False, status_code, content)
                 if (status & 2) != 0:
                     Configuration.logger.error(
-                        method_name,
-                        "Appliance restart required - halting: " + str(status))
+                        "Appliance restart required - halting: %i", status)
                     result = (False, status_code, content)
                 if (status & 4) != 0 or (status & 8) != 0:
-                    Configuration.logger.log(
-                        method_name,
-                        "Restarting LMI as required for status: " + str(status))
+                    Configuration.logger.info(
+                        "Restarting LMI as required for status: %i", status)
                     self._restart_lmi()
                 if (status & 16) != 0:
-                    Configuration.logger.log(
-                        method_name,
-                        "Deployment of changes indicates a server needs restarting: " + str(status))
+                    Configuration.logger.info(
+                        "Deployment of changes indicates a server needs restarting: %i",
+                        status)
                 if (status & 32) != 0:
-                    Configuration.logger.log(
-                        method_name,
-                        "Runtime restart was performed for status: " + str(status))
+                    Configuration.logger.info(
+                        "Runtime restart was performed for status: %i", status)
                     # TODO: Wait for Runtime to restart...
         else:
             result = (False, status_code, content)
 
-        Configuration.logger.exit_method(method_name, result)
+        Configuration.logger.exit(result)
         return result
 
     def _restart_lmi(self):

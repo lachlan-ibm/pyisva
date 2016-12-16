@@ -28,8 +28,7 @@ class SecureSettings(RestClient):
     # Personal
 
     def import_ssl_certificate_personal(self, kdb_id, file_path, password=None):
-        method_name = "import_ssl_certificate_personal()"
-        SecureSettings.logger.enter_method(method_name)
+        SecureSettings.logger.enter()
         result = None
 
         try:
@@ -46,17 +45,16 @@ class SecureSettings(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            SecureSettings.logger.error(method_name, e)
+            SecureSettings.logger.error(e)
             result = (False, None, None)
 
-        SecureSettings.logger.exit_method(method_name, result)
+        SecureSettings.logger.exit(result)
         return result
 
     # Signer
 
     def import_ssl_certificate_signer(self, kdb_id, file_path, label=None):
-        method_name = "import_ssl_certificate_signer()"
-        SecureSettings.logger.enter_method(method_name)
+        SecureSettings.logger.enter()
         result = None
 
         try:
@@ -72,16 +70,15 @@ class SecureSettings(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            SecureSettings.logger.error(method_name, e)
+            SecureSettings.logger.error(e)
             result = (False, None, None)
 
-        SecureSettings.logger.exit_method(method_name, result)
+        SecureSettings.logger.exit(result)
         return result
 
     def load_ssl_certificate_signer(
             self, kdb_id, server=None, port=None, label=None):
-        method_name = "load_ssl_certificate_signer()"
-        SecureSettings.logger.enter_method(method_name)
+        SecureSettings.logger.enter()
         result = None
 
         data = {}
@@ -95,5 +92,5 @@ class SecureSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        SecureSettings.logger.exit_method(method_name, result)
+        SecureSettings.logger.exit(result)
         return result

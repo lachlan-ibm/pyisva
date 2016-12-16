@@ -26,8 +26,7 @@ class UpdatesLicensing(RestClient):
     #
 
     def activate_module(self, code):
-        method_name = "activate_module()"
-        UpdatesLicensing.logger.enter_method(method_name)
+        UpdatesLicensing.logger.enter()
         result = None
 
         data = {}
@@ -38,12 +37,11 @@ class UpdatesLicensing(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        UpdatesLicensing.logger.exit_method(method_name, result)
+        UpdatesLicensing.logger.exit(result)
         return result
 
     def get_activated_module(self, id):
-        method_name = "get_activated_module()"
-        UpdatesLicensing.logger.enter_method(method_name)
+        UpdatesLicensing.logger.enter()
         result = None
 
         endpoint = "%s/%s/v1" % (CAPABILITIES, id)
@@ -51,12 +49,11 @@ class UpdatesLicensing(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        UpdatesLicensing.logger.exit_method(method_name, result)
+        UpdatesLicensing.logger.exit(result)
         return result
 
     def get_activated_modules(self):
-        method_name = "get_activated_modules()"
-        UpdatesLicensing.logger.enter_method(method_name)
+        UpdatesLicensing.logger.enter()
         result = None
 
         endpoint = CAPABILITIES + "/v1"
@@ -64,12 +61,11 @@ class UpdatesLicensing(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        UpdatesLicensing.logger.exit_method(method_name, result)
+        UpdatesLicensing.logger.exit(result)
         return result
 
     def import_activation_code(self, file_path):
-        method_name = "import_activation_code()"
-        UpdatesLicensing.logger.enter_method(method_name)
+        UpdatesLicensing.logger.enter()
         result = None
 
         try:
@@ -85,8 +81,8 @@ class UpdatesLicensing(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            UpdatesLicensing.logger.error(method_name, e)
+            UpdatesLicensing.logger.error(e)
             result = (False, None, None)
 
-        UpdatesLicensing.logger.exit_method(method_name, result)
+        UpdatesLicensing.logger.exit(result)
         return result

@@ -40,8 +40,7 @@ class RestClient(object):
     def http_get(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             parameters=None):
-        method_name = "http_get()"
-        RestClient.logger.enter_method(method_name, (endpoint, parameters))
+        RestClient.logger.enter(endpoint, parameters)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
@@ -54,7 +53,7 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit_method(method_name, (status_code, content))
+        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_get_json(self, endpoint, parameters=None):
@@ -64,8 +63,7 @@ class RestClient(object):
     def http_post(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             parameters=None, data=""):
-        method_name = "http_post()"
-        RestClient.logger.enter_method(method_name, (endpoint, data))
+        RestClient.logger.enter(endpoint, data)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
@@ -79,13 +77,12 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit_method(method_name, (status_code, content))
+        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_post_file(
             self, endpoint, accept_type=APPLICATION_JSON, data="", files={}):
-        method_name = "http_post_file()"
-        RestClient.logger.enter_method(method_name, (endpoint, data))
+        RestClient.logger.enter(endpoint, data)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
@@ -98,7 +95,7 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit_method(method_name, (status_code, content))
+        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_post_json(self, endpoint, data=""):
@@ -108,8 +105,7 @@ class RestClient(object):
     def http_put(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             data=""):
-        method_name = "http_put()"
-        RestClient.logger.enter_method(method_name, (endpoint, data))
+        RestClient.logger.enter(endpoint, data)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
@@ -122,7 +118,7 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit_method(method_name, (status_code, content))
+        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_put_json(self, endpoint, data=""):
@@ -130,8 +126,7 @@ class RestClient(object):
             endpoint, accept_type=APPLICATION_JSON, data=json.dumps(data))
 
     def http_delete(self, endpoint, accept_type=ALL):
-        method_name = "http_delete()"
-        RestClient.logger.enter_method(method_name, (endpoint))
+        RestClient.logger.enter(endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
@@ -144,17 +139,14 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit_method(method_name, (status_code, content))
+        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_delete_json(self, endpoint):
         return self.http_delete(endpoint, accept_type=APPLICATION_JSON)
 
     def wait_on_http_get(self, endpoint, success_code=200, sleep_interval=3):
-        method_name = "wait_on_http_get()"
-        RestClient.logger.enter_method(method_name, (endpoint))
-
-        message = "Waiting for a %s response from %s" % (success_code, endpoint)
+        RestClient.logger.enter(endpoint)
 
         status_code = 0
         while status_code != success_code:
@@ -165,10 +157,11 @@ class RestClient(object):
                 pass
 
             if status_code != success_code:
-                RestClient.logger.trace(method_name, message)
+                RestClient.logger.debug(
+                    "Waiting for a %i response from %s", success_code, endpoint)
                 time.sleep(sleep_interval)
 
-        RestClient.logger.exit_method(method_name)
+        RestClient.logger.exit()
 
     def _decode_json(self, content):
         try:

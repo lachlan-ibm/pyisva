@@ -29,27 +29,25 @@ class Manage(RestClient):
     # General
 
     def get_scim_configuration(self):
-        method_name = "get_scim_configuration()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(SCIM_CONFIGURATION)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def update_scim_configuration(self, data):
-        method_name = "update_scim_configuration()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         status_code, content = self.http_put_json(SCIM_CONFIGURATION, data=data)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     # ISAM User
@@ -57,8 +55,7 @@ class Manage(RestClient):
     def update_scim_configuration_isam_user(
             self, ldap_connection=None, isam_domain=None,
             update_native_users=None):
-        method_name = "update_scim_configuration_isam_user()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -71,7 +68,7 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     #
@@ -81,8 +78,7 @@ class Manage(RestClient):
     def update_mmfa_configuration(
             self, client_id=None, hostname=None, junction=None, options=None,
             port=None):
-        method_name = "update_mmfa_configuration()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -96,7 +92,7 @@ class Manage(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
 
@@ -115,8 +111,7 @@ class Manage9021(Manage):
             hotp_shared_secret_endpoint=None, totp_shared_secret_endpoint=None,
             token_endpoint=None, authntrxn_endpoint=None,
             discovery_mechanisms=None, options=None):
-        method_name = "update_mmfa_configuration()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         endpoints = {}
@@ -147,5 +142,5 @@ class Manage9021(Manage):
 
         result = (status_code == 204, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result

@@ -27,27 +27,25 @@ class FirstSteps(RestClient):
     #
 
     def get_setup_status(self):
-        method_name = "get_setup_status()"
-        FirstSteps.logger.enter_method(method_name)
+        FirstSteps.logger.enter()
         result = None
 
         statusCode, content = self.http_get_json(SETUP_COMPLETE)
 
         result = (statusCode == 200, statusCode, content)
 
-        FirstSteps.logger.exit_method(method_name, result)
+        FirstSteps.logger.exit(result)
         return result
 
     def set_setup_complete(self):
-        method_name = "set_setup_complete()"
-        FirstSteps.logger.enter_method(method_name)
+        FirstSteps.logger.enter()
         result = None
 
         statusCode, content = self.http_put_json(SETUP_COMPLETE)
 
         result = (statusCode == 200, statusCode, content)
 
-        FirstSteps.logger.exit_method(method_name, result)
+        FirstSteps.logger.exit(result)
         return result
 
     #
@@ -55,20 +53,18 @@ class FirstSteps(RestClient):
     #
 
     def get_sla_status(self):
-        method_name = "get_sla_status()"
-        FirstSteps.logger.enter_method(method_name)
+        FirstSteps.logger.enter()
         result = None
 
         statusCode, content = self.http_get_json(SERVICE_AGREEMENTS_ACCEPTED)
 
         result = (statusCode == 200, statusCode, content)
 
-        FirstSteps.logger.exit_method(method_name, result)
+        FirstSteps.logger.exit(result)
         return result
 
     def set_sla_status(self, accept=True):
-        method_name = "set_sla_status(accept)"
-        FirstSteps.logger.enter_method(method_name)
+        FirstSteps.logger.enter()
         result = None
 
         data = {}
@@ -79,7 +75,7 @@ class FirstSteps(RestClient):
 
         result = (statusCode == 200, statusCode, content)
 
-        FirstSteps.logger.exit_method(method_name, result)
+        FirstSteps.logger.exit(result)
         return result
 
 

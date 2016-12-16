@@ -31,8 +31,7 @@ class GlobalSettings(RestClient):
     #
 
     def get_advanced_configuration_by_key(self, key):
-        method_name = "get_advanced_configuration_by_key()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         filter = "key equals " + str(key)
@@ -44,13 +43,12 @@ class GlobalSettings(RestClient):
         else:
             result = (success, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_advanced_configurations(
             self, sortBy=None, count=None, start=None, filter=None):
-        method_name = "get_advanced_configurations()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         parameters = {}
@@ -64,12 +62,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def update_advanced_configuration(self, id, value=None, sensitive=None):
-        method_name = "update_advanced_configuration()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         data = {}
@@ -81,13 +78,12 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def update_advanced_configuration_by_key(
             self, key, value=None, sensitive=None):
-        method_name = "update_advanced_configuration_by_key()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         success, status_code, content = self.get_advanced_configuration_by_key(
@@ -99,7 +95,7 @@ class GlobalSettings(RestClient):
         else:
             result = (success, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     #
@@ -107,8 +103,7 @@ class GlobalSettings(RestClient):
     #
 
     def update_runtime_tuning_parameter(self, parameter, value=None):
-        method_name = "update_runtime_tuning_parameter()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         data = {}
@@ -119,7 +114,7 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     #
@@ -134,8 +129,7 @@ class GlobalSettings(RestClient):
             connection_bind_pwd=None, connection_ssl_truststore=None,
             connection_ssl_auth_key=None, connection_host_port=None,
             connection_ssl=None, connect_timeout=None, servers=None):
-        method_name = "create_server_connection_ldap()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         connection_data = {}
@@ -167,12 +161,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def delete_server_connection_ldap(self, uuid):
-        method_name = "delete_server_connection_ldap()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         endpoint = "%s/%s/v1" % (SERVER_CONNECTION_LDAP, uuid)
@@ -180,12 +173,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_server_connection_ldap_by_name(self, name):
-        method_name = "get_server_connection_ldap_by_name()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         success, status_code, content = self.get_server_connections_ldap()
@@ -200,12 +192,11 @@ class GlobalSettings(RestClient):
         else:
             result = (success, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_server_connections_ldap(self):
-        method_name = "get_server_connections_ldap()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         endpoint = SERVER_CONNECTION_LDAP + "/v1"
@@ -213,7 +204,7 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     # Web Service
@@ -223,8 +214,7 @@ class GlobalSettings(RestClient):
             connection_user=None, connection_password=None,
             connection_ssl_truststore=None, connection_ssl_auth_key=None,
             connection_ssl=None):
-        method_name = "create_server_connection_web_service()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         connection_data = {}
@@ -249,12 +239,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 201, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_server_connection_web_service_by_name(self, name):
-        method_name = "get_server_connection_web_service_by_name()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         success, status_code, content = self.get_server_connections_web_service()
@@ -269,12 +258,11 @@ class GlobalSettings(RestClient):
         else:
             result = (success, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_server_connections_web_service(self):
-        method_name = "get_server_connections_web_service()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         endpoint = SERVER_CONNECTION_WEB_SERVICE + "/v1"
@@ -282,7 +270,7 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     #
@@ -292,8 +280,7 @@ class GlobalSettings(RestClient):
     # Directories
 
     def create_template_file_directory(self, path, dir_name=None):
-        method_name = "create_template_file_directory()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         data = {}
@@ -305,12 +292,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_template_file_directory(self, path, recursive=None):
-        method_name = "get_template_file_directory()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         parameters = {}
@@ -328,14 +314,13 @@ class GlobalSettings(RestClient):
         else:
             result = (False, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     # Files
 
     def create_template_file(self, path, file_name=None, content=None):
-        method_name = "create_template_file()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         data = {}
@@ -348,12 +333,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def delete_template_file(self, path, file_name):
-        method_name = "delete_template_file()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))
@@ -361,12 +345,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def get_template_file(self, path, file_name):
-        method_name = "get_template_file()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))
@@ -374,12 +357,11 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def import_template_file(self, path, file_name, file_path):
-        method_name = "import_template_file()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         try:
@@ -392,15 +374,14 @@ class GlobalSettings(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            GlobalSettings.logger.error(method_name, e)
+            GlobalSettings.logger.error(e)
             result = (False, None, None)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     def update_template_file(self, path, file_name, content=None):
-        method_name = "update_template_file()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         data = {}
@@ -412,7 +393,7 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result
 
     #
@@ -422,8 +403,7 @@ class GlobalSettings(RestClient):
     # Users
 
     def update_user_registry_user_password(self, username, password=None):
-        method_name = "update_user_registry_user_password()"
-        GlobalSettings.logger.enter_method(method_name)
+        GlobalSettings.logger.enter()
         result = None
 
         data = {}
@@ -434,5 +414,5 @@ class GlobalSettings(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        GlobalSettings.logger.exit_method(method_name, result)
+        GlobalSettings.logger.exit(result)
         return result

@@ -33,8 +33,7 @@ class Manage(RestClient):
             ssl_yn=None, key_file=None, cert_label=None, ssl_port=None,
             http_yn=None, http_port=None, https_yn=None, https_port=None,
             nw_interface_yn=None, ip_address=None):
-        method_name = "create_reverse_proxy()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         success, status_code, content = self.get_wga_defaults()
@@ -67,12 +66,11 @@ class Manage(RestClient):
         else:
             result = (False, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def delete_reverse_proxy(self, id, admin_id, admin_pwd):
-        method_name = "delete_reverse_proxy()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -85,31 +83,29 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def get_reverse_proxies(self):
-        method_name = "get_reverse_proxies()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(REVERSEPROXY)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def get_wga_defaults(self):
-        method_name = "get_wga_defaults()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(WGA_DEFAULTS)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     # Auto Configuration
@@ -119,8 +115,7 @@ class Manage(RestClient):
             lmi_username=None, lmi_password=None, runtime_hostname=None,
             runtime_port=None, runtime_username=None, runtime_password=None,
             reuse_certs=None,reuse_acls=None, reuse_pops=None):
-        method_name = "configure_reverse_proxy_mmfa()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         lmi_data = {}
@@ -147,15 +142,14 @@ class Manage(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     # Configuration
 
     def add_reverse_proxy_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
-        method_name = "add_reverse_proxy_configuration_stanza_entry()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {"entries": [[str(entry_name), str(value)]]}
@@ -166,13 +160,12 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def delete_reverse_proxy_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value=None):
-        method_name = "delete_reverse_proxy_configuration_stanza_entry()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
@@ -183,13 +176,12 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def update_reverse_proxy_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
-        method_name = "update_reverse_proxy_configuration_stanza_entry()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -201,7 +193,7 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     # Junction Management
@@ -225,8 +217,7 @@ class Manage(RestClient):
             junction_hard_limit=None, junction_soft_limit=None,
             server_port=None, https_port=None, http_port=None, proxy_port=None,
             remote_http_header=None):
-        method_name = "create_reverse_proxy_junction()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -286,12 +277,11 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def get_reverse_proxy_junctions(self, webseal_id):
-        method_name = "get_reverse_proxy_junctions()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         endpoint = "%s/%s/junctions" % (REVERSEPROXY, webseal_id)
@@ -299,15 +289,14 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     # Management Root
 
     def update_reverse_proxy_management_root_file(
             self, webseal_id, page_id, contents):
-        method_name = "update_reverse_proxy_management_root_file()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -320,7 +309,7 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     #
@@ -333,8 +322,7 @@ class Manage(RestClient):
             ldap_host=None, ldap_port=None, isam_domain=None, ldap_dn=None,
             ldap_suffix=None, ldap_ssl_db=None, ldap_ssl_label=None,
             isam_host=None, isam_port=None):
-        method_name = "configure_runtime_component()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -358,12 +346,11 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     def update_runtime_component_embedded_ldap_password(self, password):
-        method_name = "update_runtime_component_embedded_ldap_password()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -373,7 +360,7 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result
 
     #
@@ -381,8 +368,7 @@ class Manage(RestClient):
     #
 
     def do_pdadmin_commands(self, admin_id, admin_pwd, commands):
-        method_name = "do_pdadmin_commands()"
-        Manage.logger.enter_method(method_name)
+        Manage.logger.enter()
         result = None
 
         data = {}
@@ -394,5 +380,5 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit_method(method_name, result)
+        Manage.logger.exit(result)
         return result

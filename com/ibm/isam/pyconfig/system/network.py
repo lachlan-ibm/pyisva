@@ -29,22 +29,20 @@ class NetworkSettings(RestClient):
     #
 
     def get_dns(self):
-        method_name = "get_dns()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(NET_DNS)
 
         result = (status_code == 200, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
 
     def update_dns(
             self, auto=True, auto_from_interface=None, primary_server=None,
             secondary_server=None, tertiary_server=None, search_domains=None):
-        method_name = "update_dns()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         data = {}
@@ -67,7 +65,7 @@ class NetworkSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
 
     #
@@ -75,8 +73,7 @@ class NetworkSettings(RestClient):
     #
 
     def add_hosts_file_hostname(self, address, hostname=None):
-        method_name = "add_hosts_file_hostname()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         data = {}
@@ -87,12 +84,11 @@ class NetworkSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
 
     def create_hosts_file_record(self, address, hostnames):
-        method_name = "create_hosts_file_record()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         data = {}
@@ -105,12 +101,11 @@ class NetworkSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
 
     def get_hosts_file_record(self, address):
-        method_name = "get_hosts_file_record()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         endpoint = "%s/%s/hostnames" % (HOST_RECORDS, address)
@@ -118,7 +113,7 @@ class NetworkSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
 
     #
@@ -128,8 +123,7 @@ class NetworkSettings(RestClient):
     def create_interface_ip_address(
             self, interface_label, address=None, mask_or_prefix=None,
             enabled=True, allow_management=False):
-        method_name = "create_interface_ip_address()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         success, status_code, content = self.get_interfaces()
@@ -160,17 +154,16 @@ class NetworkSettings(RestClient):
         else:
             result = (success, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
 
     def get_interfaces(self):
-        method_name = "get_interfaces()"
-        NetworkSettings.logger.enter_method(method_name)
+        NetworkSettings.logger.enter()
         result = None
 
         status_code, content = self.http_get_json(NET_INTERFACES)
 
         result = (status_code == 200, status_code, content)
 
-        NetworkSettings.logger.exit_method(method_name, result)
+        NetworkSettings.logger.exit(result)
         return result
