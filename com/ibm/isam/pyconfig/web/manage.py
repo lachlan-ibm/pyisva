@@ -108,6 +108,21 @@ class Manage(RestClient):
         Manage.logger.exit(result)
         return result
 
+    def restart_reverse_proxy(self, id):
+        Manage.logger.enter()
+        result = None
+
+        data = {}
+        Utils.add_value_string(data, "operation", "restart")
+
+        endpoint = "%s/%s" % (REVERSEPROXY, id)
+        status_code, content = self.http_put_json(endpoint, data)
+
+        result = (status_code == 200, status_code, content)
+
+        Manage.logger.exit(result)
+        return result
+
     # Auto Configuration
 
     def configure_reverse_proxy_mmfa(
