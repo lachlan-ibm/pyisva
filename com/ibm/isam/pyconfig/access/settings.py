@@ -380,6 +380,28 @@ class GlobalSettings(RestClient):
         GlobalSettings.logger.exit(result)
         return result
 
+    def import_template_files(self, file_path):
+        GlobalSettings.logger.enter()
+        result = None
+
+        try:
+            with open(file_path, 'rb') as templates:
+                files = {"file": templates}
+
+                data = {}
+                Utils.add_value(data, "force", True)
+
+                status_code, content = self.http_post_file(
+                    TEMPLATE_FILES, data=data, files=files)
+
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            GlobalSettings.logger.error(e)
+            result = (False, None, None)
+
+        GlobalSettings.logger.exit(result)
+        return result
+
     def update_template_file(self, path, file_name, content=None):
         GlobalSettings.logger.enter()
         result = None

@@ -3,6 +3,7 @@
 """
 
 import logging
+import os
 
 from com.ibm.isam.util.logger import Logger
 from com.ibm.isam.util.restclient import RestClient, APPLICATION_JSON, TEXT_HTML
@@ -340,7 +341,7 @@ class Policy(RestClient):
 
         status_code, content = self.http_post_json(MAPPING_RULES, data=data)
 
-        result = (status_code == 200, status_code, content)
+        result = (status_code == 201, status_code, content)
 
         Policy.logger.exit(result)
         return result
