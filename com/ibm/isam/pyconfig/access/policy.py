@@ -5,7 +5,7 @@
 import logging
 
 from com.ibm.isam.util.logger import Logger
-from com.ibm.isam.util.restclient import RestClient
+from com.ibm.isam.util.restclient import RestClient, APPLICATION_JSON, TEXT_HTML
 import com.ibm.isam.util.utils as Utils
 
 
@@ -360,6 +360,27 @@ class Policy(RestClient):
             MAPPING_RULES, parameters=parameters)
 
         result = (status_code == 200, status_code, content)
+
+        Policy.logger.exit(result)
+        return result
+
+    def import_api_protection_mapping_rule(self, id, file_path):
+        Policy.logger.enter()
+        result = None
+
+        try:
+            with open(file_path, 'rb') as mapping_rule:
+                files = {"file": mapping_rule}
+
+                endpoint = "%s/%s/file" % (MAPPING_RULES, id)
+                accept_type = "%s,%s" % (APPLICATION_JSON, TEXT_HTML)
+                status_code, content = self.http_post_file(
+                    endpoint, accept_type=accept_type, files=files)
+
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            Policy.logger.error(e)
+            result = (False, None, None)
 
         Policy.logger.exit(result)
         return result

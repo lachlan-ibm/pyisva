@@ -18,6 +18,7 @@ ALL = "*/*"
 APPLICATION_JSON = "application/json"
 AUTHORIZATION = "Authorization"
 CONTENT_TYPE = "Content-type"
+TEXT_HTML = "text/html"
 
 
 class RestClient(object):
