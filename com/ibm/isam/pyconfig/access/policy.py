@@ -192,22 +192,6 @@ class Policy(RestClient):
         Policy.logger.exit(result)
         return result
 
-    def get_api_protection_client_by_client_id(self, client_id):
-        Policy.logger.enter()
-        result = None
-
-        filter = "clientId equals " + str(client_id)
-        success, status_code, content = self.get_api_protection_clients(
-            filter=filter)
-
-        if success and content:
-            result = (success, status_code, content[0])
-        else:
-            result = (False, status_code, content)
-
-        Policy.logger.exit(result)
-        return result
-
     def get_api_protection_clients(
             self, sort_by=None, count=None, start=None, filter=None):
         Policy.logger.enter()
@@ -287,22 +271,6 @@ class Policy(RestClient):
         status_code, content = self.http_delete_json(endpoint)
 
         result = (status_code == 204, status_code, content)
-
-        Policy.logger.exit(result)
-        return result
-
-    def get_api_protection_definition_by_name(self, name):
-        Policy.logger.enter()
-        result = None
-
-        filter = "name equals " + name
-        success, status_code, content = self.get_api_protection_definitions(
-            filter=filter)
-
-        if success and content:
-            result = (success, status_code, content[0])
-        else:
-            result = (False, status_code, content)
 
         Policy.logger.exit(result)
         return result
@@ -443,21 +411,6 @@ class Policy(RestClient):
         Policy.logger.exit(result)
         return result
 
-    def get_attribute_by_uri(self, uri):
-        Policy.logger.enter()
-        result = None
-
-        filter = "uri equals %s" % str(uri)
-        success, status_code, content = self.get_attributes(filter=filter)
-
-        if success and content:
-            result = (success, status_code, content[0])
-        else:
-            result = (success, status_code, content)
-
-        Policy.logger.exit(result)
-        return result
-
     def get_attributes(self, sort_by=None, count=None, start=None, filter=None):
         Policy.logger.enter()
         result = None
@@ -477,22 +430,6 @@ class Policy(RestClient):
         return result
 
     # Matchers
-
-    def get_attribute_matcher_by_uri(self, uri):
-        Policy.logger.enter()
-        result = None
-
-        filter = "uri equals %s" % str(uri)
-        success, status_code, content = self.getAttributeMatchers(
-            filter=filter)
-
-        if success and content:
-            result = (success, status_code, content[0])
-        else:
-            result = (success, status_code, content)
-
-        Policy.logger.exit(result)
-        return result
 
     def get_attribute_matchers(self, sort_by=None, filter=None):
         Policy.logger.enter()
@@ -534,22 +471,6 @@ class Policy(RestClient):
             AUTHENTICATION_MECHANISMS, data=data)
 
         result = (status_code == 201, status_code, content)
-
-        Policy.logger.exit(result)
-        return result
-
-    def get_authentication_mechanism_by_uri(self, uri):
-        Policy.logger.enter()
-        result = None
-
-        filter = "uri equals %s" % str(uri)
-        success, status_code, content = self.get_authentication_mechanisms(
-            filter=filter)
-
-        if success and content:
-            result = (success, status_code, content[0])
-        else:
-            result = (success, status_code, content)
 
         Policy.logger.exit(result)
         return result

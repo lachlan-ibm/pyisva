@@ -30,22 +30,6 @@ class GlobalSettings(RestClient):
     # Advanced Configuration
     #
 
-    def get_advanced_configuration_by_key(self, key):
-        GlobalSettings.logger.enter()
-        result = None
-
-        filter = "key equals " + str(key)
-        success, status_code, content = self.get_advanced_configurations(
-            filter=filter)
-
-        if success and content:
-            result = (success, status_code, content[0])
-        else:
-            result = (success, status_code, content)
-
-        GlobalSettings.logger.exit(result)
-        return result
-
     def get_advanced_configurations(
             self, sortBy=None, count=None, start=None, filter=None):
         GlobalSettings.logger.enter()
@@ -77,23 +61,6 @@ class GlobalSettings(RestClient):
         status_code, content = self.http_put_json(endpoint, data=data)
 
         result = (status_code == 204, status_code, content)
-
-        GlobalSettings.logger.exit(result)
-        return result
-
-    def update_advanced_configuration_by_key(
-            self, key, value=None, sensitive=None):
-        GlobalSettings.logger.enter()
-        result = None
-
-        success, status_code, content = self.get_advanced_configuration_by_key(
-            key)
-
-        if success:
-            id = content.get("id", None)
-            result = self.update_advanced_configuration(id, value, sensitive)
-        else:
-            result = (success, status_code, content)
 
         GlobalSettings.logger.exit(result)
         return result
@@ -176,25 +143,6 @@ class GlobalSettings(RestClient):
         GlobalSettings.logger.exit(result)
         return result
 
-    def get_server_connection_ldap_by_name(self, name):
-        GlobalSettings.logger.enter()
-        result = None
-
-        success, status_code, content = self.get_server_connections_ldap()
-
-        if success:
-            for entry in content:
-                if entry.get("name", "") == name:
-                    result = (success, status_code, entry)
-
-            if not result:
-                result = (False, 404, content)
-        else:
-            result = (success, status_code, content)
-
-        GlobalSettings.logger.exit(result)
-        return result
-
     def get_server_connections_ldap(self):
         GlobalSettings.logger.enter()
         result = None
@@ -238,25 +186,6 @@ class GlobalSettings(RestClient):
         status_code, content = self.http_post_json(endpoint, data=data)
 
         result = (status_code == 201, status_code, content)
-
-        GlobalSettings.logger.exit(result)
-        return result
-
-    def get_server_connection_web_service_by_name(self, name):
-        GlobalSettings.logger.enter()
-        result = None
-
-        success, status_code, content = self.get_server_connections_web_service()
-
-        if success:
-            for entry in content:
-                if entry.get("name", "") == name:
-                    result = (success, status_code, entry)
-
-            if not result:
-                result = (False, 404, content)
-        else:
-            result = (success, status_code, content)
 
         GlobalSettings.logger.exit(result)
         return result
