@@ -319,13 +319,13 @@ class GlobalSettings(RestClient):
 
     # Files
 
-    def create_template_file(self, path, file_name=None, content=None):
+    def create_template_file(self, path, file_name=None, contents=None):
         GlobalSettings.logger.enter()
         result = None
 
         data = {}
         Utils.add_value_string(data, "file_name", file_name)
-        Utils.add_value_string(data, "content", content)
+        Utils.add_value_string(data, "contents", contents)
         Utils.add_value_string(data, "type", "file")
 
         endpoint = "%s/%s" % (TEMPLATE_FILES, path)
