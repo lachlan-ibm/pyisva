@@ -36,7 +36,7 @@ class RestClient(object):
         self._username = username
         self._password = password
 
-    def enableJsonDump(self, enable=True):
+    def enable_json_dump(self, enable=True):
         self._dump_json = enable
 
     def http_get(
