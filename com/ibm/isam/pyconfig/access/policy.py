@@ -75,7 +75,7 @@ class Policy(RestClient):
         Policy.logger.exit(result)
         return result
 
-    # Policy Attachments
+    # Resources
 
     def authenticate_security_access_manager(
             self, username=None, password=None, domain=None):
@@ -96,7 +96,7 @@ class Policy(RestClient):
         Policy.logger.exit(result)
         return result
 
-    def create_access_control_policy_attachment(
+    def configure_access_control_resource(
             self, server=None, resource_uri=None,
             policy_combining_algorithm=None, policies=None):
         Policy.logger.enter()
@@ -117,7 +117,7 @@ class Policy(RestClient):
         Policy.logger.exit(result)
         return result
 
-    def get_access_control_policy_attachment(self, sort_by=None, filter=None):
+    def get_access_control_resources(self, sort_by=None, filter=None):
         Policy.logger.enter()
         result = None
 
