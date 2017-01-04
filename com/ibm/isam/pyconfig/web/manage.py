@@ -309,6 +309,27 @@ class Manage(RestClient):
 
     # Management Root
 
+    def import_reverse_proxy_management_root_files(self, webseal_id, file_path):
+        Manage.logger.enter()
+        result = None
+
+        endpoint = ("%s/%s/management_root" % (REVERSEPROXY, webseal_id))
+
+        try:
+            with open(file_path, 'rb') as pages:
+                files = {"file": pages}
+
+                status_code, content = self.http_post_file(
+                    endpoint, files=files)
+
+                result = (status_code == 200, status_code, content)
+        except IOError as e:
+            Manage.logger.error(e)
+            result = (False, None, None)
+
+        Manage.logger.exit(result)
+        return result
+
     def update_reverse_proxy_management_root_file(
             self, webseal_id, page_id, contents):
         Manage.logger.enter()
@@ -319,7 +340,7 @@ class Manage(RestClient):
         Utils.add_value_string(data, "contents", contents)
 
         endpoint = ("%s/%s/management_root/%s"
-                    % (REVERSEPROXY, websealId, pageId))
+                    % (REVERSEPROXY, webseal_id, page_id))
         status_code, content = self.http_put_json(endpoint, data)
 
         result = (status_code == 200, status_code, content)
