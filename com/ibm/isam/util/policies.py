@@ -25,19 +25,13 @@ ATTRIBUTE_VALUE = [
     "<AttributeValue DataType=\"%(data_type)s\">%(attribute_value)s</AttributeValue>",
     "</AttributeAssignment>"
 ]
-AUTHENTICATION_POLICY = [
-    "<Policy xmlns=\"urn:ibm:security:authentication:policy:1.0:schema\" PolicyId=\"%(policy_id)s\">",
-    "<Description>%(policy_description)s</Description>",
-    "%(workflow)s",
-    "</Policy>"
-]
-CUSTOM_AUTHENTICATOR = [
+AUTHENTICATION_MECHANISM_AUTHENTICATOR_BASIC = [
     "<Step id=\"id%(id_a)s\" type=\"Authenticator\">",
     "<Authenticator id=\"id%(id_b)s\" AuthenticatorId=\"%(mechanism_uri)s\">",
     "</Authenticator>",
     "</Step>"
 ]
-FINGERPRINT_AUTHENTICATOR = [
+AUTHENTICATION_MECHANISM_AUTHENTICATOR_FINGERPRINT = [
     "<Step id=\"id%(id_a)s\" type=\"Authenticator\">",
     "<Authenticator id=\"id%(id_b)s\" AuthenticatorId=\"urn:ibm:security:authentication:asf:mechanism:mobile_user_approval:fingerprint\">",
     "<Parameters>",
@@ -46,7 +40,7 @@ FINGERPRINT_AUTHENTICATOR = [
     "</Authenticator>",
     "</Step>"
 ]
-MMFA_AUTHENTICATOR = [
+AUTHENTICATION_MECHANISM_AUTHENTICATOR_MMFA = [
     "<Step id=\"id%(id_a)s\" type=\"Authenticator\">",
     "<Authenticator id=\"id%(id_b)s\" AuthenticatorId=\"urn:ibm:security:authentication:asf:mechanism:mmfa\">",
     "<Parameters>",
@@ -59,9 +53,7 @@ MMFA_AUTHENTICATOR = [
     "</Authenticator>",
     "</Step>"
 ]
-REQUEST_SCOPE = "urn:ibm:security:asf:scope:request"
-SESSION_SCOPE = "urn:ibm:security:asf:scope:session"
-USER_PRESENCE_AUTHENTICATOR = [
+AUTHENTICATION_MECHANISM_AUTHENTICATOR_USER_PRESENCE = [
     "<Step id=\"id%(id_a)s\" type=\"Authenticator\">",
     "<Authenticator id=\"id%(id_b)s\" AuthenticatorId=\"urn:ibm:security:authentication:asf:mechanism:mobile_user_approval:user_presence\">",
     "<Parameters>",
@@ -70,6 +62,16 @@ USER_PRESENCE_AUTHENTICATOR = [
     "</Authenticator>",
     "</Step>"
 ]
+AUTHENTICATION_MECHANISM_URI_RECAPTCHA_VERIFICATION = "urn:ibm:security:authentication:asf:mechanism:recaptcha"
+AUTHENTICATION_MECHANISM_URI_SCIM_ENDPOINT_CONFIGURATION = "urn:ibm:security:authentication:asf:mechanism:scimConfig"
+AUTHENTICATION_POLICY = [
+    "<Policy xmlns=\"urn:ibm:security:authentication:policy:1.0:schema\" PolicyId=\"%(policy_id)s\">",
+    "<Description>%(policy_description)s</Description>",
+    "%(workflow)s",
+    "</Policy>"
+]
+SOURCE_URI_SCOPE_REQUEST = "urn:ibm:security:asf:scope:request"
+SOURCE_URI_SCOPE_SESSION = "urn:ibm:security:asf:scope:session"
 
 
 class AccessPolicies(object):
@@ -89,40 +91,55 @@ class AccessPolicies(object):
 
 class AuthenticationPolicies(object):
 
-    def custom_authenticator(self, mechanism_uri):
+    def basic_authenticator(self, mechanism_uri):
         millis = int(time.time() * 1000)
         id_a = millis
         id_b = millis + 1
-        return ''.join(CUSTOM_AUTHENTICATOR) % locals()
+        return ''.join(AUTHENTICATION_MECHANISM_AUTHENTICATOR_BASIC) % locals()
 
     def fingerprint_authenticator(self, username=""):
         millis = int(time.time() * 1000)
         id_a = millis
         id_b = millis + 1
-        return ''.join(FINGERPRINT_AUTHENTICATOR) % locals()
+        return ''.join(
+            AUTHENTICATION_MECHANISM_AUTHENTICATOR_FINGERPRINT) % locals()
 
-    def mmfa_authenticator(self, context_message="", mode="", policy_uri="", reauthenticate="", username=""):
+    def mmfa_authenticator(
+            self, context_message="", mode="", policy_uri="", reauthenticate="",
+            username=""):
         millis = int(time.time() * 1000)
         id_a = millis
         id_b = millis + 1
-        return ''.join(MMFA_AUTHENTICATOR) % locals()
+        return ''.join(AUTHENTICATION_MECHANISM_AUTHENTICATOR_MMFA) % locals()
+
+    def policy(self, policy_id, policy_description, workflow):
+        return ''.join(AUTHENTICATION_POLICY) % locals()
+
+    def recaptcha_verification_authenticator(self):
+        return self.basic_authenticator(
+            AUTHENTICATION_MECHANISM_URI_RECAPTCHA_VERIFICATION)
+
+    def request_parameter(
+            self, attribute_id, designator_id, namespace, data_type="String"):
+        source = SOURCE_URI_SCOPE_REQUEST
+        return ''.join(ATTRIBUTE) % locals()
+
+    def scim_endpoint_configuration_authenticator(self):
+        return self.basic_authenticator(
+            AUTHENTICATION_MECHANISM_URI_SCIM_ENDPOINT_CONFIGURATION)
+
+    def session_parameter(
+            self, attribute_id, designator_id, namespace, data_type="String"):
+        source = SOURCE_URI_SCOPE_SESSION
+        return ''.join(ATTRIBUTE) % locals()
 
     def user_presence_authenticator(self, username=""):
         millis = int(time.time() * 1000)
         id_a = millis
         id_b = millis + 1
-        return ''.join(USER_PRESENCE_AUTHENTICATOR) % locals()
+        return ''.join(
+            AUTHENTICATION_MECHANISM_AUTHENTICATOR_USER_PRESENCE) % locals()
 
-    def policy(self, policy_id, policy_description, workflow):
-        return ''.join(AUTHENTICATION_POLICY) % locals()
-
-    def request_parameter(self, attribute_id, designator_id, namespace, data_type="String"):
-        source = REQUEST_SCOPE
-        return ''.join(ATTRIBUTE) % locals()
-
-    def session_parameter(self, attribute_id, designator_id, namespace, data_type="String"):
-        source = SESSION_SCOPE
-        return ''.join(ATTRIBUTE) % locals()
-
-    def value_parameter(self, attribute_id, attribute_value, data_type="String"):
+    def value_parameter(
+            self, attribute_id, attribute_value, data_type="String"):
         return ''.join(ATTRIBUTE_VALUE) % locals()
