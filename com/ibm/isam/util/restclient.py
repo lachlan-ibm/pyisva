@@ -39,6 +39,26 @@ class RestClient(object):
     def enable_json_dump(self, enable=True):
         self._dump_json = enable
 
+    def http_delete(self, endpoint, accept_type=ALL):
+        RestClient.logger.enter(endpoint)
+
+        url = self._base_url + endpoint
+        headers = self._get_headers(accept_type)
+
+        response = requests.delete(
+            url=url, headers=headers, params=None, verify=False)
+
+        status_code = response.status_code
+        content = self._decode_json(response._content)
+
+        response.close()
+
+        RestClient.logger.exit(status_code, content)
+        return (status_code, content)
+
+    def http_delete_json(self, endpoint):
+        return self.http_delete(endpoint, accept_type=APPLICATION_JSON)
+
     def http_get(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             parameters=None):
@@ -61,6 +81,30 @@ class RestClient(object):
     def http_get_json(self, endpoint, parameters=None):
         return self.http_get(
             endpoint, accept_type=APPLICATION_JSON, parameters=parameters)
+
+    def http_get_wait(
+            self, endpoint, success_code=200, poll_interval=3,
+            max_number_polls=20):
+        RestClient.logger.enter(endpoint)
+
+        success = False
+        poll_count = 0
+        while not success and (
+                max_number_polls is None or poll_count < max_number_polls):
+            RestClient.logger.debug(
+                "Waiting for a %i response from %s", success_code, endpoint)
+            try:
+                response = requests.get(url=url, verify=False, timeout=1)
+                success = response.status_code == success_code
+            except: # Ignore this
+                pass
+
+            if not success:
+                time.sleep(poll_interval)
+                poll_count += 1
+
+        RestClient.logger.exit(success)
+        return success
 
     def http_post(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
@@ -126,44 +170,6 @@ class RestClient(object):
     def http_put_json(self, endpoint, data=""):
         return self.http_put(
             endpoint, accept_type=APPLICATION_JSON, data=json.dumps(data))
-
-    def http_delete(self, endpoint, accept_type=ALL):
-        RestClient.logger.enter(endpoint)
-
-        url = self._base_url + endpoint
-        headers = self._get_headers(accept_type)
-
-        response = requests.delete(
-            url=url, headers=headers, params=None, verify=False)
-
-        status_code = response.status_code
-        content = self._decode_json(response._content)
-
-        response.close()
-
-        RestClient.logger.exit(status_code, content)
-        return (status_code, content)
-
-    def http_delete_json(self, endpoint):
-        return self.http_delete(endpoint, accept_type=APPLICATION_JSON)
-
-    def wait_on_http_get(self, endpoint, success_code=200, sleep_interval=3):
-        RestClient.logger.enter(endpoint)
-
-        status_code = 0
-        while status_code != success_code:
-            try:
-                status_code, content = self.http_get(
-                    endpoint, accept_type=None, content_type=None)
-            except: # Ignore this
-                pass
-
-            if status_code != success_code:
-                RestClient.logger.debug(
-                    "Waiting for a %i response from %s", success_code, endpoint)
-                time.sleep(sleep_interval)
-
-        RestClient.logger.exit()
 
     def _decode_json(self, content):
         try:
