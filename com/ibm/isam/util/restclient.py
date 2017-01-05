@@ -87,24 +87,26 @@ class RestClient(object):
             max_number_polls=20):
         RestClient.logger.enter(endpoint)
 
-        success = False
+        status_code = 0
+        content = ""
         poll_count = 0
-        while not success and (
+        while status_code != success_code and (
                 max_number_polls is None or poll_count < max_number_polls):
             RestClient.logger.debug(
                 "Waiting for a %i response from %s", success_code, endpoint)
             try:
                 response = requests.get(url=url, verify=False, timeout=1)
-                success = response.status_code == success_code
+                status_code = response.status_code
+                content = self._decode_json(response._content)
             except: # Ignore this
                 pass
 
-            if not success:
+            if status_code != success_code:
                 time.sleep(poll_interval)
                 poll_count += 1
 
-        RestClient.logger.exit(success)
-        return success
+        RestClient.logger.exit(status_code, content)
+        return (status_code, content)
 
     def http_post(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
