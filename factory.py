@@ -5,7 +5,8 @@
 import importlib
 import logging
 
-from com.ibm.isam.util.restclient import RestClient
+from pyisam.util.restclient import RestClient
+
 
 DEVELOPMENT_VERSION = "IBM Security Access Manager Development"
 VERSIONS = {
@@ -33,22 +34,22 @@ class Factory(object):
 
     def get_access_control(self):
         class_name = "AccessControl" + self._get_version()
-        module_name = "com.ibm.isam.pyconfig.access.accesscontrol"
+        module_name = "pyisam.core.access.accesscontrol"
         return self._class_loader(module_name, class_name)
 
     def get_first_steps(self):
         class_name = "FirstSteps" + self._get_version()
-        module_name = "com.ibm.isam.pyconfig.firststeps.firststeps"
+        module_name = "pyisam.core.firststeps.firststeps"
         return self._class_loader(module_name, class_name)
 
     def get_system_settings(self):
         class_name = "SystemSettings" + self._get_version()
-        module_name = "com.ibm.isam.pyconfig.system.systemsettings"
+        module_name = "pyisam.core.system.systemsettings"
         return self._class_loader(module_name, class_name)
 
     def get_web_settings(self):
         class_name = "WebSettings" + self._get_version()
-        module_name = "com.ibm.isam.pyconfig.web.websettings"
+        module_name = "pyisam.core.web.websettings"
         return self._class_loader(module_name, class_name)
 
     def set_password(self, password):

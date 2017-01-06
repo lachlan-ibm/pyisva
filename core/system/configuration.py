@@ -4,8 +4,8 @@
 
 import logging
 
-from com.ibm.isam.util.logger import Logger
-from com.ibm.isam.util.restclient import RestClient
+from pyisam.util.logger import Logger
+from pyisam.util.restclient import RestClient
 
 from .system import SystemSettings
 

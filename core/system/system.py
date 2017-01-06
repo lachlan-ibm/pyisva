@@ -5,9 +5,9 @@
 import logging
 import time
 
-from com.ibm.isam.util.logger import Logger
-from com.ibm.isam.util.restclient import RestClient
-import com.ibm.isam.util.utils as Utils
+from pyisam.util.logger import Logger
+from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 ADMIN_CONFIG = "/core/admin_cfg"
@@ -136,25 +136,6 @@ class SystemSettings(RestClient):
             result = (True, status_code, content.get("tuningParameters", []))
         else:
             result = (False, status_code, content)
-
-        SystemSettings.logger.exit(result)
-        return result
-
-    def get_advanced_tuning_parameter(self, key):
-        SystemSettings.logger.enter()
-        result = None
-
-        success, status_code, content = self.get_advanced_tuning_parameters()
-
-        if success:
-            for entry in content:
-                if entry.get("key", "") == key:
-                    result = (success, status_code, entry)
-
-            if not result:
-                result = (False, 404, content)
-        else:
-            result = (success, status_code, content)
 
         SystemSettings.logger.exit(result)
         return result

@@ -4,9 +4,9 @@
 
 import logging
 
-from com.ibm.isam.util.logger import Logger
-from com.ibm.isam.util.restclient import RestClient
-import com.ibm.isam.util.utils as Utils
+from pyisam.util.logger import Logger
+from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 SSL_CERTIFICATES = "/isam/ssl_certificates"
