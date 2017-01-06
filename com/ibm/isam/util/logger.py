@@ -7,16 +7,16 @@ import logging
 
 
 CALLER = 1
+DETAILED = "[%(asctime)-15s] %(name)-20.20s %(level).1s %(method)s() %(message)s"
 METHOD = 3
-FORMAT = "[%(asctime)-15s] %(name)-20.20s %(level).1s %(method)s() %(message)s"
-
-logging.basicConfig(format=FORMAT)
+SIMPLE = "%(levelname)s:%(name)s:%(method)s() %(message)s"
 
 
 class Logger(object):
 
     def __init__(self, class_name, level=logging.NOTSET):
         self._logger = logging.getLogger(class_name)
+        self._logger.addHandler(logging.NullHandler())
         self._logger.setLevel(level)
 
     def get_level(self):
