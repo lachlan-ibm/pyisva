@@ -4,7 +4,7 @@
 
 import logging
 
-from com.ibm.isam.util.logger import Logger
+from pyisam.util.logger import Logger
 
 from .configuration import Configuration
 from .network import NetworkSettings

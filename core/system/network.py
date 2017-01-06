@@ -5,9 +5,9 @@
 import logging
 import uuid
 
-from com.ibm.isam.util.logger import Logger
-from com.ibm.isam.util.restclient import RestClient
-import com.ibm.isam.util.utils as Utils
+from pyisam.util.logger import Logger
+from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 HOST_RECORDS = "/isam/host_records"

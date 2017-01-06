@@ -4,7 +4,7 @@
 
 import logging
 
-from com.ibm.isam.util.logger import Logger
+from pyisam.util.logger import Logger
 
 from .manage import Manage
 

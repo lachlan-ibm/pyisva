@@ -87,8 +87,10 @@ class RestClient(object):
             max_number_polls=20):
         RestClient.logger.enter(endpoint)
 
+        url = self._base_url + endpoint
         status_code = 0
         content = ""
+
         poll_count = 0
         while status_code != success_code and (
                 max_number_polls is None or poll_count < max_number_polls):

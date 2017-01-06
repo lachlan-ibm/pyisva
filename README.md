@@ -1,6 +1,6 @@
-# ISAM PyConfig
+# PyISAM
 
-ISAM PyConfig is a Python framework for issuing configuration based web service requests to an ISAM appliance.
+PyISAM is a Python framework for configuring an IBM Security Access Manager (ISAM) appliance via web service requests.
 
 **Supported ISAM versions**
 * IBM Security Access Manager 9.0.2.1
@@ -15,29 +15,33 @@ ISAM PyConfig is a Python framework for issuing configuration based web service 
 The project is structured closely around the ISAM Local Management Interface mega menu.
 
 ```
-com -
-    ibm -
-        isam -
-             pyconfig -
-                      {category} -
-                                 {category-module}
-                                 {subcategory-module}
-                      factory.py
-             util -
-                      {modules}
+pyisam -
+    aux -
+        {modules}
+    core -
+        {category} -
+            {category-module}
+            {subcategory-module}
+    util -
+        {modules}
+    factory.py
 ```
 
-**Category:** a mega menu categories (e.g. Access Control) are separated by a directory, each holding all REST API functionality related to that category.
+**Core:** functionality that is an exact, or close to, mapping of the available ISAM REST APIs.
 
-**Category Module:** a master module for the category that inherits all subcategory functionality. This module will contain multiple classes each for a specific version of ISAM.
+**Auxiliary:** functionality that is not a specific ISAM REST API but is a common procedure to configuring appliances. This may include multiple calls for `Core` functionality.
+
+**Utilities:** functionality that does not configure an ISAM appliance but aid in configuration tasks.
+
+**Category:** maps to a mega menu category (e.g. Access Control) and contains all REST API functionality related to it.
+
+**Category Module:** a master module for the category that inherits all subcategory functionality. This module will contain multiple classes each for a specific ISAM firmware version.
 
 **Subcategory Module:** a module that contains all REST API functionality for a given subcategory (e.g. Policy). These modules will contain multiple classes, a base class implementing all methods, and additional classes specific to a version of ISAM which override any functionality that has been changed in that version.
 
 **Factory:** the master module/class of the framework. This module handles the discovery and enforcement of supported ISAM versions, along with dynamic instantiation of version specific classes.
 
 Discovery of the ISAM appliance's version and enforcement of supported versions are handled here, along with dynamic instantiation of version specific classes.
-
-**Utilities:** all functionality that is not a ISAM REST API is stored within modules under the `util` directory.
 
 ## Style Guide
 

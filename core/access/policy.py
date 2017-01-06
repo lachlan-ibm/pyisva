@@ -5,9 +5,9 @@
 import logging
 import os
 
-from com.ibm.isam.util.logger import Logger
-from com.ibm.isam.util.restclient import RestClient, APPLICATION_JSON, TEXT_HTML
-import com.ibm.isam.util.utils as Utils
+from pyisam.util.logger import Logger
+from pyisam.util.restclient import RestClient, APPLICATION_JSON, TEXT_HTML
+import pyisam.util.common as Utils
 
 
 ATTRIBUTE_MATCHERS = "/iam/access/v8/attribute-matchers"
