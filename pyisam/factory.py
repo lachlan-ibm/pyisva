@@ -3,7 +3,6 @@
 """
 
 import importlib
-import logging
 
 from pyisam.util.restclient import RestClient
 
@@ -22,34 +21,43 @@ class AuthenticationError(Exception):
 
 class Factory(object):
 
-    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
+    def __init__(self, base_url, username, password):
         self._base_url = base_url
         self._username = username
         self._password = password
-        self._log_level = log_level
         self._version = None
 
         self._discover_version()
         self._get_version()
 
-    def get_access_control(self):
-        class_name = "AccessControl" + self._get_version()
-        module_name = "pyisam.core.access.accesscontrol"
+    def get_access_auxiliary(self):
+        class_name = "AccessAuxiliary" + self._get_version()
+        module_name = "pyisam.aux.accessauxiliary"
         return self._class_loader(module_name, class_name)
 
-    def get_first_steps(self):
-        class_name = "FirstSteps" + self._get_version()
-        module_name = "pyisam.core.firststeps.firststeps"
+    def get_access_control(self):
+        class_name = "AccessControl" + self._get_version()
+        module_name = "pyisam.core.accesscontrol"
+        return self._class_loader(module_name, class_name)
+
+    def get_system_auxiliary(self):
+        class_name = "SystemAuxiliary" + self._get_version()
+        module_name = "pyisam.aux.systemauxiliary"
         return self._class_loader(module_name, class_name)
 
     def get_system_settings(self):
         class_name = "SystemSettings" + self._get_version()
-        module_name = "pyisam.core.system.systemsettings"
+        module_name = "pyisam.core.systemsettings"
+        return self._class_loader(module_name, class_name)
+
+    def get_web_auxiliary(self):
+        class_name = "WebAuxiliary" + self._get_version()
+        module_name = "pyisam.aux.webauxiliary"
         return self._class_loader(module_name, class_name)
 
     def get_web_settings(self):
         class_name = "WebSettings" + self._get_version()
-        module_name = "pyisam.core.web.websettings"
+        module_name = "pyisam.core.websettings"
         return self._class_loader(module_name, class_name)
 
     def set_password(self, password):
@@ -57,12 +65,10 @@ class Factory(object):
 
     def _class_loader(self, module_name, class_name):
         Klass = getattr(importlib.import_module(module_name), class_name)
-        return Klass(
-            self._base_url, self._username, self._password, self._log_level)
+        return Klass(self._base_url, self._username, self._password)
 
     def _discover_version(self):
-        client = RestClient(
-            self._base_url, self._username, self._password, self._log_level)
+        client = RestClient(self._base_url, self._username, self._password)
         status_code, content = client.http_get_json("/firmware_settings")
 
         if status_code == 200:
