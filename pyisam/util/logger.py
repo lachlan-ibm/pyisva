@@ -6,10 +6,7 @@ import inspect
 import logging
 
 
-CALLER = 1
-DETAILED = "[%(asctime)-15s] %(name)-20.20s %(level).1s %(method)s() %(message)s"
-METHOD = 3
-SIMPLE = "%(levelname)s:%(name)s:%(method)s() %(message)s"
+DETAILED = "[%(asctime)-15s] %(name)-20.20s %(levelname).1s %(message)s"
 
 
 class Logger(object):
@@ -26,39 +23,32 @@ class Logger(object):
         self._logger.setLevel(level)
 
     def enter(self, *args):
-        extras = {"level": ">", "method": inspect.stack()[CALLER][METHOD]}
         if not args:
-            self._logger.debug("ENTRY", extra=extras)
+            self._logger.debug("ENTRY")
         elif len(args) == 1:
-            self._logger.debug("ENTRY %s", *args, extra=extras)
+            self._logger.debug("ENTRY %s", *args)
         else:
-            self._logger.debug("ENTRY %s", args, extra=extras)
+            self._logger.debug("ENTRY %s", args)
 
     def exit(self, *args):
-        extras = {"level": "<", "method": inspect.stack()[CALLER][METHOD]}
         if not args:
-            self._logger.debug("RETURN", extra=extras)
+            self._logger.debug("RETURN")
         elif len(args) == 1:
-            self._logger.debug("RETURN %s", *args, extra=extras)
+            self._logger.debug("RETURN %s", *args)
         else:
-            self._logger.debug("RETURN %s", args, extra=extras)
+            self._logger.debug("RETURN %s", args)
 
     def critical(self, message, *args):
-        extras = {"level": "C", "method": inspect.stack()[CALLER][METHOD]}
-        self._logger.critical(message, *args, extra=extras)
+        self._logger.critical(message, *args)
 
     def debug(self, message, *args):
-        extras = {"level": "D", "method": inspect.stack()[CALLER][METHOD]}
-        self._logger.debug(message, *args, extra=extras)
+        self._logger.debug(message, *args)
 
     def error(self, message, *args):
-        extras = {"level": "E", "method": inspect.stack()[CALLER][METHOD]}
-        self._logger.error(message, *args, extra=extras)
+        self._logger.error(message, *args)
 
     def info(self, message, *args):
-        extras = {"level": "I", "method": inspect.stack()[CALLER][METHOD]}
-        self._logger.info(message, *args, extra=extras)
+        self._logger.info(message, *args)
 
     def warning(self, message, *args):
-        extras = {"level": "W", "method": inspect.stack()[CALLER][METHOD]}
-        self._logger.warning(message, *args, extra=extras)
+        self._logger.warning(message, *args)
