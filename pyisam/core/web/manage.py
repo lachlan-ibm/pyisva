@@ -8,7 +8,6 @@ from pyisam.util.logger import Logger
 from pyisam.util.restclient import RestClient
 import pyisam.util.common as Utils
 
-
 EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
 PDADMIN = "/isam/pdadmin"
 REVERSEPROXY = "/wga/reverseproxy"
@@ -351,6 +350,18 @@ class Manage(RestClient):
     #
     # Runtime Component
     #
+
+    def get_runtime_components(self):
+        """
+        Query the ISAM API to get the runtime components list.
+        :return: The tuple of success flag, status code and response contents.
+        """
+        status_code, content = self.http_get_json(RUNTIME_COMPONENT)
+
+        result = (status_code == 200, status_code, content)
+
+        Manage.logger.exit(result)
+        return result
 
     def configure_runtime_component(
             self, ps_mode=None, user_registry=None, admin_password=None,
