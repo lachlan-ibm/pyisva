@@ -323,6 +323,5 @@ class ReverseProxy(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-
         #logger.exit(result)
         return result
