@@ -26,7 +26,6 @@ class ReverseProxy(RestClient):
             http_yn=None, http_port=None, https_yn=None, https_port=None,
             nw_interface_yn=None, ip_address=None):
         #logger.enter()
-        result = None
 
         success, status_code, content = self.get_wga_defaults()
 
@@ -63,7 +62,6 @@ class ReverseProxy(RestClient):
 
     def delete_instance(self, id, admin_id, admin_pwd):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "admin_id", admin_id)
@@ -80,7 +78,6 @@ class ReverseProxy(RestClient):
 
     def get_instances(self):
         #logger.enter()
-        result = None
 
         status_code, content = self.http_get_json(REVERSEPROXY)
 
@@ -91,7 +88,6 @@ class ReverseProxy(RestClient):
 
     def get_wga_defaults(self):
         #logger.enter()
-        result = None
 
         status_code, content = self.http_get_json(WGA_DEFAULTS)
 
@@ -102,7 +98,6 @@ class ReverseProxy(RestClient):
 
     def restart_instance(self, id):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "operation", "restart")
@@ -123,7 +118,6 @@ class ReverseProxy(RestClient):
             runtime_port=None, runtime_username=None, runtime_password=None,
             reuse_certs=None,reuse_acls=None, reuse_pops=None):
         #logger.enter()
-        result = None
 
         lmi_data = {}
         Utils.add_value_string(lmi_data, "hostname", lmi_hostname)
@@ -157,7 +151,6 @@ class ReverseProxy(RestClient):
     def add_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
         #logger.enter()
-        result = None
 
         data = {"entries": [[str(entry_name), str(value)]]}
 
@@ -173,7 +166,6 @@ class ReverseProxy(RestClient):
     def delete_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value=None):
         #logger.enter()
-        result = None
 
         endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
                     % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
@@ -189,7 +181,6 @@ class ReverseProxy(RestClient):
     def update_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "value", value)
@@ -225,7 +216,6 @@ class ReverseProxy(RestClient):
             server_port=None, https_port=None, http_port=None, proxy_port=None,
             remote_http_header=None):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "server_hostname", server_hostname)
@@ -289,7 +279,6 @@ class ReverseProxy(RestClient):
 
     def get_junctions(self, webseal_id):
         #logger.enter()
-        result = None
 
         endpoint = "%s/%s/junctions" % (REVERSEPROXY, webseal_id)
         status_code, content = self.http_get_json(endpoint)
@@ -303,7 +292,7 @@ class ReverseProxy(RestClient):
 
     def import_management_root_files(self, webseal_id, file_path):
         #logger.enter()
-        result = None
+        result = (False, None, None)
 
         endpoint = ("%s/%s/management_root" % (REVERSEPROXY, webseal_id))
 
@@ -317,14 +306,12 @@ class ReverseProxy(RestClient):
                 result = (status_code == 200, status_code, content)
         except IOError as e:
             logger.error(e)
-            result = (False, None, None)
 
         #logger.exit(result)
         return result
 
     def update_management_root_file(self, webseal_id, page_id, contents):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "type", "file")

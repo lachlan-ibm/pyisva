@@ -24,7 +24,6 @@ class FirstSteps(RestClient):
 
     def get_setup_status(self):
         #logger.enter()
-        result = None
 
         statusCode, content = self.http_get_json(SETUP_COMPLETE)
 
@@ -35,7 +34,6 @@ class FirstSteps(RestClient):
 
     def set_setup_complete(self):
         #logger.enter()
-        result = None
 
         statusCode, content = self.http_put_json(SETUP_COMPLETE)
 
@@ -48,7 +46,6 @@ class FirstSteps(RestClient):
 
     def get_sla_status(self):
         #logger.enter()
-        result = None
 
         statusCode, content = self.http_get_json(SERVICE_AGREEMENTS_ACCEPTED)
 
@@ -59,7 +56,6 @@ class FirstSteps(RestClient):
 
     def set_sla_status(self, accept=True):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value(data, "accepted", accept)

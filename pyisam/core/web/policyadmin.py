@@ -21,7 +21,6 @@ class PolicyAdmin(RestClient):
 
     def do_commands(self, admin_id, admin_pwd, commands):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "admin_id", admin_id)
