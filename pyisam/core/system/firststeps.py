@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.common import add_value, add_value_not_empty, add_value_string
 from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 SETUP_COMPLETE = "/setup_complete"
@@ -62,7 +62,7 @@ class FirstSteps(RestClient):
         result = None
 
         data = {}
-        add_value(data, "accepted", accept)
+        Utils.add_value(data, "accepted", accept)
 
         statusCode, content = self.http_put_json(
             SERVICE_AGREEMENTS_ACCEPTED, data)

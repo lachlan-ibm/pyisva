@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.common import add_value, add_value_not_empty, add_value_string
 from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 REVERSEPROXY = "/wga/reverseproxy"
@@ -35,22 +35,22 @@ class ReverseProxy(RestClient):
             domain = content.get("domain")
 
             data = {}
-            add_value_string(data, "inst_name", inst_name)
-            add_value_string(data, "host", host)
-            add_value_string(data, "listening_port", listening_port)
-            add_value_string(data, "domain", domain)
-            add_value_string(data, "admin_id", admin_id)
-            add_value_string(data, "admin_pwd", admin_pwd)
-            add_value_string(data, "ssl_yn", ssl_yn)
-            add_value_string(data, "key_file", key_file)
-            add_value_string(data, "cert_label", cert_label)
-            add_value_string(data, "ssl_port", ssl_port)
-            add_value_string(data, "http_yn", http_yn)
-            add_value_string(data, "http_port", http_port)
-            add_value_string(data, "https_yn", https_yn)
-            add_value_string(data, "https_port", https_port)
-            add_value_string(data, "nw_interface_yn", nw_interface_yn)
-            add_value_string(data, "ip_address", ip_address)
+            Utils.add_value_string(data, "inst_name", inst_name)
+            Utils.add_value_string(data, "host", host)
+            Utils.add_value_string(data, "listening_port", listening_port)
+            Utils.add_value_string(data, "domain", domain)
+            Utils.add_value_string(data, "admin_id", admin_id)
+            Utils.add_value_string(data, "admin_pwd", admin_pwd)
+            Utils.add_value_string(data, "ssl_yn", ssl_yn)
+            Utils.add_value_string(data, "key_file", key_file)
+            Utils.add_value_string(data, "cert_label", cert_label)
+            Utils.add_value_string(data, "ssl_port", ssl_port)
+            Utils.add_value_string(data, "http_yn", http_yn)
+            Utils.add_value_string(data, "http_port", http_port)
+            Utils.add_value_string(data, "https_yn", https_yn)
+            Utils.add_value_string(data, "https_port", https_port)
+            Utils.add_value_string(data, "nw_interface_yn", nw_interface_yn)
+            Utils.add_value_string(data, "ip_address", ip_address)
 
             status_code, content = self.http_post_json(REVERSEPROXY, data)
 
@@ -66,9 +66,9 @@ class ReverseProxy(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "admin_id", admin_id)
-        add_value_string(data, "admin_pwd", admin_pwd)
-        add_value_string(data, "operation", "unconfigure")
+        Utils.add_value_string(data, "admin_id", admin_id)
+        Utils.add_value_string(data, "admin_pwd", admin_pwd)
+        Utils.add_value_string(data, "operation", "unconfigure")
 
         endpoint = "%s/%s" % (REVERSEPROXY, id)
         status_code, content = self.http_put_json(endpoint, data)
@@ -105,7 +105,7 @@ class ReverseProxy(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "operation", "restart")
+        Utils.add_value_string(data, "operation", "restart")
 
         endpoint = "%s/%s" % (REVERSEPROXY, id)
         status_code, content = self.http_put_json(endpoint, data)
@@ -126,23 +126,23 @@ class ReverseProxy(RestClient):
         result = None
 
         lmi_data = {}
-        add_value_string(lmi_data, "hostname", lmi_hostname)
-        add_value_string(lmi_data, "username", lmi_username)
-        add_value_string(lmi_data, "password", lmi_password)
-        add_value(lmi_data, "port", lmi_port)
+        Utils.add_value_string(lmi_data, "hostname", lmi_hostname)
+        Utils.add_value_string(lmi_data, "username", lmi_username)
+        Utils.add_value_string(lmi_data, "password", lmi_password)
+        Utils.add_value(lmi_data, "port", lmi_port)
 
         runtime_data = {}
-        add_value_string(runtime_data, "hostname", runtime_hostname)
-        add_value_string(runtime_data, "username", runtime_username)
-        add_value_string(runtime_data, "password", runtime_password)
-        add_value(runtime_data, "port", runtime_port)
+        Utils.add_value_string(runtime_data, "hostname", runtime_hostname)
+        Utils.add_value_string(runtime_data, "username", runtime_username)
+        Utils.add_value_string(runtime_data, "password", runtime_password)
+        Utils.add_value(runtime_data, "port", runtime_port)
 
         data = {}
-        add_value(data, "reuse_certs", reuse_certs)
-        add_value(data, "reuse_acls", reuse_acls)
-        add_value(data, "reuse_pops", reuse_pops)
-        add_value_not_empty(data, "lmi", lmi_data)
-        add_value_not_empty(data, "runtime", runtime_data)
+        Utils.add_value(data, "reuse_certs", reuse_certs)
+        Utils.add_value(data, "reuse_acls", reuse_acls)
+        Utils.add_value(data, "reuse_pops", reuse_pops)
+        Utils.add_value_not_empty(data, "lmi", lmi_data)
+        Utils.add_value_not_empty(data, "runtime", runtime_data)
 
         endpoint = "%s/%s/mmfa_config" % (REVERSEPROXY, webseal_id)
         status_code, content = self.http_post_json(endpoint, data)
@@ -192,7 +192,7 @@ class ReverseProxy(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "value", value)
+        Utils.add_value_string(data, "value", value)
 
         endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
                     % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
@@ -228,54 +228,56 @@ class ReverseProxy(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "server_hostname", server_hostname)
-        add_value_string(data, "junction_point", junction_point)
-        add_value_string(data, "junction_type", junction_type)
-        add_value_string(data, "basic_auth_mode", basic_auth_mode)
-        add_value_string(data, "tfim_sso", tfim_sso)
-        add_value_string(data, "stateful_junction", stateful_junction)
-        add_value_string(data, "preserve_cookie", preserve_cookie)
-        add_value_string(data, "cookie_include_path", cookie_include_path)
-        add_value_string(
+        Utils.add_value_string(data, "server_hostname", server_hostname)
+        Utils.add_value_string(data, "junction_point", junction_point)
+        Utils.add_value_string(data, "junction_type", junction_type)
+        Utils.add_value_string(data, "basic_auth_mode", basic_auth_mode)
+        Utils.add_value_string(data, "tfim_sso", tfim_sso)
+        Utils.add_value_string(data, "stateful_junction", stateful_junction)
+        Utils.add_value_string(data, "preserve_cookie", preserve_cookie)
+        Utils.add_value_string(data, "cookie_include_path", cookie_include_path)
+        Utils.add_value_string(
             data, "transparent_path_junction", transparent_path_junction)
-        add_value_string(data, "mutual_auth", mutual_auth)
-        add_value_string(data, "insert_ltpa_cookies", insert_ltpa_cookies)
-        add_value_string(data, "insert_session_cookies", insert_session_cookies)
-        add_value_string(data, "request_encoding", request_encoding)
-        add_value_string(data, "enable_basic_auth", enable_basic_auth)
-        add_value_string(data, "key_label", key_label)
-        add_value_string(data, "gso_resource_group", gso_resource_group)
-        add_value_string(
+        Utils.add_value_string(data, "mutual_auth", mutual_auth)
+        Utils.add_value_string(data, "insert_ltpa_cookies", insert_ltpa_cookies)
+        Utils.add_value_string(
+            data, "insert_session_cookies", insert_session_cookies)
+        Utils.add_value_string(data, "request_encoding", request_encoding)
+        Utils.add_value_string(data, "enable_basic_auth", enable_basic_auth)
+        Utils.add_value_string(data, "key_label", key_label)
+        Utils.add_value_string(data, "gso_resource_group", gso_resource_group)
+        Utils.add_value_string(
             data, "junction_cookie_javascript_block",
             junction_cookie_javascript_block)
-        add_value_string(data, "client_ip_http", client_ip_http)
-        add_value_string(data, "version_two_cookies", version_two_cookies)
-        add_value_string(data, "ltpa_keyfile", ltpa_keyfile)
-        add_value_string(data, "authz_rules", authz_rules)
-        add_value_string(data, "fsso_config_file", fsso_config_file)
-        add_value_string(data, "username", username)
-        add_value_string(data, "password", password)
-        add_value_string(data, "server_uuid", server_uuid)
-        add_value_string(data, "virtual_hostname", virtual_hostname)
-        add_value_string(data, "server_dn", server_dn)
-        add_value_string(data, "local_ip", local_ip)
-        add_value_string(data, "query_contents", query_contents)
-        add_value_string(data, "case_sensitive_url", case_sensitive_url)
-        add_value_string(data, "windows_style_url", windows_style_url)
-        add_value_string(data, "ltpa_keyfile_password", ltpa_keyfile_password)
-        add_value_string(data, "proxy_hostname", proxy_hostname)
-        add_value_string(data, "sms_environment", sms_environment)
-        add_value_string(data, "vhost_label", vhost_label)
-        add_value_string(data, "force", force)
-        add_value_string(data, "delegation_support", delegation_support)
-        add_value_string(data, "scripting_support", scripting_support)
-        add_value(data, "junction_hard_limit", junction_hard_limit)
-        add_value(data, "junction_soft_limit", junction_soft_limit)
-        add_value(data, "server_port", server_port)
-        add_value(data, "https_port", https_port)
-        add_value(data, "http_port", http_port)
-        add_value(data, "proxy_port", proxy_port)
-        add_value(data, "remote_http_header", remote_http_header)
+        Utils.add_value_string(data, "client_ip_http", client_ip_http)
+        Utils.add_value_string(data, "version_two_cookies", version_two_cookies)
+        Utils.add_value_string(data, "ltpa_keyfile", ltpa_keyfile)
+        Utils.add_value_string(data, "authz_rules", authz_rules)
+        Utils.add_value_string(data, "fsso_config_file", fsso_config_file)
+        Utils.add_value_string(data, "username", username)
+        Utils.add_value_string(data, "password", password)
+        Utils.add_value_string(data, "server_uuid", server_uuid)
+        Utils.add_value_string(data, "virtual_hostname", virtual_hostname)
+        Utils.add_value_string(data, "server_dn", server_dn)
+        Utils.add_value_string(data, "local_ip", local_ip)
+        Utils.add_value_string(data, "query_contents", query_contents)
+        Utils.add_value_string(data, "case_sensitive_url", case_sensitive_url)
+        Utils.add_value_string(data, "windows_style_url", windows_style_url)
+        Utils.add_value_string(
+            data, "ltpa_keyfile_password", ltpa_keyfile_password)
+        Utils.add_value_string(data, "proxy_hostname", proxy_hostname)
+        Utils.add_value_string(data, "sms_environment", sms_environment)
+        Utils.add_value_string(data, "vhost_label", vhost_label)
+        Utils.add_value_string(data, "force", force)
+        Utils.add_value_string(data, "delegation_support", delegation_support)
+        Utils.add_value_string(data, "scripting_support", scripting_support)
+        Utils.add_value(data, "junction_hard_limit", junction_hard_limit)
+        Utils.add_value(data, "junction_soft_limit", junction_soft_limit)
+        Utils.add_value(data, "server_port", server_port)
+        Utils.add_value(data, "https_port", https_port)
+        Utils.add_value(data, "http_port", http_port)
+        Utils.add_value(data, "proxy_port", proxy_port)
+        Utils.add_value(data, "remote_http_header", remote_http_header)
 
         endpoint = "%s/%s/junctions" % (REVERSEPROXY, str(webseal_id))
         status_code, content = self.http_post_json(endpoint, data)
@@ -325,8 +327,8 @@ class ReverseProxy(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "type", "file")
-        add_value_string(data, "contents", contents)
+        Utils.add_value_string(data, "type", "file")
+        Utils.add_value_string(data, "contents", contents)
 
         endpoint = ("%s/%s/management_root/%s"
                     % (REVERSEPROXY, webseal_id, page_id))

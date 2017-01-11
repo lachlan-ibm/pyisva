@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.common import add_value, add_value_not_empty, add_value_string
 from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
@@ -30,21 +30,21 @@ class RuntimeComponent(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "ps_mode", ps_mode)
-        add_value_string(data, "user_registry", user_registry)
-        add_value_string(data, "admin_cert_lifetime", admin_cert_lifetime)
-        add_value_string(data, "ssl_compliance", ssl_compliance)
-        add_value_string(data, "admin_pwd", admin_password)
-        add_value_string(data, "ldap_pwd", ldap_password)
-        add_value_string(data, "ldap_host", ldap_host)
-        add_value_string(data, "domain", isam_domain)
-        add_value_string(data, "ldap_dn", ldap_dn)
-        add_value_string(data, "ldap_suffix", ldap_suffix)
-        add_value_string(data, "ldap_ssl_db", ldap_ssl_db)
-        add_value_string(data, "ldap_ssl_label", ldap_ssl_label)
-        add_value_string(data, "isam_host", isam_host)
-        add_value(data, "ldap_port", ldap_port)
-        add_value(data, "isam_port", isam_port)
+        Utils.add_value_string(data, "ps_mode", ps_mode)
+        Utils.add_value_string(data, "user_registry", user_registry)
+        Utils.add_value_string(data, "admin_cert_lifetime", admin_cert_lifetime)
+        Utils.add_value_string(data, "ssl_compliance", ssl_compliance)
+        Utils.add_value_string(data, "admin_pwd", admin_password)
+        Utils.add_value_string(data, "ldap_pwd", ldap_password)
+        Utils.add_value_string(data, "ldap_host", ldap_host)
+        Utils.add_value_string(data, "domain", isam_domain)
+        Utils.add_value_string(data, "ldap_dn", ldap_dn)
+        Utils.add_value_string(data, "ldap_suffix", ldap_suffix)
+        Utils.add_value_string(data, "ldap_ssl_db", ldap_ssl_db)
+        Utils.add_value_string(data, "ldap_ssl_label", ldap_ssl_label)
+        Utils.add_value_string(data, "isam_host", isam_host)
+        Utils.add_value(data, "ldap_port", ldap_port)
+        Utils.add_value(data, "isam_port", isam_port)
 
         status_code, content = self.http_post_json(RUNTIME_COMPONENT, data)
 
@@ -58,7 +58,7 @@ class RuntimeComponent(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "password", password)
+        Utils.add_value_string(data, "password", password)
 
         status_code, content = self.http_post_json(EMBEDDED_LDAP_PASSWORD, data)
 

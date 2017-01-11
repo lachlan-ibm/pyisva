@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.common import add_value, add_value_not_empty, add_value_string
 from pyisam.util.restclient import RestClient
+import pyisam.util.common as Utils
 
 
 PDADMIN = "/isam/pdadmin"
@@ -24,9 +24,9 @@ class PolicyAdmin(RestClient):
         result = None
 
         data = {}
-        add_value_string(data, "admin_id", admin_id)
-        add_value_string(data, "admin_pwd", admin_pwd)
-        add_value(data, "commands", commands)
+        Utils.add_value_string(data, "admin_id", admin_id)
+        Utils.add_value_string(data, "admin_pwd", admin_pwd)
+        Utils.add_value(data, "commands", commands)
 
         status_code, content = self.http_post_json(PDADMIN, data)
 

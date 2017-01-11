@@ -2,12 +2,8 @@
 @copyright: IBM
 """
 
-import logging
 
 from .system.firststeps import FirstSteps
-
-
-logger = logging.getLogger(__name__)
 
 
 class SystemSettings9020(object):

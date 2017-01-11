@@ -2,12 +2,8 @@
 @copyright: IBM
 """
 
-#import logging
 
 #from .access.accesscontrol import AccessControl
-
-
-#logger = logging.getLogger(__name__)
 
 
 class AccessControl9020(object):
