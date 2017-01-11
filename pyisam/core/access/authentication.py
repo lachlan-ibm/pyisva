@@ -41,7 +41,7 @@ class Authentication(RestClient):
         #logger.exit(result)
         return result
 
-    def get_mechanism_types(
+    def list_mechanism_types(
             self, sort_by=None, count=None, start=None, filter=None):
         #logger.enter()
 
@@ -59,7 +59,7 @@ class Authentication(RestClient):
         #logger.exit(result)
         return result
 
-    def get_mechanisms(self, sort_by=None, count=None, start=None, filter=None):
+    def list_mechanisms(self, sort_by=None, count=None, start=None, filter=None):
         #logger.enter()
 
         parameters = {}

@@ -59,7 +59,7 @@ class APIProtection(RestClient):
         #logger.exit(result)
         return result
 
-    def get_clients(self, sort_by=None, count=None, start=None, filter=None):
+    def list_clients(self, sort_by=None, count=None, start=None, filter=None):
         #logger.enter()
 
         parameters = {}
@@ -136,7 +136,7 @@ class APIProtection(RestClient):
         #logger.exit(result)
         return result
 
-    def get_definitions(
+    def list_definitions(
             self, sort_by=None, count=None, start=None, filter=None):
         #logger.enter()
 
@@ -171,7 +171,7 @@ class APIProtection(RestClient):
         #logger.exit(result)
         return result
 
-    def get_mapping_rules(
+    def list_mapping_rules(
             self, sort_by=None, count=None, start=None, filter=None):
         #logger.enter()
 

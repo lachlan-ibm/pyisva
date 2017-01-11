@@ -54,7 +54,8 @@ class Attributes(RestClient):
         #logger.exit(result)
         return result
 
-    def get_attributes(self, sort_by=None, count=None, start=None, filter=None):
+    def list_attributes(
+            self, sort_by=None, count=None, start=None, filter=None):
         #logger.enter()
 
         parameters = {}
@@ -71,7 +72,7 @@ class Attributes(RestClient):
         #logger.exit(result)
         return result
 
-    def get_attribute_matchers(self, sort_by=None, filter=None):
+    def list_attribute_matchers(self, sort_by=None, filter=None):
         #logger.enter()
 
         parameters = {}

@@ -75,7 +75,7 @@ class ReverseProxy(RestClient):
         #logger.exit(result)
         return result
 
-    def get_instances(self):
+    def list_instances(self):
         #logger.enter()
 
         status_code, content = self.http_get_json(REVERSEPROXY)
@@ -270,7 +270,7 @@ class ReverseProxy(RestClient):
         #logger.exit(result)
         return result
 
-    def get_junctions(self, webseal_id):
+    def list_junctions(self, webseal_id):
         #logger.enter()
 
         endpoint = "%s/%s/junctions" % (REVERSEPROXY, webseal_id)

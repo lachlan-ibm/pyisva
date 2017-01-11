@@ -25,7 +25,7 @@ class Interfaces(RestClient):
         #logger.enter()
         result = None
 
-        success, status_code, content = self.get_interfaces()
+        success, status_code, content = self.list_interfaces()
 
         if success:
             for entry in content.get("interfaces", []):
@@ -56,7 +56,7 @@ class Interfaces(RestClient):
         #logger.exit(result)
         return result
 
-    def get_interfaces(self):
+    def list_interfaces(self):
         #logger.enter()
 
         status_code, content = self.http_get_json(NET_INTERFACES)

@@ -5,7 +5,7 @@
 import logging
 
 from pyisam.util.restclient import RestClient
-from .system import SystemSettings
+from .restartshutdown import RestartShutdown
 
 
 PENDING_CHANGES = "/isam/pending_changes"
@@ -86,6 +86,6 @@ class Configuration(RestClient):
         return result
 
     def _restart_lmi(self):
-        systemSettings = SystemSettings(
+        restart_shutdown = RestartShutdown(
             self._base_url, self._username, self._password)
-        systemSettings.restart_lmi()
+        restart_shutdown.restart_lmi()

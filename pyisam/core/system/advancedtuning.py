@@ -34,7 +34,7 @@ class AdvancedTuning(RestClient):
         #logger.exit(result)
         return result
 
-    def get_parameters(self):
+    def list_parameters(self):
         #logger.enter()
 
         status_code, content = self.http_get_json(ADVANCED_PARAMETERS)

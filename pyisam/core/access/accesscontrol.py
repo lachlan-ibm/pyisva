@@ -40,7 +40,7 @@ class AccessControl(RestClient):
         #logger.exit(result)
         return result
 
-    def get_policies(self, sort_by=None, filter=None):
+    def list_policies(self, sort_by=None, filter=None):
         #logger.enter()
 
         parameters = {}
@@ -93,7 +93,7 @@ class AccessControl(RestClient):
         #logger.exit(result)
         return result
 
-    def get_resources(self, sort_by=None, filter=None):
+    def list_resources(self, sort_by=None, filter=None):
         #logger.enter()
 
         parameters = {}

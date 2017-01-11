@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class SCIMConfig(RestClient):
 
     def __init__(self, base_url, username, password):
-        super(ScimConfig, self).__init__(base_url, username, password)
+        super(SCIMConfig, self).__init__(base_url, username, password)
 
     def get(self):
         #logger.enter()
