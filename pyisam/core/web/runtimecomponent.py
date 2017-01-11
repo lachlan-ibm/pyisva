@@ -27,7 +27,6 @@ class RuntimeComponent(RestClient):
             ldap_suffix=None, ldap_ssl_db=None, ldap_ssl_label=None,
             isam_host=None, isam_port=None):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "ps_mode", ps_mode)
@@ -53,9 +52,20 @@ class RuntimeComponent(RestClient):
         #logger.exit(result)
         return result
 
+    def get_status(self):
+        """
+        Query the ISAM API to get the runtime components list.
+        :return: The tuple of success flag, status code and response contents.
+        """
+        status_code, content = self.http_get_json(RUNTIME_COMPONENT)
+
+        result = (status_code == 200, status_code, content)
+
+        #logger.exit(result)
+        return result
+
     def update_embedded_ldap_password(self, password):
         #logger.enter()
-        result = None
 
         data = {}
         Utils.add_value_string(data, "password", password)
