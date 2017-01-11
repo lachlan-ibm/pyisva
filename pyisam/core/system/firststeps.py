@@ -11,7 +11,6 @@ import pyisam.util.common as Utils
 SETUP_COMPLETE = "/setup_complete"
 SERVICE_AGREEMENTS_ACCEPTED = "/setup_service_agreements/accepted"
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -19,8 +18,6 @@ class FirstSteps(RestClient):
 
     def __init__(self, base_url, username, password):
         super(FirstSteps, self).__init__(base_url, username, password)
-
-    # First Steps Setup
 
     def get_setup_status(self):
         #logger.enter()
@@ -41,8 +38,6 @@ class FirstSteps(RestClient):
 
         #logger.exit(result)
         return result
-
-    # Service Agreements
 
     def get_sla_status(self):
         #logger.enter()

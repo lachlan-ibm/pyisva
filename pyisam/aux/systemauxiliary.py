@@ -3,9 +3,6 @@
 """
 
 
-from pyisam.core.systemsettings import SystemSettings9020, SystemSettings9021
-
-
 class SystemAuxiliary9020(object):
 
     def __init__(self, base_url, username, password):

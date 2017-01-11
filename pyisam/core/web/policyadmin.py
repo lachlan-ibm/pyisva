@@ -10,7 +10,6 @@ import pyisam.util.common as Utils
 
 PDADMIN = "/isam/pdadmin"
 
-
 logger = logging.getLogger(__name__)
 
 

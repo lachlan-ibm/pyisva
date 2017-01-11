@@ -11,7 +11,6 @@ import pyisam.util.common as Utils
 REVERSEPROXY = "/wga/reverseproxy"
 WGA_DEFAULTS = "/isam/wga_templates/defaults"
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -110,8 +109,6 @@ class ReverseProxy(RestClient):
         #logger.exit(result)
         return result
 
-    # Auto Configuration
-
     def configure_mmfa(
             self, webseal_id, lmi_hostname=None, lmi_port=None,
             lmi_username=None, lmi_password=None, runtime_hostname=None,
@@ -145,8 +142,6 @@ class ReverseProxy(RestClient):
 
         #logger.exit(result)
         return result
-
-    # Configuration
 
     def add_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
@@ -193,8 +188,6 @@ class ReverseProxy(RestClient):
 
         #logger.exit(result)
         return result
-
-    # Junction Management
 
     def create_junction(
             self, webseal_id, server_hostname=None, junction_point=None,
@@ -287,8 +280,6 @@ class ReverseProxy(RestClient):
 
         #logger.exit(result)
         return result
-
-    # Management Root
 
     def import_management_root_files(self, webseal_id, file_path):
         #logger.enter()

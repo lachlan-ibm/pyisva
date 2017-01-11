@@ -11,7 +11,6 @@ import pyisam.util.common as Utils
 EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
 RUNTIME_COMPONENT = "/isam/runtime_components"
 
-
 logger = logging.getLogger(__name__)
 
 

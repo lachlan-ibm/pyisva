@@ -2,7 +2,6 @@
 @copyright: IBM
 """
 
-
 from .web.policyadmin import PolicyAdmin
 from .web.reverseproxy import ReverseProxy
 from .web.runtimecomponent import RuntimeComponent

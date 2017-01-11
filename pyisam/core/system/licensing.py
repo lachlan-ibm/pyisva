@@ -4,30 +4,22 @@
 
 import logging
 
-from pyisam.util.logger import Logger
 from pyisam.util.restclient import RestClient
 import pyisam.util.common as Utils
 
 
 CAPABILITIES = "/isam/capabilities"
 
+logger = logging.getLogger(__name__)
 
-class UpdatesLicensing(RestClient):
 
-    logger = Logger("UpdatesLicensing")
+class Licensing(RestClient):
 
-    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
-        super(UpdatesLicensing, self).__init__(
-            base_url, username, password, log_level)
-        UpdatesLicensing.logger.set_level(log_level)
-
-    #
-    # Licensing and Activation
-    #
+    def __init__(self, base_url, username, password):
+        super(Licensing, self).__init__(base_url, username, password)
 
     def activate_module(self, code):
-        UpdatesLicensing.logger.enter()
-        result = None
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "code", code)
@@ -37,36 +29,34 @@ class UpdatesLicensing(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        UpdatesLicensing.logger.exit(result)
+        #logger.exit(result)
         return result
 
     def get_activated_module(self, id):
-        UpdatesLicensing.logger.enter()
-        result = None
+        #logger.enter()
 
         endpoint = "%s/%s/v1" % (CAPABILITIES, id)
         status_code, content = self.http_get_json(endpoint)
 
         result = (status_code == 200, status_code, content)
 
-        UpdatesLicensing.logger.exit(result)
+        #logger.exit(result)
         return result
 
     def get_activated_modules(self):
-        UpdatesLicensing.logger.enter()
-        result = None
+        #logger.enter()
 
         endpoint = CAPABILITIES + "/v1"
         status_code, content = self.httpGetJson(endpoint)
 
         result = (status_code == 200, status_code, content)
 
-        UpdatesLicensing.logger.exit(result)
+        #logger.exit(result)
         return result
 
     def import_activation_code(self, file_path):
-        UpdatesLicensing.logger.enter()
-        result = None
+        #logger.enter()
+        result = (False, None, None)
 
         try:
             with open(file_path, 'rb') as code:
@@ -81,8 +71,7 @@ class UpdatesLicensing(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            UpdatesLicensing.logger.error(e)
-            result = (False, None, None)
+            logger.error(e)
 
-        UpdatesLicensing.logger.exit(result)
+        #logger.exit(result)
         return result
