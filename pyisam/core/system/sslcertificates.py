@@ -4,32 +4,23 @@
 
 import logging
 
-from pyisam.util.logger import Logger
 from pyisam.util.restclient import RestClient
 import pyisam.util.common as Utils
 
 
 SSL_CERTIFICATES = "/isam/ssl_certificates"
 
+logger = logging.getLogger(__name__)
 
-class SecureSettings(RestClient):
 
-    logger = Logger("SecureSettings")
+class SSLCertificates(RestClient):
 
-    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
-        super(SecureSettings, self).__init__(
-            base_url, username, password, log_level)
-        SecureSettings.logger.set_level(log_level)
+    def __init__(self, base_url, username, password):
+        super(SSLCertificates, self).__init__(base_url, username, password)
 
-    #
-    # SSL Certificates
-    #
-
-    # Personal
-
-    def import_ssl_certificate_personal(self, kdb_id, file_path, password=None):
-        SecureSettings.logger.enter()
-        result = None
+    def import_personal(self, kdb_id, file_path, password=None):
+        #logger.enter()
+        result = (False, None, None)
 
         try:
             with open(file_path, 'rb') as certificate:
@@ -45,17 +36,14 @@ class SecureSettings(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            SecureSettings.logger.error(e)
-            result = (False, None, None)
+            logger.error(e)
 
-        SecureSettings.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    # Signer
-
-    def import_ssl_certificate_signer(self, kdb_id, file_path, label=None):
-        SecureSettings.logger.enter()
-        result = None
+    def import_signer(self, kdb_id, file_path, label=None):
+        #logger.enter()
+        result = (False, None, None)
 
         try:
             with open(file_path, 'rb') as certificate:
@@ -70,16 +58,13 @@ class SecureSettings(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            SecureSettings.logger.error(e)
-            result = (False, None, None)
+            logger.error(e)
 
-        SecureSettings.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def load_ssl_certificate_signer(
-            self, kdb_id, server=None, port=None, label=None):
-        SecureSettings.logger.enter()
-        result = None
+    def load_signer(self, kdb_id, server=None, port=None, label=None):
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "operation", "load")
@@ -92,5 +77,5 @@ class SecureSettings(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        SecureSettings.logger.exit(result)
+        #logger.exit(result)
         return result

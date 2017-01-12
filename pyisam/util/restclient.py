@@ -10,8 +10,6 @@ from base64 import b64encode
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-from .logger import Logger
-
 
 ACCEPT = "Accept"
 ALL = "*/*"
@@ -21,26 +19,20 @@ CONTENT_TYPE = "Content-type"
 TEXT_HTML = "text/html"
 
 
+logger = logging.getLogger(__name__)
+
+
 class RestClient(object):
 
-    logger = Logger("RestClient")
-
-    def __init__(
-            self, base_url, username=None, password=None,
-            log_level=logging.NOTSET):
+    def __init__(self, base_url, username=None, password=None):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-        RestClient.logger.set_level(log_level)
 
-        self._dump_json = False
         self._base_url = base_url
         self._username = username
         self._password = password
 
-    def enable_json_dump(self, enable=True):
-        self._dump_json = enable
-
     def http_delete(self, endpoint, accept_type=ALL):
-        RestClient.logger.enter(endpoint)
+        logger.debug("DELETE %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
@@ -53,7 +45,6 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_delete_json(self, endpoint):
@@ -62,7 +53,7 @@ class RestClient(object):
     def http_get(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             parameters=None):
-        RestClient.logger.enter(endpoint, parameters)
+        logger.debug("GET %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
@@ -75,7 +66,6 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_get_json(self, endpoint, parameters=None):
@@ -85,7 +75,7 @@ class RestClient(object):
     def http_get_wait(
             self, endpoint, success_code=200, poll_interval=3,
             max_number_polls=20):
-        RestClient.logger.enter(endpoint)
+        logger.debug("Waiting for %i response from %s", success_code, endpoint)
 
         url = self._base_url + endpoint
         status_code = 0
@@ -94,26 +84,25 @@ class RestClient(object):
         poll_count = 0
         while status_code != success_code and (
                 max_number_polls is None or poll_count < max_number_polls):
-            RestClient.logger.debug(
-                "Waiting for a %i response from %s", success_code, endpoint)
+            logger.debug("GET %s", endpoint)
             try:
                 response = requests.get(url=url, verify=False, timeout=1)
                 status_code = response.status_code
                 content = self._decode_json(response._content)
             except: # Ignore this
                 pass
+            logger.debug("Status Code: %i", status_code)
 
             if status_code != success_code:
                 time.sleep(poll_interval)
                 poll_count += 1
 
-        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_post(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             parameters=None, data=""):
-        RestClient.logger.enter(endpoint, data)
+        logger.debug("POST %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
@@ -127,12 +116,11 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_post_file(
             self, endpoint, accept_type=APPLICATION_JSON, data="", files={}):
-        RestClient.logger.enter(endpoint, data)
+        logger.debug("POST %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
@@ -145,7 +133,6 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_post_json(self, endpoint, data=""):
@@ -155,7 +142,7 @@ class RestClient(object):
     def http_put(
             self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
             data=""):
-        RestClient.logger.enter(endpoint, data)
+        logger.debug("PUT %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
@@ -168,7 +155,6 @@ class RestClient(object):
 
         response.close()
 
-        RestClient.logger.exit(status_code, content)
         return (status_code, content)
 
     def http_put_json(self, endpoint, data=""):
@@ -177,13 +163,7 @@ class RestClient(object):
 
     def _decode_json(self, content):
         try:
-            data = json.loads(content)
-
-            if self._dump_json:
-                print(json.dumps(
-                    data, sort_keys=True, indent=4, separators=(',', ': ')))
-
-            return data
+            return json.loads(content)
         except:
             return content
 

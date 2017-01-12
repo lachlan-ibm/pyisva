@@ -4,36 +4,27 @@
 
 import logging
 
-from pyisam.util.logger import Logger
 from pyisam.util.restclient import RestClient
 import pyisam.util.common as Utils
 
-EMBEDDED_LDAP_PASSWORD = "/isam/embedded_ldap/change_pwd/v1"
-PDADMIN = "/isam/pdadmin"
+
 REVERSEPROXY = "/wga/reverseproxy"
-RUNTIME_COMPONENT = "/isam/runtime_components"
 WGA_DEFAULTS = "/isam/wga_templates/defaults"
 
+logger = logging.getLogger(__name__)
 
-class Manage(RestClient):
 
-    logger = Logger("Manage")
+class ReverseProxy(RestClient):
 
-    def __init__(self, base_url, username, password, log_level=logging.NOTSET):
-        super(Manage, self).__init__(base_url, username, password, log_level)
-        Manage.logger.set_level(log_level)
+    def __init__(self, base_url, username, password):
+        super(ReverseProxy, self).__init__(base_url, username, password)
 
-    #
-    # Reverse Proxy
-    #
-
-    def create_reverse_proxy(
+    def create_instance(
             self, inst_name=None, host=None, admin_id=None, admin_pwd=None,
             ssl_yn=None, key_file=None, cert_label=None, ssl_port=None,
             http_yn=None, http_port=None, https_yn=None, https_port=None,
             nw_interface_yn=None, ip_address=None):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         success, status_code, content = self.get_wga_defaults()
 
@@ -65,12 +56,11 @@ class Manage(RestClient):
         else:
             result = (False, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def delete_reverse_proxy(self, id, admin_id, admin_pwd):
-        Manage.logger.enter()
-        result = None
+    def delete_instance(self, id, admin_id, admin_pwd):
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "admin_id", admin_id)
@@ -82,34 +72,31 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def get_reverse_proxies(self):
-        Manage.logger.enter()
-        result = None
+    def list_instances(self):
+        #logger.enter()
 
         status_code, content = self.http_get_json(REVERSEPROXY)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
     def get_wga_defaults(self):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         status_code, content = self.http_get_json(WGA_DEFAULTS)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def restart_reverse_proxy(self, id):
-        Manage.logger.enter()
-        result = None
+    def restart_instance(self, id):
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "operation", "restart")
@@ -119,18 +106,15 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    # Auto Configuration
-
-    def configure_reverse_proxy_mmfa(
+    def configure_mmfa(
             self, webseal_id, lmi_hostname=None, lmi_port=None,
             lmi_username=None, lmi_password=None, runtime_hostname=None,
             runtime_port=None, runtime_username=None, runtime_password=None,
             reuse_certs=None,reuse_acls=None, reuse_pops=None):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         lmi_data = {}
         Utils.add_value_string(lmi_data, "hostname", lmi_hostname)
@@ -156,15 +140,12 @@ class Manage(RestClient):
 
         result = (status_code == 204, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    # Configuration
-
-    def add_reverse_proxy_configuration_stanza_entry(
+    def add_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         data = {"entries": [[str(entry_name), str(value)]]}
 
@@ -174,13 +155,12 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def delete_reverse_proxy_configuration_stanza_entry(
+    def delete_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value=None):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
                     % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
@@ -190,13 +170,12 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def update_reverse_proxy_configuration_stanza_entry(
+    def update_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "value", value)
@@ -207,12 +186,10 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    # Junction Management
-
-    def create_reverse_proxy_junction(
+    def create_junction(
             self, webseal_id, server_hostname=None, junction_point=None,
             junction_type=None, basic_auth_mode=None, tfim_sso=None,
             stateful_junction=None, preserve_cookie=None,
@@ -231,8 +208,7 @@ class Manage(RestClient):
             junction_hard_limit=None, junction_soft_limit=None,
             server_port=None, https_port=None, http_port=None, proxy_port=None,
             remote_http_header=None):
-        Manage.logger.enter()
-        result = None
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "server_hostname", server_hostname)
@@ -291,26 +267,23 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def get_reverse_proxy_junctions(self, webseal_id):
-        Manage.logger.enter()
-        result = None
+    def list_junctions(self, webseal_id):
+        #logger.enter()
 
         endpoint = "%s/%s/junctions" % (REVERSEPROXY, webseal_id)
         status_code, content = self.http_get_json(endpoint)
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    # Management Root
-
-    def import_reverse_proxy_management_root_files(self, webseal_id, file_path):
-        Manage.logger.enter()
-        result = None
+    def import_management_root_files(self, webseal_id, file_path):
+        #logger.enter()
+        result = (False, None, None)
 
         endpoint = ("%s/%s/management_root" % (REVERSEPROXY, webseal_id))
 
@@ -323,16 +296,13 @@ class Manage(RestClient):
 
                 result = (status_code == 200, status_code, content)
         except IOError as e:
-            Manage.logger.error(e)
-            result = (False, None, None)
+            logger.error(e)
 
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
 
-    def update_reverse_proxy_management_root_file(
-            self, webseal_id, page_id, contents):
-        Manage.logger.enter()
-        result = None
+    def update_management_root_file(self, webseal_id, page_id, contents):
+        #logger.enter()
 
         data = {}
         Utils.add_value_string(data, "type", "file")
@@ -344,88 +314,5 @@ class Manage(RestClient):
 
         result = (status_code == 200, status_code, content)
 
-        Manage.logger.exit(result)
-        return result
-
-    #
-    # Runtime Component
-    #
-
-    def get_runtime_components(self):
-        """
-        Query the ISAM API to get the runtime components list.
-        :return: The tuple of success flag, status code and response contents.
-        """
-        status_code, content = self.http_get_json(RUNTIME_COMPONENT)
-
-        result = (status_code == 200, status_code, content)
-
-        Manage.logger.exit(result)
-        return result
-
-    def configure_runtime_component(
-            self, ps_mode=None, user_registry=None, admin_password=None,
-            ldap_password=None, admin_cert_lifetime=None, ssl_compliance=None,
-            ldap_host=None, ldap_port=None, isam_domain=None, ldap_dn=None,
-            ldap_suffix=None, ldap_ssl_db=None, ldap_ssl_label=None,
-            isam_host=None, isam_port=None):
-        Manage.logger.enter()
-        result = None
-
-        data = {}
-        Utils.add_value_string(data, "ps_mode", ps_mode)
-        Utils.add_value_string(data, "user_registry", user_registry)
-        Utils.add_value_string(data, "admin_cert_lifetime", admin_cert_lifetime)
-        Utils.add_value_string(data, "ssl_compliance", ssl_compliance)
-        Utils.add_value_string(data, "admin_pwd", admin_password)
-        Utils.add_value_string(data, "ldap_pwd", ldap_password)
-        Utils.add_value_string(data, "ldap_host", ldap_host)
-        Utils.add_value_string(data, "domain", isam_domain)
-        Utils.add_value_string(data, "ldap_dn", ldap_dn)
-        Utils.add_value_string(data, "ldap_suffix", ldap_suffix)
-        Utils.add_value_string(data, "ldap_ssl_db", ldap_ssl_db)
-        Utils.add_value_string(data, "ldap_ssl_label", ldap_ssl_label)
-        Utils.add_value_string(data, "isam_host", isam_host)
-        Utils.add_value(data, "ldap_port", ldap_port)
-        Utils.add_value(data, "isam_port", isam_port)
-
-        status_code, content = self.http_post_json(RUNTIME_COMPONENT, data)
-
-        result = (status_code == 200, status_code, content)
-
-        Manage.logger.exit(result)
-        return result
-
-    def update_runtime_component_embedded_ldap_password(self, password):
-        Manage.logger.enter()
-        result = None
-
-        data = {}
-        Utils.add_value_string(data, "password", password)
-
-        status_code, content = self.http_post_json(EMBEDDED_LDAP_PASSWORD, data)
-
-        result = (status_code == 200, status_code, content)
-
-        Manage.logger.exit(result)
-        return result
-
-    #
-    # Policy Administation
-    #
-
-    def do_pdadmin_commands(self, admin_id, admin_pwd, commands):
-        Manage.logger.enter()
-        result = None
-
-        data = {}
-        Utils.add_value_string(data, "admin_id", admin_id)
-        Utils.add_value_string(data, "admin_pwd", admin_pwd)
-        Utils.add_value(data, "commands", commands)
-
-        status_code, content = self.http_post_json(PDADMIN, data)
-
-        result = (status_code == 200, status_code, content)
-
-        Manage.logger.exit(result)
+        #logger.exit(result)
         return result
