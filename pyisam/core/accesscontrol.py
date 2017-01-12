@@ -6,7 +6,7 @@ from .access.accesscontrol import AccessControl
 from .access.advancedconfig import AdvancedConfig
 from .access.apiprotection import APIProtection
 from .access.attributes import Attributes
-from .access.authentication import Authentication
+from .access.authentication import Authentication, Authentication9021
 from .access.mmfaconfig import MMFAConfig, MMFAConfig9021
 from .access.riskprofiles import RiskProfiles
 from .access.runtimeparameters import RuntimeParameters
@@ -40,3 +40,4 @@ class AccessControl9021(AccessControl9020):
     def __init__(self, base_url, username, password):
         super(AccessControl9021, self).__init__(base_url, username, password)
         self.mmfa_config = MMFAConfig9021(base_url, username, password)
+        self.authentication = Authentication9021(base_url, username, password)
