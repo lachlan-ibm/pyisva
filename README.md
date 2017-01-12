@@ -10,6 +10,28 @@ PyISAM is a Python framework for configuring an IBM Security Access Manager (ISA
 
 [Requests](http://docs.python-requests.org/en/master)
 
+## Usage
+
+```
+import logging
+
+from pyisam import Factory
+
+logging.basicConfig(level=logging.DEBUG)
+
+base_url = "https://isam.pyisam.ibm.com"
+username = "admin"
+password = "Passw0rd"
+
+factory = Factory(base_url, username, password)
+access_control = factory.get_access_control()
+success, status, content = access_control.authentication.create_policy(...)
+if success:
+    print "Successfully created the policy"
+else:
+    print Failed to create the policy. status: %i, content: %s" % (status, content)
+```
+
 ## Structure
 
 The project is structured closely around the ISAM Local Management Interface mega menu.
@@ -20,10 +42,10 @@ pyisam -
         {modules}
     core -
         {category} -
-            {category-module}
             {subcategory-module}
+        {category-module}
     util -
-        {modules}
+        {module}
     factory.py
 ```
 
@@ -35,9 +57,9 @@ pyisam -
 
 **Category:** maps to a mega menu category (e.g. Access Control) and contains all REST API functionality related to it.
 
-**Category Module:** a master module for the category that inherits all subcategory functionality. This module will contain multiple classes each for a specific ISAM firmware version.
+**Category Module:** a master module for the category that defines public accessible variables for each subcategory. This module will contain multiple classes each for a specific ISAM firmware version.
 
-**Subcategory Module:** a module that contains all REST API functionality for a given subcategory (e.g. Policy). These modules will contain multiple classes, a base class implementing all methods, and additional classes specific to a version of ISAM which override any functionality that has been changed in that version.
+**Subcategory Module:** a module that contains all REST API functionality for a given subcategory (e.g. API Protection). These modules will contain multiple classes, a base class implementing all methods, and additional classes specific to a version of ISAM which override any functionality that has been changed in that version.
 
 **Factory:** the master module/class of the framework. This module handles the discovery and enforcement of supported ISAM versions, along with dynamic instantiation of version specific classes.
 
