@@ -48,7 +48,8 @@ class MMFAConfig9021(MMFAConfig):
             details_url=None, enrollment_endpoint=None,
             hotp_shared_secret_endpoint=None, totp_shared_secret_endpoint=None,
             token_endpoint=None, authntrxn_endpoint=None,
-            discovery_mechanisms=None, options=None):
+            mobile_endpoint_prefix=None, discovery_mechanisms=None, 
+            options=None):
         #logger.enter()
 
         endpoints = {}
@@ -64,6 +65,8 @@ class MMFAConfig9021(MMFAConfig):
         Utils.add_value_string(endpoints, "token_endpoint", token_endpoint)
         Utils.add_value_string(
             endpoints, "authntrxn_endpoint", authntrxn_endpoint)
+        Utils.add_value_string(
+            endpoints, "mobile_endpoint_prefix", mobile_endpoint_prefix)
 
         data = {}
         Utils.add_value_string(data, "client_id", client_id)
