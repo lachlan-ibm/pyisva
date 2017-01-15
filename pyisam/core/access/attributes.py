@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 ATTRIBUTE_MATCHERS = "/iam/access/v8/attribute-matchers"
@@ -14,75 +14,62 @@ ATTRIBUTES = "/iam/access/v8/attributes"
 logger = logging.getLogger(__name__)
 
 
-class Attributes(RestClient):
+class Attributes(object):
 
     def __init__(self, base_url, username, password):
-        super(Attributes, self).__init__(base_url, username, password)
+        super(Attributes, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def create_attribute(
             self, category=None, matcher=None, issuer=None, description=None,
             name=None, datatype=None, uri=None, storage_session=None,
             storage_behavior=None, storage_device=None, type_risk=None,
             type_policy=None):
-        #logger.enter()
+        storage_data = DataObject()
+        storage_data.add_value("session", storage_session)
+        storage_data.add_value("behavior", storage_behavior)
+        storage_data.add_value("device", storage_device)
 
-        storage_data = {}
-        Utils.add_value(storage_data, "session", storage_session)
-        Utils.add_value(storage_data, "behavior", storage_behavior)
-        Utils.add_value(storage_data, "device", storage_device)
+        type_data = DataObject()
+        type_data.add_value("risk", type_risk)
+        type_data.add_value("policy", type_policy)
 
-        type_data = {}
-        Utils.add_value(type_data, "risk", type_risk)
-        Utils.add_value(type_data, "policy", type_policy)
+        data = DataObject()
+        data.add_value_string("category", category)
+        data.add_value_string("matcher", matcher)
+        data.add_value_string("issuer", issuer)
+        data.add_value_string("description", description)
+        data.add_value_string("name", name)
+        data.add_value_string("datatype", datatype)
+        data.add_value_string("uri", uri)
+        data.add_value("predefined", False)
+        data.add_value_not_empty("storageDomain", storage_data.data)
+        data.add_value_not_empty("type", type_data.data)
 
-        data = {}
-        Utils.add_value_string(data, "category", category)
-        Utils.add_value_string(data, "matcher", matcher)
-        Utils.add_value_string(data, "issuer", issuer)
-        Utils.add_value_string(data, "description", description)
-        Utils.add_value_string(data, "name", name)
-        Utils.add_value_string(data, "datatype", datatype)
-        Utils.add_value_string(data, "uri", uri)
-        Utils.add_value(data, "predefined", False)
-        Utils.add_value_not_empty(data, "storageDomain", storage_data)
-        Utils.add_value_not_empty(data, "type", type_data)
+        response = self.client.post_json(ATTRIBUTES, data.data)
+        response.success = response.status_code == 201
 
-        status_code, content = self.http_post_json(ATTRIBUTES, data=data)
-
-        result = (status_code == 201, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def list_attributes(
             self, sort_by=None, count=None, start=None, filter=None):
-        #logger.enter()
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("count", count)
+        parameters.add_value_string("start", start)
+        parameters.add_value_string("filter", filter)
 
-        parameters = {}
-        Utils.add_value_string(parameters, "sortBy", sort_by)
-        Utils.add_value_string(parameters, "count", count)
-        Utils.add_value_string(parameters, "start", start)
-        Utils.add_value_string(parameters, "filter", filter)
+        response = self.client.get_json(ATTRIBUTES, parameters.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(
-            ATTRIBUTES, parameters=parameters)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def list_attribute_matchers(self, sort_by=None, filter=None):
-        #logger.enter()
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("filter", filter)
 
-        parameters = {}
-        Utils.add_value_string(parameters, "sortBy", sort_by)
-        Utils.add_value_string(parameters, "filter", filter)
+        response = self.client.get_json(ATTRIBUTE_MATCHERS, parameters.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(
-            ATTRIBUTE_MATCHERS, parameters=parameters)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response

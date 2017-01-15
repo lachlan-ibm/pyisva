@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 ADVANCED_PARAMETERS = "/core/adv_params"
@@ -13,36 +13,29 @@ ADVANCED_PARAMETERS = "/core/adv_params"
 logger = logging.getLogger(__name__)
 
 
-class AdvancedTuning(RestClient):
+class AdvancedTuning(object):
 
     def __init__(self, base_url, username, password):
-        super(AdvancedTuning, self).__init__(base_url, username, password)
+        super(AdvancedTuning, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def create_parameter(self, key=None, value=None, comment=None):
-        #logger.enter()
+        data = DataObject()
+        data.add_value_string("key", key)
+        data.add_value_string("value", value)
+        data.add_value_string("comment", comment)
+        data.add_value("_isNew", True)
 
-        data = {}
-        Utils.add_value_string(data, "key", key)
-        Utils.add_value_string(data, "value", value)
-        Utils.add_value_string(data, "comment", comment)
-        Utils.add_value(data, "_isNew", True)
+        response = self.client.post_json(ADVANCED_PARAMETERS, data.data)
+        response.success = response.status_code == 201
 
-        status_code, content = self.http_post_json(ADVANCED_PARAMETERS, data)
-
-        result = (status_code == 201, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def list_parameters(self):
-        #logger.enter()
+        response = self.client.get_json(ADVANCED_PARAMETERS)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(ADVANCED_PARAMETERS)
+        if response.success:
+            response.json = response.json.get("tuningParameters", [])
 
-        if status_code == 200:
-            result = (True, status_code, content.get("tuningParameters", []))
-        else:
-            result = (False, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response

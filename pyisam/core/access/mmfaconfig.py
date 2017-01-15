@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 MMFA_CONFIG = "/iam/access/v8/mmfa-config"
@@ -13,29 +13,26 @@ MMFA_CONFIG = "/iam/access/v8/mmfa-config"
 logger = logging.getLogger(__name__)
 
 
-class MMFAConfig(RestClient):
+class MMFAConfig(object):
 
     def __init__(self, base_url, username, password):
-        super(MMFAConfig, self).__init__(base_url, username, password)
+        super(MMFAConfig, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def update(
             self, client_id=None, hostname=None, junction=None, options=None,
             port=None):
-        #logger.enter()
+        data = DataObject()
+        data.add_value_string("client_id", client_id)
+        data.add_value_string("hostname", hostname)
+        data.add_value_string("junction", junction)
+        data.add_value_string("options", options)
+        data.add_value("port", port)
 
-        data = {}
-        Utils.add_value_string(data, "client_id", client_id)
-        Utils.add_value_string(data, "hostname", hostname)
-        Utils.add_value_string(data, "junction", junction)
-        Utils.add_value_string(data, "options", options)
-        Utils.add_value(data, "port", port)
+        response = self.client.post_json(MMFA_CONFIG, data.data)
+        response.success = response.status_code == 204
 
-        status_code, content = self.http_post_json(MMFA_CONFIG, data=data)
-
-        result = (status_code == 204, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
 
 class MMFAConfig9021(MMFAConfig):
@@ -48,39 +45,30 @@ class MMFAConfig9021(MMFAConfig):
             details_url=None, enrollment_endpoint=None,
             hotp_shared_secret_endpoint=None, totp_shared_secret_endpoint=None,
             token_endpoint=None, authntrxn_endpoint=None,
-            mobile_endpoint_prefix=None, discovery_mechanisms=None, 
+            mobile_endpoint_prefix=None, discovery_mechanisms=None,
             options=None):
-        #logger.enter()
+        endpoints = DataObject()
+        endpoints.add_value_string("details_url", details_url)
+        endpoints.add_value_string("enrollment_endpoint", enrollment_endpoint)
+        endpoints.add_value_string(
+            "hotp_shared_secret_endpoint",hotp_shared_secret_endpoint)
+        endpoints.add_value_string(
+            "totp_shared_secret_endpoint",totp_shared_secret_endpoint)
+        endpoints.add_value_string("token_endpoint", token_endpoint)
+        endpoints.add_value_string("authntrxn_endpoint", authntrxn_endpoint)
+        endpoints.add_value_string(
+            "mobile_endpoint_prefix", mobile_endpoint_prefix)
 
-        endpoints = {}
-        Utils.add_value_string(endpoints, "details_url", details_url)
-        Utils.add_value_string(
-            endpoints, "enrollment_endpoint", enrollment_endpoint)
-        Utils.add_value_string(
-            endpoints, "hotp_shared_secret_endpoint",
-            hotp_shared_secret_endpoint)
-        Utils.add_value_string(
-            endpoints, "totp_shared_secret_endpoint",
-            totp_shared_secret_endpoint)
-        Utils.add_value_string(endpoints, "token_endpoint", token_endpoint)
-        Utils.add_value_string(
-            endpoints, "authntrxn_endpoint", authntrxn_endpoint)
-        Utils.add_value_string(
-            endpoints, "mobile_endpoint_prefix", mobile_endpoint_prefix)
+        data = DataObject()
+        data.add_value_string("client_id", client_id)
+        data.add_value_string("hostname", hostname)
+        data.add_value_string("junction", junction)
+        data.add_value_string("options", options)
+        data.add_value("port", port)
+        data.add_value_not_empty("endpoints", endpoints.data)
+        data.add_value_not_empty("discovery_mechanisms", discovery_mechanisms)
 
-        data = {}
-        Utils.add_value_string(data, "client_id", client_id)
-        Utils.add_value_string(data, "hostname", hostname)
-        Utils.add_value_string(data, "junction", junction)
-        Utils.add_value_string(data, "options", options)
-        Utils.add_value(data, "port", port)
-        Utils.add_value_not_empty(data, "endpoints", endpoints)
-        Utils.add_value_not_empty(
-            data, "discovery_mechanisms", discovery_mechanisms)
+        response = self.client.post_json(MMFA_CONFIG, data.data)
+        response.success = response.status_code == 204
 
-        status_code, content = self.http_post_json(MMFA_CONFIG, data=data)
-
-        result = (status_code == 204, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response

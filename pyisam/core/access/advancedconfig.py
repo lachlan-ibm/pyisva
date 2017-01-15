@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 OVERRIDE_CONFIGS = "/iam/access/v8/override-configs"
@@ -13,39 +13,32 @@ OVERRIDE_CONFIGS = "/iam/access/v8/override-configs"
 logger = logging.getLogger(__name__)
 
 
-class AdvancedConfig(RestClient):
+class AdvancedConfig(object):
 
     def __init__(self, base_url, username, password):
-        super(AdvancedConfig, self).__init__(base_url, username, password)
+        super(AdvancedConfig, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def list(self, sortBy=None, count=None, start=None, filter=None):
-        #logger.enter()
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sortBy)
+        parameters.add_value_string("count", count)
+        parameters.add_value_string("start", start)
+        parameters.add_value_string("filter", filter)
 
-        parameters = {}
-        Utils.add_value_string(parameters, "sortBy", sortBy)
-        Utils.add_value_string(parameters, "count", count)
-        Utils.add_value_string(parameters, "start", start)
-        Utils.add_value_string(parameters, "filter", filter)
+        response = self.client.get_json(OVERRIDE_CONFIGS, parameters.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(
-            OVERRIDE_CONFIGS, parameters=parameters)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def update(self, id, value=None, sensitive=None):
-        #logger.enter()
-
-        data = {}
-        Utils.add_value_string(data, "value", value)
-        Utils.add_value(data, "sensitive", sensitive)
+        data = DataObject()
+        data.add_value_string("value", value)
+        data.add_value("sensitive", sensitive)
 
         endpoint = "%s/%s" % (OVERRIDE_CONFIGS, id)
-        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (status_code == 204, status_code, content)
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 204
 
-        #logger.exit(result)
-        return result
+        return response

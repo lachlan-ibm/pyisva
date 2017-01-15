@@ -19,6 +19,7 @@ from .access.userregistry import UserRegistry
 class AccessControl9020(object):
 
     def __init__(self, base_url, username, password):
+        super(AccessControl9020, self).__init__()
         self.access_control = AccessControl(base_url, username, password)
         self.advanced_config = AdvancedConfig(base_url, username, password)
         self.api_protection = APIProtection(base_url, username, password)

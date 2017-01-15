@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 RUNTIME_TUNING = "/mga/runtime_tuning"
@@ -13,21 +13,19 @@ RUNTIME_TUNING = "/mga/runtime_tuning"
 logger = logging.getLogger(__name__)
 
 
-class RuntimeParameters(RestClient):
+class RuntimeParameters(object):
 
     def __init__(self, base_url, username, password):
-        super(RuntimeParameters, self).__init__(base_url, username, password)
+        super(RuntimeParameters, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def update(self, parameter, value=None):
-        #logger.enter()
-
-        data = {}
-        Utils.add_value(data, "value", value)
+        data = DataObject()
+        data.add_value("value", value)
 
         endpoint = "%s/%s/v1" % (RUNTIME_TUNING, parameter)
-        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (status_code == 200, status_code, content)
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 200
 
-        #logger.exit(result)
-        return result
+        return response
