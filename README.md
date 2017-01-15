@@ -13,23 +13,16 @@ PyISAM is a Python framework for configuring an IBM Security Access Manager (ISA
 ## Usage
 
 ```
-import logging
-
-from pyisam import Factory
-
-logging.basicConfig(level=logging.DEBUG)
-
-base_url = "https://isam.pyisam.ibm.com"
-username = "admin"
-password = "Passw0rd"
-
-factory = Factory(base_url, username, password)
-access_control = factory.get_access_control()
-success, status, content = access_control.authentication.create_policy(...)
-if success:
-    print "Successfully created the policy"
-else:
-    print Failed to create the policy. status: %i, content: %s" % (status, content)
+>>> import pyisam
+>>> factory = pyisam.Factory("https://isam.mmfa.ibm.com", "admin", "Passw0rd")
+>>> web = factory.get_web_settings()
+>>> resp = web.reverse_proxy.restart_instance("default")
+>>> if resp.success:
+...     print "Successfully restarted the default instance."
+... else:
+...     print "Failed to restart the default instance. status_code: %i, data: %s" % (r.status_code, r.data)
+...
+Successfully restarted the default instance
 ```
 
 ## Structure
