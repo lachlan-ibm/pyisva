@@ -6,6 +6,7 @@
 class AccessAuxiliary9020(object):
 
     def __init__(self, base_url, username, password):
+        super(AccessAuxiliary9020, self).__init__()
         pass
 
 

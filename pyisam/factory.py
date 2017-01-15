@@ -4,7 +4,7 @@
 
 import importlib
 
-from pyisam.util.restclient import RestClient
+from pyisam.util.restclient import RESTClient
 
 
 DEVELOPMENT_VERSION = "IBM Security Access Manager Development"
@@ -22,6 +22,7 @@ class AuthenticationError(Exception):
 class Factory(object):
 
     def __init__(self, base_url, username, password):
+        super(Factory, self).__init__()
         self._base_url = base_url
         self._username = username
         self._password = password
@@ -50,6 +51,9 @@ class Factory(object):
         module_name = "pyisam.core.systemsettings"
         return self._class_loader(module_name, class_name)
 
+    def get_version(self):
+        return self._version
+
     def get_web_auxiliary(self):
         class_name = "WebAuxiliary" + self._get_version()
         module_name = "pyisam.aux.webauxiliary"
@@ -68,17 +72,17 @@ class Factory(object):
         return Klass(self._base_url, self._username, self._password)
 
     def _discover_version(self):
-        client = RestClient(self._base_url, self._username, self._password)
-        status_code, content = client.http_get_json("/firmware_settings")
+        client = RESTClient(self._base_url, self._username, self._password)
+        response = client.get_json("/firmware_settings")
 
-        if status_code == 200:
-            for entry in content:
+        if response.status_code == 200:
+            for entry in response.json:
                 if entry.get("active", False):
                     if entry.get("name", "").endswith("_nonproduction_dev"):
                         self._version = DEVELOPMENT_VERSION
                     else:
                         self._version = entry.get("firmware_version")
-        elif status_code == 403:
+        elif response.status_code == 403:
             raise AuthenticationError("Authentication failed.")
 
         if not self._version:

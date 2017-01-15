@@ -5,8 +5,8 @@
 import logging
 import time
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject, Response
+from pyisam.util.restclient import RESTClient
 
 
 LMI = "/lmi"
@@ -15,50 +15,40 @@ LMI_RESTART = "/restarts/restart_server"
 logger = logging.getLogger(__name__)
 
 
-class RestartShutdown(RestClient):
+class RestartShutdown(object):
 
     def __init__(self, base_url, username, password):
-        super(RestartShutdown, self).__init__(base_url, username, password)
+        super(RestartShutdown, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def get_lmi_status(self):
-        #logger.enter()
+        response = self.client.get_json(LMI)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(LMI)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def restart_lmi(self):
-        #logger.enter()
-
         last_start = -1
 
-        success, status_code, content = self.get_lmi_status()
-
-        if success:
-            last_start = content[0].get("start_time", -1)
+        response = self.get_lmi_status()
+        if response.success:
+            last_start = response.json[0].get("start_time", -1)
 
         if last_start > 0:
-            status_code, content = self.http_post_json(LMI_RESTART)
+            response = self.client.post_json(LMI_RESTART)
+            response.success = (response.status_code == 200
+                and response.json.get("restart", False) == True)
 
-            if status_code == 200 and content.get("restart", False) == True:
+            if response.success:
                 logger.info("Waiting for LMI to restart...")
                 self._wait_on_lmi(last_start)
-                result = (True, status_code, content)
-            else:
-                result = (False, status_code, content)
         else:
             logger.error("Invalid start time was retrieved: %i", last_start)
-            result = (False, status_code, content)
+            response.success = False
 
-        #logger.exit(result)
-        return result
+        return response
 
     def _wait_on_lmi(self, last_start, sleep_interval=3):
-        #logger.enter()
-
         if last_start > 0:
             restart_time = last_start
 
@@ -69,15 +59,13 @@ class RestartShutdown(RestClient):
                 time.sleep(sleep_interval)
 
                 try:
-                    success, status_code, content = self.get_lmi_status()
+                    response = self.get_lmi_status()
 
-                    if success:
-                        restart_time = content[0].get("start_time", -1)
+                    if response.success:
+                        restart_time = response.json[0].get("start_time", -1)
                 except:
                     restart_time = -1
 
             time.sleep(sleep_interval)
         else:
             logger.error("Invalid last start time: %i", last_start)
-
-        #logger.exit()

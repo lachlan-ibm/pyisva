@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient, APPLICATION_JSON, TEXT_HTML
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject, Response
+from pyisam.util.restclient import RESTClient
 
 
 CLIENTS = "/iam/access/v8/clients"
@@ -15,66 +15,55 @@ MAPPING_RULES = "/iam/access/v8/mapping-rules"
 logger = logging.getLogger(__name__)
 
 
-class APIProtection(RestClient):
+class APIProtection(object):
 
     def __init__(self, base_url, username, password):
-        super(APIProtection, self).__init__(base_url, username, password)
+        super(APIProtection, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def create_client(
             self, name=None, redirect_uri=None, company_name=None,
             company_url=None, contact_person=None, contact_type=None,
             email=None, phone=None, other_info=None, definition=None,
             client_id=None, client_secret=None):
-        #logger.enter()
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("redirectUri", redirect_uri)
+        data.add_value_string("companyName", company_name)
+        data.add_value_string("companyUrl", company_url)
+        data.add_value_string("contactPerson", contact_person)
+        data.add_value_string("contactType", contact_type)
+        data.add_value_string("email", email)
+        data.add_value_string("phone", phone)
+        data.add_value_string("otherInfo", other_info)
+        data.add_value_string("definition", definition)
+        data.add_value_string("clientId", client_id)
+        data.add_value_string("clientSecret", client_secret)
 
-        data = {}
-        Utils.add_value_string(data, "name", name)
-        Utils.add_value_string(data, "redirectUri", redirect_uri)
-        Utils.add_value_string(data, "companyName", company_name)
-        Utils.add_value_string(data, "companyUrl", company_url)
-        Utils.add_value_string(data, "contactPerson", contact_person)
-        Utils.add_value_string(data, "contactType", contact_type)
-        Utils.add_value_string(data, "email", email)
-        Utils.add_value_string(data, "phone", phone)
-        Utils.add_value_string(data, "otherInfo", other_info)
-        Utils.add_value_string(data, "definition", definition)
-        Utils.add_value_string(data, "clientId", client_id)
-        Utils.add_value_string(data, "clientSecret", client_secret)
+        response = self.client.post_json(CLIENTS, data.data)
+        response.success = response.status_code == 201
 
-        status_code, content = self.http_post_json(CLIENTS, data=data)
-
-        result = (status_code == 201, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def delete_client(self, id):
-        #logger.enter()
-
         endpoint = "%s/%s" % (CLIENTS, id)
-        status_code, content = self.http_delete_json(endpoint)
 
-        result = (status_code == 204, status_code, content)
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
 
-        #logger.exit(result)
-        return result
+        return response
 
     def list_clients(self, sort_by=None, count=None, start=None, filter=None):
-        #logger.enter()
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("count", count)
+        parameters.add_value_string("start", start)
+        parameters.add_value_string("filter", filter)
 
-        parameters = {}
-        Utils.add_value_string(parameters, "sortBy", sort_by)
-        Utils.add_value_string(parameters, "count", count)
-        Utils.add_value_string(parameters, "start", start)
-        Utils.add_value_string(parameters, "filter", filter)
+        response = self.client.get_json(CLIENTS, parameters.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(
-            CLIENTS, parameters=parameters)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def create_definition(
             self, name=None, description=None, tcm_behavior=None,
@@ -87,138 +76,110 @@ class APIProtection(RestClient):
             enforce_single_access_token_per_grant=None,
             enable_multiple_refresh_tokens_for_fault_tolerance=None,
             pin_policy_enabled=None, grant_types=None):
-        #logger.enter()
-
-        data = {}
-        Utils.add_value_string(data, "name", name)
-        Utils.add_value_string(data, "description", description)
-        Utils.add_value_string(data, "tcmBehavior", tcm_behavior)
-        Utils.add_value_string(data, "tokenCharSet", token_char_set)
-        Utils.add_value(data, "accessTokenLifetime", access_token_lifetime)
-        Utils.add_value(data, "accessTokenLength", access_token_length)
-        Utils.add_value(
-            data, "authorizationCodeLifetime", authorization_code_lifetime)
-        Utils.add_value(
-            data, "authorizationCodeLength", authorization_code_length)
-        Utils.add_value(data, "refreshTokenLength", refresh_token_length)
-        Utils.add_value(
-            data, "maxAuthorizationGrantLifetime",
-            max_authorization_grant_lifetime)
-        Utils.add_value(data, "pinLength", pin_length)
-        Utils.add_value(
-            data, "enforceSingleUseAuthorizationGrant",
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("description", description)
+        data.add_value_string("tcmBehavior", tcm_behavior)
+        data.add_value_string("tokenCharSet", token_char_set)
+        data.add_value("accessTokenLifetime", access_token_lifetime)
+        data.add_value("accessTokenLength", access_token_length)
+        data.add_value("authorizationCodeLifetime", authorization_code_lifetime)
+        data.add_value("authorizationCodeLength", authorization_code_length)
+        data.add_value("refreshTokenLength", refresh_token_length)
+        data.add_value(
+            "maxAuthorizationGrantLifetime", max_authorization_grant_lifetime)
+        data.add_value("pinLength", pin_length)
+        data.add_value(
+            "enforceSingleUseAuthorizationGrant",
             enforce_single_use_authorization_grant)
-        Utils.add_value(data, "issueRefreshToken", issue_refresh_token)
-        Utils.add_value(
-            data, "enforceSingleAccessTokenPerGrant",
+        data.add_value("issueRefreshToken", issue_refresh_token)
+        data.add_value(
+            "enforceSingleAccessTokenPerGrant",
             enforce_single_access_token_per_grant)
-        Utils.add_value(
-            data, "enableMultipleRefreshTokensForFaultTolerance",
+        data.add_value(
+            "enableMultipleRefreshTokensForFaultTolerance",
             enable_multiple_refresh_tokens_for_fault_tolerance)
-        Utils.add_value(data, "pinPolicyEnabled", pin_policy_enabled)
-        Utils.add_value(data, "grantTypes", grant_types)
+        data.add_value("pinPolicyEnabled", pin_policy_enabled)
+        data.add_value("grantTypes", grant_types)
 
-        status_code, content = self.http_post_json(DEFINITIONS, data=data)
+        response = self.client.post_json(DEFINITIONS, data.data)
+        response.success = response.status_code == 201
 
-        result = (status_code == 201, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def delete_definition(self, id):
-        #logger.enter()
-
         endpoint = "%s/%s" % (DEFINITIONS, id)
-        status_code, content = self.http_delete_json(endpoint)
 
-        result = (status_code == 204, status_code, content)
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
 
-        #logger.exit(result)
-        return result
+        return response
 
     def list_definitions(
             self, sort_by=None, count=None, start=None, filter=None):
-        #logger.enter()
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("count", count)
+        parameters.add_value_string("start", start)
+        parameters.add_value_string("filter", filter)
 
-        parameters = {}
-        Utils.add_value_string(parameters, "sortBy", sort_by)
-        Utils.add_value_string(parameters, "count", count)
-        Utils.add_value_string(parameters, "start", start)
-        Utils.add_value_string(parameters, "filter", filter)
+        response = self.client.get_json(DEFINITIONS, parameters.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(
-            DEFINITIONS, parameters=parameters)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def create_mapping_rule(
             self, name=None, category=None, file_name=None, content=None):
-        #logger.enter()
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("category", category)
+        data.add_value_string("fileName", file_name)
+        data.add_value_string("content", content)
 
-        data = {}
-        Utils.add_value_string(data, "name", name)
-        Utils.add_value_string(data, "category", category)
-        Utils.add_value_string(data, "fileName", file_name)
-        Utils.add_value_string(data, "content", content)
+        response = self.client.post_json(MAPPING_RULES, data.data)
+        response.success = response.status_code == 201
 
-        status_code, content = self.http_post_json(MAPPING_RULES, data=data)
-
-        result = (status_code == 201, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def list_mapping_rules(
             self, sort_by=None, count=None, start=None, filter=None):
-        #logger.enter()
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("count", count)
+        parameters.add_value_string("start", start)
+        parameters.add_value_string("filter", filter)
 
-        parameters = {}
-        Utils.add_value_string(parameters, "sortBy", sort_by)
-        Utils.add_value_string(parameters, "count", count)
-        Utils.add_value_string(parameters, "start", start)
-        Utils.add_value_string(parameters, "filter", filter)
+        response = self.client.get_json(MAPPING_RULES, parameters.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_get_json(
-            MAPPING_RULES, parameters=parameters)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def import_mapping_rule(self, id, file_path):
-        #logger.enter()
-        result = (False, None, None)
+        response = Response()
 
         try:
             with open(file_path, 'rb') as mapping_rule:
                 files = {"file": mapping_rule}
-
                 endpoint = "%s/%s/file" % (MAPPING_RULES, id)
-                accept_type = "%s,%s" % (APPLICATION_JSON, TEXT_HTML)
-                status_code, content = self.http_post_file(
+                accept_type = "%s,%s" % ("application/json", "text/html")
+
+                response = self.client.post_file(
                     endpoint, accept_type=accept_type, files=files)
 
-                result = (status_code == 200, status_code, content)
+                response.success = response.status_code == 200
         except IOError as e:
             logger.error(e)
+            response.success = False
 
-        #logger.exit(result)
-        return result
+        return response
 
     def update_mapping_rule(self, id, content=None):
-        #logger.enter()
-
-        data = {}
-        Utils.add_value_string(data, "content", content)
+        data = DataObject()
+        data.add_value_string("content", content)
 
         endpoint = "%s/%s" % (MAPPING_RULES, id)
-        status_code, content = self.http_put_json(endpoint, data=data)
 
-        result = (status_code == 204, status_code, content)
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 204
 
-        #logger.exit(result)
-        return result
+        return response

@@ -18,6 +18,7 @@ from .system.sslcertificates import SSLCertificates
 class SystemSettings9020(object):
 
     def __init__(self, base_url, username, password):
+        super(SystemSettings9020, self).__init__()
         self.advanced_tuning = AdvancedTuning(base_url, username, password)
         self.admin_settings = AdminSettings(base_url, username, password)
         self.configuration = Configuration(base_url, username, password)

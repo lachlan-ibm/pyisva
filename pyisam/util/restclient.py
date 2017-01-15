@@ -2,184 +2,183 @@
 @copyright: IBM
 """
 
+import base64
 import json
 import logging
-import time
-from base64 import b64encode
-
 import requests
+import time
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-
-ACCEPT = "Accept"
-ALL = "*/*"
-APPLICATION_JSON = "application/json"
-AUTHORIZATION = "Authorization"
-CONTENT_TYPE = "Content-type"
-TEXT_HTML = "text/html"
+from .model import Response
 
 
 logger = logging.getLogger(__name__)
 
 
-class RestClient(object):
+class RESTClient(object):
 
     def __init__(self, base_url, username=None, password=None):
+        super(RESTClient, self).__init__()
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
         self._base_url = base_url
         self._username = username
         self._password = password
 
-    def http_delete(self, endpoint, accept_type=ALL):
+    def delete(self, endpoint, accept_type="*/*"):
         logger.debug("DELETE %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
 
-        response = requests.delete(
-            url=url, headers=headers, params=None, verify=False)
+        r = requests.delete(url=url, headers=headers, params=None, verify=False)
 
-        status_code = response.status_code
-        content = self._decode_json(response._content)
+        response = Response()
+        response.data = r._content
+        response.json = self._decode_json(response.data)
+        response.status_code = r.status_code
 
-        response.close()
+        r.close()
+        return response
 
-        return (status_code, content)
+    def delete_json(self, endpoint):
+        return self.delete(endpoint, accept_type="application/json")
 
-    def http_delete_json(self, endpoint):
-        return self.http_delete(endpoint, accept_type=APPLICATION_JSON)
-
-    def http_get(
-            self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
+    def get(
+            self, endpoint, accept_type="*/*", content_type="application/json",
             parameters=None):
         logger.debug("GET %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
 
-        response = requests.get(
+        r = requests.get(
             url=url, params=parameters, headers=headers, verify=False)
 
-        status_code = response.status_code
-        content = self._decode_json(response._content)
+        response = Response()
+        response.data = r._content
+        response.json = self._decode_json(response.data)
+        response.status_code = r.status_code
 
-        response.close()
+        r.close()
+        return response
 
-        return (status_code, content)
+    def get_json(self, endpoint, parameters=None):
+        return self.get(
+            endpoint, accept_type="application/json", parameters=parameters)
 
-    def http_get_json(self, endpoint, parameters=None):
-        return self.http_get(
-            endpoint, accept_type=APPLICATION_JSON, parameters=parameters)
+    def get_wait(
+            self, endpoint, status_code=200, iteration_wait=3,
+            max_iterations=20):
+        logger.debug("Waiting for %i response from %s", status_code, endpoint)
 
-    def http_get_wait(
-            self, endpoint, success_code=200, poll_interval=3,
-            max_number_polls=20):
-        logger.debug("Waiting for %i response from %s", success_code, endpoint)
-
+        response = Response()
         url = self._base_url + endpoint
-        status_code = 0
-        content = ""
 
-        poll_count = 0
-        while status_code != success_code and (
-                max_number_polls is None or poll_count < max_number_polls):
-            logger.debug("GET %s", endpoint)
+        iteration = 1
+        while response.status_code != status_code and (
+                max_iterations is None or iteration <= max_iterations):
+            logger.debug("#%i GET %s", iteration, endpoint)
             try:
-                response = requests.get(url=url, verify=False, timeout=1)
-                status_code = response.status_code
-                content = self._decode_json(response._content)
+                r = requests.get(url=url, verify=False, timeout=1)
+
+                response.data = r._content
+                response.status_code = r.status_code
+                response.json = self._decode_json(response.data)
+
+                r.close()
             except: # Ignore this
                 pass
-            logger.debug("Status Code: %i", status_code)
 
-            if status_code != success_code:
-                time.sleep(poll_interval)
-                poll_count += 1
+            if response.status_code != status_code:
+                time.sleep(iteration_wait)
+                iteration += 1
 
-        return (status_code, content)
+        return response
 
-    def http_post(
-            self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
+    def post(
+            self, endpoint, accept_type="*/*", content_type="application/json",
             parameters=None, data=""):
         logger.debug("POST %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
 
-        response = requests.post(
+        r = requests.post(
             url=url, headers=headers, params=parameters, data=data,
             verify=False)
 
-        status_code = response.status_code
-        content = self._decode_json(response._content)
+        response = Response()
+        response.data = r._content
+        response.json = self._decode_json(response.data)
+        response.status_code = r.status_code
 
-        response.close()
+        r.close()
+        return response
 
-        return (status_code, content)
-
-    def http_post_file(
-            self, endpoint, accept_type=APPLICATION_JSON, data="", files={}):
+    def post_file(
+            self, endpoint, accept_type="application/json", data="", files={}):
         logger.debug("POST %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
 
-        response = requests.post(
+        r = requests.post(
             url=url, headers=headers, data=data, files=files, verify=False)
 
-        status_code = response.status_code
-        content = self._decode_json(response._content)
+        response = Response()
+        response.data = r._content
+        response.json = self._decode_json(response.data)
+        response.status_code = r.status_code
 
-        response.close()
+        r.close()
+        return response
 
-        return (status_code, content)
+    def post_json(self, endpoint, data=""):
+        return self.post(
+            endpoint, accept_type="application/json", data=json.dumps(data))
 
-    def http_post_json(self, endpoint, data=""):
-        return self.http_post(
-            endpoint, accept_type=APPLICATION_JSON, data=json.dumps(data))
-
-    def http_put(
-            self, endpoint, accept_type=ALL, content_type=APPLICATION_JSON,
+    def put(
+            self, endpoint, accept_type="*/*", content_type="application/json",
             data=""):
         logger.debug("PUT %s", endpoint)
 
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
 
-        response = requests.put(
+        r = requests.put(
             url=url, headers=headers, params=None, data=data, verify=False)
 
-        status_code = response.status_code
-        content = self._decode_json(response._content)
+        response = Response()
+        response.data = r._content
+        response.json = self._decode_json(response.data)
+        response.status_code = r.status_code
 
-        response.close()
+        r.close()
+        return response
 
-        return (status_code, content)
+    def put_json(self, endpoint, data=""):
+        return self.put(
+            endpoint, accept_type="application/json", data=json.dumps(data))
 
-    def http_put_json(self, endpoint, data=""):
-        return self.http_put(
-            endpoint, accept_type=APPLICATION_JSON, data=json.dumps(data))
-
-    def _decode_json(self, content):
+    def _decode_json(self, data):
         try:
-            return json.loads(content)
+            return json.loads(data)
         except:
-            return content
+            return None
 
     def _get_headers(self, accept_type=None, content_type=None):
         headers = {}
 
         if accept_type:
-            headers[ACCEPT] = accept_type
+            headers["Accept"] = accept_type
 
         if content_type:
-            headers[CONTENT_TYPE] = content_type
+            headers["Content-type"] = content_type
 
         if self._username and self._password:
             credential = "%s:%s" % (self._username, self._password)
-            credential_encode = b64encode(credential.encode())
+            credential_encode = base64.b64encode(credential.encode())
             authorization = "Basic " + str(credential_encode.decode()).rstrip()
-            headers[AUTHORIZATION] = authorization
+            headers["Authorization"] = authorization
 
         return headers

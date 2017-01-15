@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject, Response
+from pyisam.util.restclient import RESTClient
 
 
 SSL_CERTIFICATES = "/isam/ssl_certificates"
@@ -13,69 +13,65 @@ SSL_CERTIFICATES = "/isam/ssl_certificates"
 logger = logging.getLogger(__name__)
 
 
-class SSLCertificates(RestClient):
+class SSLCertificates(object):
 
     def __init__(self, base_url, username, password):
-        super(SSLCertificates, self).__init__(base_url, username, password)
+        super(SSLCertificates, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def import_personal(self, kdb_id, file_path, password=None):
-        #logger.enter()
-        result = (False, None, None)
+        response = Response()
 
         try:
             with open(file_path, 'rb') as certificate:
-                data = {}
-                Utils.add_value_string(data, "operation", "import")
-                Utils.add_value_string(data, "password", password)
+                data = DataObject()
+                data.add_value_string("operation", "import")
+                data.add_value_string("password", password)
 
                 files = {"cert": certificate}
 
                 endpoint = ("%s/%s/personal_cert" % (SSL_CERTIFICATES, kdb_id))
-                status_code, content = self.http_post_file(
-                    endpoint, data=data, files=files)
 
-                result = (status_code == 200, status_code, content)
+                response = self.client.post_file(
+                    endpoint, data=data.data, files=files)
+                response.success = response.status_code == 200
         except IOError as e:
             logger.error(e)
+            response.success = False
 
-        #logger.exit(result)
-        return result
+        return response
 
     def import_signer(self, kdb_id, file_path, label=None):
-        #logger.enter()
-        result = (False, None, None)
+        response = Response()
 
         try:
             with open(file_path, 'rb') as certificate:
-                data = {}
-                Utils.add_value_string(data, "label", label)
+                data = DataObject()
+                data.add_value_string("label", label)
 
                 files = {"cert": certificate}
 
                 endpoint = ("%s/%s/signer_cert" % (SSL_CERTIFICATES, kdb_id))
-                status_code, content = self.http_post_file(
-                    endpoint, data=data, files=files)
 
-                result = (status_code == 200, status_code, content)
+                response = self.client.post_file(
+                    endpoint, data=data.data, files=files)
+                response.success = response.status_code == 200
         except IOError as e:
             logger.error(e)
+            response.success = False
 
-        #logger.exit(result)
-        return result
+        return response
 
     def load_signer(self, kdb_id, server=None, port=None, label=None):
-        #logger.enter()
-
-        data = {}
-        Utils.add_value_string(data, "operation", "load")
-        Utils.add_value_string(data, "label", label)
-        Utils.add_value_string(data, "server", server)
-        Utils.add_value(data, "port", port)
+        data = DataObject()
+        data.add_value_string("operation", "load")
+        data.add_value_string("label", label)
+        data.add_value_string("server", server)
+        data.add_value("port", port)
 
         endpoint = ("%s/%s/signer_cert" % (SSL_CERTIFICATES, kdb_id))
-        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (status_code == 200, status_code, content)
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 200
 
-        #logger.exit(result)
-        return result
+        return response

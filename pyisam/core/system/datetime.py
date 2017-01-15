@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 TIME_CONFIG = "/core/time_cfg"
@@ -13,25 +13,22 @@ TIME_CONFIG = "/core/time_cfg"
 logger = logging.getLogger(__name__)
 
 
-class DateTime(RestClient):
+class DateTime(object):
 
     def __init__(self, base_url, username, password):
-        super(DateTime, self).__init__(base_url, username, password)
+        super(DateTime, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def update(
             self, enable_ntp=True, ntp_servers=None, time_zone=None,
             date_time="0000-00-00 00:00:00"):
-        #logger.enter()
+        data = DataObject()
+        data.add_value_string("dateTime", date_time)
+        data.add_value_string("ntpServers", ntp_servers)
+        data.add_value_string("timeZone", time_zone)
+        data.add_value("enableNtp", enable_ntp)
 
-        data = {}
-        Utils.add_value_string(data, "dateTime", date_time)
-        Utils.add_value_string(data, "ntpServers", ntp_servers)
-        Utils.add_value_string(data, "timeZone", time_zone)
-        Utils.add_value(data, "enableNtp", enable_ntp)
+        response = self.client.put_json(TIME_CONFIG, data.data)
+        response.success = response.status_code == 200
 
-        status_code, content = self.http_put_json(TIME_CONFIG, data)
-
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response

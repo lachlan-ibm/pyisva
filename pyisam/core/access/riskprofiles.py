@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 RISK_PROFILES = "/iam/access/v8/risk/profiles"
@@ -13,24 +13,21 @@ RISK_PROFILES = "/iam/access/v8/risk/profiles"
 logger = logging.getLogger(__name__)
 
 
-class RiskProfiles(RestClient):
+class RiskProfiles(object):
 
     def __init__(self, base_url, username, password):
-        super(RiskProfiles, self).__init__(base_url, username, password)
+        super(RiskProfiles, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def create(self, description=None, name=None, active=None, attributes=None):
-        #logger.enter()
+        data = DataObject()
+        data.add_value_string("description", description)
+        data.add_value_string("name", name)
+        data.add_value("active", active)
+        data.add_value("attributes", attributes)
+        data.add_value("predefined", False)
 
-        data = {}
-        Utils.add_value_string(data, "description", description)
-        Utils.add_value_string(data, "name", name)
-        Utils.add_value(data, "active", active)
-        Utils.add_value(data, "attributes", attributes)
-        Utils.add_value(data, "predefined", False)
+        response = self.client.post_json(RISK_PROFILES, data.data)
+        response.success = response.status_code == 201
 
-        status_code, content = self.http_post_json(RISK_PROFILES, data=data)
-
-        result = (status_code == 201, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response

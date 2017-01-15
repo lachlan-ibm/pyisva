@@ -4,8 +4,8 @@
 
 import logging
 
-from pyisam.util.restclient import RestClient
-import pyisam.util.common as Utils
+from pyisam.util.model import DataObject
+from pyisam.util.restclient import RESTClient
 
 
 HOST_RECORDS = "/isam/host_records"
@@ -13,48 +13,41 @@ HOST_RECORDS = "/isam/host_records"
 logger = logging.getLogger(__name__)
 
 
-class HostsFile(RestClient):
+class HostsFile(object):
 
     def __init__(self, base_url, username, password):
-        super(HostsFile, self).__init__(base_url, username, password)
+        super(HostsFile, self).__init__()
+        self.client = RESTClient(base_url, username, password)
 
     def add_hostname(self, address, hostname=None):
-        #logger.enter()
-
-        data = {}
-        Utils.add_value_string(data, "name", hostname)
+        data = DataObject()
+        data.add_value_string("name", hostname)
 
         endpoint = "%s/%s/hostnames" % (HOST_RECORDS, address)
-        status_code, content = self.http_post_json(endpoint, data)
 
-        result = (status_code == 200, status_code, content)
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 200
 
-        #logger.exit(result)
-        return result
+        return response
 
-    def create_record(self, address, hostnames):
-        #logger.enter()
+    def create_record(self, address, hostname_list):
+        hostnames = []
+        for entry in hostname_list:
+            hostnames.append({"name":str(entry)})
 
-        data = {}
-        Utils.add_value_string(data, "addr", address)
-        data["hostnames"] = []
-        for entry in hostnames:
-            data["hostnames"].append({"name":str(entry)})
+        data = DataObject()
+        data.add_value_string("addr", address)
+        data.add_value_not_empty("hostnames", hostnames)
 
-        status_code, content = self.http_post_json(HOST_RECORDS, data)
+        response = self.client.post_json(HOST_RECORDS, data.data)
+        response.success = response.status_code == 200
 
-        result = (status_code == 200, status_code, content)
-
-        #logger.exit(result)
-        return result
+        return response
 
     def get_record(self, address):
-        #logger.enter()
-
         endpoint = "%s/%s/hostnames" % (HOST_RECORDS, address)
-        status_code, content = self.http_get_json(endpoint)
 
-        result = (status_code == 200, status_code, content)
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
 
-        #logger.exit(result)
-        return result
+        return response
