@@ -105,6 +105,51 @@ class Authentication(object):
 
         return response
 
+    def get_policy(self, id):
+        endpoint = "%s/%s" % (AUTHENTICATION_POLICIES, id)
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
+    def list_policies(
+            self, sort_by=None, count=None, start=None, filter=None):
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("count", count)
+        parameters.add_value_string("start", start)
+        parameters.add_value_string("filter", filter)
+
+        response = self.client.get_json(
+            AUTHENTICATION_POLICIES, parameters.data)
+        response.success = response.status_code == 200
+
+        return response
+
+    def update_policy(
+            self, id, name=None, policy=None, uri=None, description=None,
+            dialect=None, user_last_modified=None, last_modified=None,
+            date_created=None, predefined=None):
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("policy", policy)
+        data.add_value_string("uri", uri)
+        data.add_value_string("description", description)
+        data.add_value_string("dialect", dialect)
+        data.add_value_string("id", id)
+        data.add_value_string("userlastmodified", user_last_modified)
+        data.add_value_string("lastmodified", last_modified)
+        data.add_value_string("datecreated", date_created)
+        data.add_value("predefined", predefined)
+
+        endpoint = "%s/%s" % (AUTHENTICATION_POLICIES, id)
+
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
 
 class Authentication9021(Authentication):
 
@@ -129,5 +174,29 @@ class Authentication9021(Authentication):
 
         response = self.client.post_json(AUTHENTICATION_POLICIES, data.data)
         response.success = response.status_code == 201
+
+        return response
+
+    def update_policy(
+            self, id, name=None, policy=None, uri=None, description=None,
+            dialect=None, user_last_modified=None, last_modified=None,
+            date_created=None, predefined=None, enabled=None):
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("policy", policy)
+        data.add_value_string("uri", uri)
+        data.add_value_string("description", description)
+        data.add_value_string("dialect", dialect)
+        data.add_value_string("id", id)
+        data.add_value_string("userlastmodified", user_last_modified)
+        data.add_value_string("lastmodified", last_modified)
+        data.add_value_string("datecreated", date_created)
+        data.add_value("predefined", predefined)
+        data.add_value("enabled", enabled)
+
+        endpoint = "%s/%s" % (AUTHENTICATION_POLICIES, id)
+
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 204
 
         return response
