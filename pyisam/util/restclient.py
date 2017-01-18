@@ -76,7 +76,7 @@ class RESTClient(object):
         while response.status_code != status_code and (
                 max_iterations is None or iteration <= max_iterations):
             try:
-                self._log_request("GET", url, headers)
+                self._log_request("GET", url, None)
 
                 r = requests.get(url=url, verify=False, timeout=1)
 
@@ -185,10 +185,10 @@ class RESTClient(object):
 
     def _log_request(self, method, url, headers):
         safe_headers = copy.copy(headers)
-        if safe_headers.get("Authorization", None):
+        if safe_headers and safe_headers.get("Authorization", None):
             safe_headers["Authorization"] = "*******"
 
-        logger.debug("Request: method=%s, url=%s, headers=%s", method, url, safe_headers)
+        logger.debug("Request: %s %s headers=%s", method, url, safe_headers)
 
     def _log_response(self, status_code, headers):
-        logger.debug("Response: status_code=%i, headers=%s", status_code, headers)
+        logger.debug("Response: %i headers=%s", status_code, headers)
