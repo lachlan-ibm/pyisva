@@ -2,6 +2,8 @@
 @copyright: IBM
 """
 
+import json
+
 
 class DataObject(object):
 
@@ -30,3 +32,12 @@ class Response(object):
         self.json = None
         self.status_code = None
         self.success = None
+
+    def __str__(self):
+        return "<Response [%s, %s]>" % (self.success, self.status_code)
+
+    def decode_json(self, data):
+        try:
+            self.json = json.loads(data)
+        except:
+            self.json = None
