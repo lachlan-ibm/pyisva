@@ -35,13 +35,9 @@ class RESTClient(object):
 
         self._log_response(r.status_code, r.headers)
 
-        response = Response()
-        response.data = r._content
-        response.status_code = r.status_code
-        if "application/json" in accept_type.lower():
-            response.decode_json(response.data)
-
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def delete_json(self, endpoint):
@@ -60,13 +56,9 @@ class RESTClient(object):
 
         self._log_response(r.status_code, r.headers)
 
-        response = Response()
-        response.data = r._content
-        response.status_code = r.status_code
-        if "application/json" in accept_type.lower():
-            response.decode_json(response.data)
-
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def get_json(self, endpoint, parameters=None):
@@ -90,11 +82,7 @@ class RESTClient(object):
 
                 self._log_response(r.status_code, r.headers)
 
-                response.data = r._content
-                response.status_code = r.status_code
-                if "application/json" in accept_type.lower():
-                    response.decode_json(response.data)
-
+                response = self._build_response(r)
                 r.close()
             except: # Ignore this
                 pass
@@ -119,13 +107,9 @@ class RESTClient(object):
 
         self._log_response(r.status_code, r.headers)
 
-        response = Response()
-        response.data = r._content
-        response.status_code = r.status_code
-        if "application/json" in accept_type.lower():
-            response.decode_json(response.data)
-
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def post_file(
@@ -140,13 +124,9 @@ class RESTClient(object):
 
         self._log_response(r.status_code, r.headers)
 
-        response = Response()
-        response.data = r._content
-        response.status_code = r.status_code
-        if "application/json" in accept_type.lower():
-            response.decode_json(response.data)
-
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def post_json(self, endpoint, data=""):
@@ -166,18 +146,25 @@ class RESTClient(object):
 
         self._log_response(r.status_code, r.headers)
 
-        response = Response()
-        response.data = r._content
-        response.status_code = r.status_code
-        if "application/json" in accept_type.lower():
-            response.decode_json(response.data)
-
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def put_json(self, endpoint, data=""):
         return self.put(
             endpoint, accept_type="application/json", data=json.dumps(data))
+
+    def _build_response(self, request_response):
+        response = Response()
+
+        response.data = request_response._content
+        response.status_code = request_response.status_code
+        content_type = request_response.headers.get("Content-type", "").lower()
+        if "application/json" in content_type:
+            response.decode_json()
+
+        return response
 
     def _get_headers(self, accept_type=None, content_type=None):
         headers = {}

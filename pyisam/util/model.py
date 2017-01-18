@@ -36,8 +36,8 @@ class Response(object):
     def __str__(self):
         return "<Response [%s, %s]>" % (self.success, self.status_code)
 
-    def decode_json(self, data):
+    def decode_json(self):
         try:
-            self.json = json.loads(data)
+            self.json = json.loads(self.data)
         except:
             self.json = None
