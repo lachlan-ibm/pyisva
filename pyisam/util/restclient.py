@@ -3,6 +3,7 @@
 """
 
 import base64
+import copy
 import json
 import logging
 import requests
@@ -25,19 +26,18 @@ class RESTClient(object):
         self._password = password
 
     def delete(self, endpoint, accept_type="*/*"):
-        logger.debug("DELETE %s", endpoint)
-
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
 
+        self._log_request("DELETE", url, headers)
+
         r = requests.delete(url=url, headers=headers, params=None, verify=False)
 
-        response = Response()
-        response.data = r._content
-        response.json = self._decode_json(response.data)
-        response.status_code = r.status_code
+        self._log_response(r.status_code, r.headers)
 
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def delete_json(self, endpoint):
@@ -46,20 +46,19 @@ class RESTClient(object):
     def get(
             self, endpoint, accept_type="*/*", content_type="application/json",
             parameters=None):
-        logger.debug("GET %s", endpoint)
-
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
+
+        self._log_request("GET", url, headers)
 
         r = requests.get(
             url=url, params=parameters, headers=headers, verify=False)
 
-        response = Response()
-        response.data = r._content
-        response.json = self._decode_json(response.data)
-        response.status_code = r.status_code
+        self._log_response(r.status_code, r.headers)
 
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def get_json(self, endpoint, parameters=None):
@@ -70,21 +69,20 @@ class RESTClient(object):
             self, endpoint, status_code=200, iteration_wait=3,
             max_iterations=20):
         logger.debug("Waiting for %i response from %s", status_code, endpoint)
-
         response = Response()
         url = self._base_url + endpoint
 
         iteration = 1
         while response.status_code != status_code and (
                 max_iterations is None or iteration <= max_iterations):
-            logger.debug("#%i GET %s", iteration, endpoint)
             try:
+                self._log_request("GET", url, None)
+
                 r = requests.get(url=url, verify=False, timeout=1)
 
-                response.data = r._content
-                response.status_code = r.status_code
-                response.json = self._decode_json(response.data)
+                self._log_response(r.status_code, r.headers)
 
+                response = self._build_response(r)
                 r.close()
             except: # Ignore this
                 pass
@@ -98,39 +96,37 @@ class RESTClient(object):
     def post(
             self, endpoint, accept_type="*/*", content_type="application/json",
             parameters=None, data=""):
-        logger.debug("POST %s", endpoint)
-
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
+
+        self._log_request("POST", url, headers)
 
         r = requests.post(
             url=url, headers=headers, params=parameters, data=data,
             verify=False)
 
-        response = Response()
-        response.data = r._content
-        response.json = self._decode_json(response.data)
-        response.status_code = r.status_code
+        self._log_response(r.status_code, r.headers)
 
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def post_file(
             self, endpoint, accept_type="application/json", data="", files={}):
-        logger.debug("POST %s", endpoint)
-
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type)
+
+        self._log_request("POST", url, headers)
 
         r = requests.post(
             url=url, headers=headers, data=data, files=files, verify=False)
 
-        response = Response()
-        response.data = r._content
-        response.json = self._decode_json(response.data)
-        response.status_code = r.status_code
+        self._log_response(r.status_code, r.headers)
 
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def post_json(self, endpoint, data=""):
@@ -140,31 +136,35 @@ class RESTClient(object):
     def put(
             self, endpoint, accept_type="*/*", content_type="application/json",
             data=""):
-        logger.debug("PUT %s", endpoint)
-
         url = self._base_url + endpoint
         headers = self._get_headers(accept_type, content_type)
+
+        self._log_request("PUT", url, headers)
 
         r = requests.put(
             url=url, headers=headers, params=None, data=data, verify=False)
 
-        response = Response()
-        response.data = r._content
-        response.json = self._decode_json(response.data)
-        response.status_code = r.status_code
+        self._log_response(r.status_code, r.headers)
 
+        response = self._build_response(r)
         r.close()
+
         return response
 
     def put_json(self, endpoint, data=""):
         return self.put(
             endpoint, accept_type="application/json", data=json.dumps(data))
 
-    def _decode_json(self, data):
-        try:
-            return json.loads(data)
-        except:
-            return None
+    def _build_response(self, request_response):
+        response = Response()
+
+        response.data = request_response._content
+        response.status_code = request_response.status_code
+        content_type = request_response.headers.get("Content-type", "").lower()
+        if "application/json" in content_type:
+            response.decode_json()
+
+        return response
 
     def _get_headers(self, accept_type=None, content_type=None):
         headers = {}
@@ -182,3 +182,13 @@ class RESTClient(object):
             headers["Authorization"] = authorization
 
         return headers
+
+    def _log_request(self, method, url, headers):
+        safe_headers = copy.copy(headers)
+        if safe_headers and safe_headers.get("Authorization", None):
+            safe_headers["Authorization"] = "*******"
+
+        logger.debug("Request: %s %s headers=%s", method, url, safe_headers)
+
+    def _log_response(self, status_code, headers):
+        logger.debug("Response: %i headers=%s", status_code, headers)
