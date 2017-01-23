@@ -10,6 +10,7 @@ from pyisam.util.restclient import RESTClient
 
 SCHEMA_ISAM_USER = "urn:ietf:params:scim:schemas:extension:isam:1.0:User"
 SCIM_CONFIGURATION = "/mga/scim/configuration"
+SCIM_CONFIGURATION_GENERAL = "/mga/scim/configuration/general"
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,25 @@ class SCIMConfig(object):
         return response
 
     def update(self, data):
-        response = self.client.put_json(SCIM_CONFIGURATION, data=data)
+        response = self.client.put_json(SCIM_CONFIGURATION, data)
         response.success = response.status_code == 200
+
+        return response
+
+    def update_attribute_mode(
+            self, schema_name, scim_attribute, scim_subattribute=None,
+            mode=None):
+
+        data = DataObject()
+        data.add_value_string("mode", mode)
+
+        endpoint = "%s/attribute_modes/%s/%s" % (
+            SCIM_CONFIGURATION_GENERAL, schema_name, scim_attribute)
+        if scim_subattribute:
+            endpoint = "%s/%s" % (endpoint, scim_subattribute)
+
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 204
 
         return response
 
