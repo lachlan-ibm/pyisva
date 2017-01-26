@@ -31,19 +31,9 @@ class Factory(object):
         self._discover_version()
         self._get_version()
 
-    def get_access_auxiliary(self):
-        class_name = "AccessAuxiliary" + self._get_version()
-        module_name = "pyisam.aux.accessauxiliary"
-        return self._class_loader(module_name, class_name)
-
     def get_access_control(self):
         class_name = "AccessControl" + self._get_version()
         module_name = "pyisam.core.accesscontrol"
-        return self._class_loader(module_name, class_name)
-
-    def get_system_auxiliary(self):
-        class_name = "SystemAuxiliary" + self._get_version()
-        module_name = "pyisam.aux.systemauxiliary"
         return self._class_loader(module_name, class_name)
 
     def get_system_settings(self):
@@ -53,11 +43,6 @@ class Factory(object):
 
     def get_version(self):
         return self._version
-
-    def get_web_auxiliary(self):
-        class_name = "WebAuxiliary" + self._get_version()
-        module_name = "pyisam.aux.webauxiliary"
-        return self._class_loader(module_name, class_name)
 
     def get_web_settings(self):
         class_name = "WebSettings" + self._get_version()

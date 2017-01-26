@@ -31,8 +31,6 @@ The project is structured closely around the ISAM Local Management Interface meg
 
 ```
 pyisam -
-    aux -
-        {modules}
     core -
         {category} -
             {subcategory-module}
@@ -43,8 +41,6 @@ pyisam -
 ```
 
 **Core:** functionality that is an exact, or close to, mapping of the available ISAM REST APIs.
-
-**Auxiliary:** functionality that is not a specific ISAM REST API but is a common procedure to configuring appliances. This may include multiple calls for `Core` functionality.
 
 **Utilities:** functionality that does not configure an ISAM appliance but aid in configuration tasks.
 
