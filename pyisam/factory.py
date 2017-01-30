@@ -36,6 +36,11 @@ class Factory(object):
         module_name = "pyisam.core.accesscontrol"
         return self._class_loader(module_name, class_name)
 
+    def get_analysis_diagnostics(self):
+        class_name = "AnalysisDiagnostics" + self._get_version()
+        module_name = "pyisam.core.analysisdiagnostics"
+        return self._class_loader(module_name, class_name)
+
     def get_system_settings(self):
         class_name = "SystemSettings" + self._get_version()
         module_name = "pyisam.core.systemsettings"
