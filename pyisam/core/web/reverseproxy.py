@@ -142,6 +142,15 @@ class ReverseProxy(object):
 
         return response
 
+    def get_configuration_stanza_entry(self, webseal_id, stanza_id, entry_name):
+        endpoint = ("%s/%s/configuration/stanza/%s/entry_name/%s"
+                    % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
     def update_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
         data = DataObject()
