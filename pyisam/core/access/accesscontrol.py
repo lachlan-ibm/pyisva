@@ -37,6 +37,14 @@ class AccessControl(object):
 
         return response
 
+    def delete_policy(
+            self, id=None):
+        endpoint = "%s/%s" % (POLICIES, id)
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
+
     def list_policies(self, sort_by=None, filter=None):
         parameters = DataObject()
         parameters.add_value_string("sortBy", sort_by)
@@ -72,6 +80,14 @@ class AccessControl(object):
 
         response = self.client.post_json(POLICY_ATTACHMENTS, data.data)
         response.success = response.status_code == 201
+
+        return response
+
+    def remove_resource(
+            self, id):
+        endpoint = "%s/%s" % (POLICY_ATTACHMENTS, id)
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
 
         return response
 
