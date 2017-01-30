@@ -6,10 +6,12 @@ import logging
 
 from pyisam.util.model import DataObject, Response
 from pyisam.util.restclient import RESTClient
+import urllib
 
 
 REVERSEPROXY = "/wga/reverseproxy"
 WGA_DEFAULTS = "/isam/wga_templates/defaults"
+JUNCTIONS_QUERY = "junctions_id"
 
 logger = logging.getLogger(__name__)
 
@@ -227,6 +229,15 @@ class ReverseProxy(object):
         endpoint = "%s/%s/junctions" % (REVERSEPROXY, str(webseal_id))
 
         response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 200
+
+        return response
+
+    def delete_junction(self, webseal_id, junction_point):
+        query = urllib.urlencode({ JUNCTIONS_QUERY : junction_point})
+        endpoint = "%s/%s/junctions?%s" % (REVERSEPROXY, webseal_id, query)
+
+        response = self.client.delete_json(endpoint)
         response.success = response.status_code == 200
 
         return response
