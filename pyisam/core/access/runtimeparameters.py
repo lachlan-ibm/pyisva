@@ -31,6 +31,15 @@ class RuntimeParameters(object):
 
         return response
 
+
+    def get_runtime_tuning(self):
+        endpoint = "%s/v1" % RUNTIME_TUNING
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
     def add_listening_interface(self, interface, port, secure=None):
         data = DataObject()
         data.add_value("interface", interface)
