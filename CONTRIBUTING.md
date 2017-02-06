@@ -38,7 +38,7 @@ Bugs are tracked as [GitHub Issues](https://guides.github.com/features/issues).
 When executing the code snippet stated below, the instance is restarted, however the Response success is set to `False`.
 ```python
 >>> import pyisam
->>> factory = pyisam.Factory("https://isam.mmfa.ibm.com", "admin", "*******")
+>>> factory = pyisam.Factory("https://isam.mmfa.ibm.com", "admin", "Passw0rd")
 >>> web = factory.get_web_settings()
 >>> response = web.reverse_proxy.restart_instance("default")
 >>> print response
@@ -46,7 +46,7 @@ When executing the code snippet stated below, the instance is restarted, however
 ```
 The expected value of the Response success is `True`, as the instance has been restarted and the Response status code is `200`. The Web service endpoint was additionally tested with the following cURL command:
 ```shell
-curl -kv -u 'admin:*******' -H 'Accept: application/json' -H 'Content-type: application/json' -X PUT https://isam.mmfa.ibm.com/wga/reverseproxy/default -d '{"operation":"restart"}'
+curl -kv -u 'admin:Passw0rd' -H 'Accept: application/json' -H 'Content-type: application/json' -X PUT https://isam.mmfa.ibm.com/wga/reverseproxy/default -d '{"operation":"restart"}'
 ```
 
 ## Suggesting Enhancements
@@ -80,7 +80,7 @@ Enhancement requests are tracked as [GitHub Issues](https://guides.github.com/fe
 
 This task can be achieved with the following cURL command:
 ```shell
-curl -kv -u 'admin:*******' -H 'Accept: application/json' -H 'Content-type: application/json' -X PUT https://isam.mmfa.ibm.com/wga/reverseproxy/default -d '{"admin_id":"sec_master","admin_pwd":"*******","operation":"unconfigure"}'
+curl -kv -u 'admin:Passw0rd' -H 'Accept: application/json' -H 'Content-type: application/json' -X PUT https://isam.mmfa.ibm.com/wga/reverseproxy/default -d '{"admin_id":"sec_master","admin_pwd":"Passw0rd","operation":"unconfigure"}'
 ```
 
 ## Contributing Code

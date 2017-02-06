@@ -16,7 +16,7 @@ quick and easy way to construct configuration scripts for appliances.
 
 ```python
 >>> import pyisam
->>> factory = pyisam.Factory("https://isam.mmfa.ibm.com", "admin", "*******")
+>>> factory = pyisam.Factory("https://isam.mmfa.ibm.com", "admin", "Passw0rd")
 >>> web = factory.get_web_settings()
 >>> resp = web.reverse_proxy.restart_instance("default")
 >>> if resp.success:
