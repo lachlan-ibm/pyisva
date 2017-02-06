@@ -11,6 +11,7 @@ from pyisam.util.restclient import RESTClient
 POLICIES = "/iam/access/v8/policies"
 POLICY_ATTACHMENTS = "/iam/access/v8/policyattachments"
 POLICY_ATTACHMENTS_PDADMIN = "/iam/access/v8/policyattachments/pdadmin"
+OBLIGATIONS = "/iam/access/v8/obligations"
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +106,59 @@ class AccessControl(object):
         endpoint = "%s/deployment/%s" % (POLICY_ATTACHMENTS, id)
 
         response = self.client.put_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
+
+    def publish_multiple_policy_attachments(self, *ids):
+        id_string = ""
+        for id in ids:
+
+            if len(id_string) > 0:
+                id_string += ", "
+            id_string += str(id)
+
+        data = DataObject()
+        data.add_value_string("policyAttachmentIds", id_string)
+
+        endpoint = "%s/deployment" % POLICY_ATTACHMENTS
+
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
+    def list_obligations(self, sort_by=None, filter=None):
+        parameters = DataObject()
+        parameters.add_value_string("sortBy", sort_by)
+        parameters.add_value_string("filter", filter)
+
+        response = self.client.get_json(OBLIGATIONS, parameters.data)
+        response.success = response.status_code == 200
+
+        return response
+
+    def create_obligation(
+            self, name=None, predefined=False, description=None, obligationURI=None,
+            type=None, parameters=None, typeId=None, properties=None):
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value("predefined", predefined)
+        data.add_value_string("description", description)
+        data.add_value_string("obligationURI", obligationURI)
+        data.add_value_string("type", type)
+        data.add_value("parameters", parameters)
+        data.add_value_string("typeId", typeId)
+        data.add_value("properties", properties)
+
+        response = self.client.post_json(OBLIGATIONS, data.data)
+        response.success = response.status_code == 201
+
+        return response
+
+    def delete_obligation(self, id):
+        endpoint = "%s/%s" % (OBLIGATIONS, id)
+        response = self.client.delete_json(endpoint)
         response.success = response.status_code == 204
 
         return response
