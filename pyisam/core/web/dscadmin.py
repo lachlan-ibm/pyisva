@@ -23,18 +23,6 @@ class DSCAdmin(object):
     def list_replica_sets(self):
         """
         List the replica sets in the DSC server.
-        [
-           {
-             id: 0,
-             "name": "replica1",
-             "sessions": 436
-           },
-           {
-             id: 1,
-             "name": "replica2",
-             "sessions": 20902
-           }
-        ]
         """
         response = self.client.get_json(DSC_ADMIN_REPLICAS)
         response.success = response.status_code == 200
@@ -44,18 +32,6 @@ class DSCAdmin(object):
     def list_servers(self, replica_set):
         """
         List the servers (WebSEALs) for a replica set.
-        [
-           {
-             id: 0,
-             "server": "webseal1",
-             "joined": "2013-10-09-14:51:21 UTC"
-           },
-           {
-             id: 1,
-             "server": "webseal2",
-             "joined": "2013-10-09-14:51:29 UTC"
-           }
-        ]
         """
         replica_set = urllib.quote(replica_set, safe='')
         endpoint = "%s/%s/servers" % (DSC_ADMIN_REPLICAS, replica_set)
@@ -68,17 +44,6 @@ class DSCAdmin(object):
     def list_user_sessions(self, replica_set, user_name_pattern, max_results):
         """
         List user sessions in a replica set.
-        {
-             "total_sessions" : 42,
-             "matched_sessions" : [
-                 {
-                   "id": 0,
-                   "user": "sec_master",
-                   "session": "JKSUtZ1ap4mNy+JpwacfD7eynUffyHZqkTEzuhuCZ41mx7QYBm0=",
-                   "date": "2013-10-09-14:52:26 UTC"
-                 }
-             ]
-        }
         """
         parameters = DataObject()
         parameters.add_value_string("user", user_name_pattern)
