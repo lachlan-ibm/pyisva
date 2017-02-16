@@ -71,7 +71,8 @@ class AccessControl(object):
 
     def configure_resource(
             self, server=None, resource_uri=None,
-            policy_combining_algorithm=None, policies=None, type="reverse_proxy"):
+            policy_combining_algorithm=None, policies=None,
+            type="reverse_proxy"):
         data = DataObject()
         data.add_value_string("server", server)
         data.add_value_string("resourceUri", resource_uri)
