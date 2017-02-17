@@ -10,7 +10,14 @@ quick and easy way to construct configuration scripts for appliances.
 
 ## Installation
 
-*To be documented...*
+For Linux/macOS: if you clone the library to `~/repos/pyisam`, add this to `~/.profile`:
+```sh
+# add pyisam library to Python's search path
+export PYTHONPATH="${PYTHONPATH}:${HOME}/repos/pyisam"
+```
+
+*More to come...*
+
 
 ## Usage
 
