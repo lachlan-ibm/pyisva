@@ -71,15 +71,13 @@ class AccessControl(object):
 
     def configure_resource(
             self, server=None, resource_uri=None,
-            policy_combining_algorithm=None, policies=None,
-            type="reverse_proxy"):
+            policy_combining_algorithm=None, policies=None):
         data = DataObject()
         data.add_value_string("server", server)
         data.add_value_string("resourceUri", resource_uri)
         data.add_value_string(
             "policyCombiningAlgorithm", policy_combining_algorithm)
         data.add_value("policies", policies)
-        data.add_value_string("type", type)
 
         response = self.client.post_json(POLICY_ATTACHMENTS, data.data)
         response.success = response.status_code == 201
@@ -162,5 +160,28 @@ class AccessControl(object):
         endpoint = "%s/%s" % (OBLIGATIONS, id)
         response = self.client.delete_json(endpoint)
         response.success = response.status_code == 204
+
+        return response
+
+
+class AccessControl9030(AccessControl):
+
+    def __init__(self, base_url, username, password):
+        super(AccessControl9030, self).__init__(base_url, username, password)
+
+    def configure_resource(
+            self, server=None, resource_uri=None,
+            policy_combining_algorithm=None, policies=None,
+            type="reverse_proxy"):
+        data = DataObject()
+        data.add_value_string("server", server)
+        data.add_value_string("resourceUri", resource_uri)
+        data.add_value_string(
+            "policyCombiningAlgorithm", policy_combining_algorithm)
+        data.add_value("policies", policies)
+        data.add_value_string("type", type)
+
+        response = self.client.post_json(POLICY_ATTACHMENTS, data.data)
+        response.success = response.status_code == 201
 
         return response

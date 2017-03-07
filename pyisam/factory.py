@@ -9,7 +9,8 @@ from pyisam.util.restclient import RESTClient
 
 DEVELOPMENT_VERSION = "IBM Security Access Manager Development"
 VERSIONS = {
-    DEVELOPMENT_VERSION: "9021",
+    DEVELOPMENT_VERSION: "9030",
+    "IBM Security Access Manager 9.0.3.0": "9030",
     "IBM Security Access Manager 9.0.2.1": "9021",
     "IBM Security Access Manager 9.0.2.0": "9020"
 }

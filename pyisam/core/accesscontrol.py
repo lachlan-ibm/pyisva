@@ -42,3 +42,10 @@ class AccessControl9021(AccessControl9020):
         super(AccessControl9021, self).__init__(base_url, username, password)
         self.mmfa_config = MMFAConfig9021(base_url, username, password)
         self.authentication = Authentication9021(base_url, username, password)
+
+
+class AccessControl9030(AccessControl9021):
+
+    def __init__(self, base_url, username, password):
+        super(AccessControl9030, self).__init__(base_url, username, password)
+        self.access_control = AccessControl9030(base_url, username, password)
