@@ -22,3 +22,9 @@ class WebSettings9021(WebSettings9020):
 
     def __init__(self, base_url, username, password):
         super(WebSettings9021, self).__init__(base_url, username, password)
+
+
+class WebSettings9030(WebSettings9021):
+
+    def __init__(self, base_url, username, password):
+        super(WebSettings9030, self).__init__(base_url, username, password)

@@ -3,6 +3,7 @@
 """
 
 from .access.accesscontrol import AccessControl
+from .access.accesscontrol import AccessControl9030 as AC9030
 from .access.advancedconfig import AdvancedConfig
 from .access.apiprotection import APIProtection
 from .access.attributes import Attributes
@@ -48,4 +49,4 @@ class AccessControl9030(AccessControl9021):
 
     def __init__(self, base_url, username, password):
         super(AccessControl9030, self).__init__(base_url, username, password)
-        self.access_control = AccessControl9030(base_url, username, password)
+        self.access_control = AC9030(base_url, username, password)

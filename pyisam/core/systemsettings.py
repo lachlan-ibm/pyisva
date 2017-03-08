@@ -36,3 +36,9 @@ class SystemSettings9021(SystemSettings9020):
 
     def __init__(self, base_url, username, password):
         super(SystemSettings9021, self).__init__(base_url, username, password)
+
+
+class SystemSettings9030(SystemSettings9021):
+
+    def __init__(self, base_url, username, password):
+        super(SystemSettings9030, self).__init__(base_url, username, password)
