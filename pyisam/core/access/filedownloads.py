@@ -4,6 +4,7 @@
 
 import logging
 
+from pyisam.util.model import DataObject
 from pyisam.util.restclient import RESTClient
 
 FILE_DOWNLOADS = "/isam/downloads"
@@ -22,5 +23,19 @@ class FileDownloads(object):
 
         response = self.client.get_json(endpoint)
         response.success = response.status_code == 200
+
+        return response
+
+    def get_directory(self, path, recursive=None):
+        parameters = DataObject()
+        parameters.add_value("recursive", recursive)
+
+        endpoint = "%s/%s" % (FILE_DOWNLOADS, path)
+
+        response = self.client.get_json(endpoint, parameters.data)
+        response.success == response.status_code == 200
+
+        if response.success and isinstance(response.json, dict):
+            response.json = response.json.get("contents", [])
 
         return response
