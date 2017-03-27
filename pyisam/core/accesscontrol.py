@@ -8,6 +8,7 @@ from .access.advancedconfig import AdvancedConfig
 from .access.apiprotection import APIProtection
 from .access.attributes import Attributes
 from .access.authentication import Authentication, Authentication9021
+from .access.filedownloads import FileDownloads
 from .access.mmfaconfig import MMFAConfig, MMFAConfig9021
 from .access.riskprofiles import RiskProfiles
 from .access.runtimeparameters import RuntimeParameters
@@ -26,6 +27,7 @@ class AccessControl9020(object):
         self.api_protection = APIProtection(base_url, username, password)
         self.attributes = Attributes(base_url, username, password)
         self.authentication = Authentication(base_url, username, password)
+        self.file_downloads = FileDownloads(base_url, username, password)
         self.mmfa_config = MMFAConfig(base_url, username, password)
         self.risk_profiles = RiskProfiles(base_url, username, password)
         self.runtime_parameters = RuntimeParameters(
