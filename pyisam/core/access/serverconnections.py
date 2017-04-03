@@ -58,7 +58,7 @@ class ServerConnections(object):
     def delete_ldap(self, uuid):
         endpoint = "%s/%s/v1" % (SERVER_CONNECTION_LDAP, uuid)
 
-        response =  self.delete_json(endpoint)
+        response = self.client.delete_json(endpoint)
         response.success = response.status_code == 204
 
         return response
@@ -66,7 +66,7 @@ class ServerConnections(object):
     def list_ldap(self):
         endpoint = SERVER_CONNECTION_LDAP + "/v1"
 
-        response =  self.get_json(endpoint)
+        response = self.client.get_json(endpoint)
         response.success = response.status_code == 200
 
         return response
