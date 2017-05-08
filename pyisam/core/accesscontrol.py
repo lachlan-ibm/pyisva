@@ -9,6 +9,7 @@ from .access.apiprotection import APIProtection
 from .access.attributes import Attributes
 from .access.authentication import Authentication, Authentication9021
 from .access.mmfaconfig import MMFAConfig, MMFAConfig9021
+from .access.pushnotification import PushNotification, PushNotification9021
 from .access.riskprofiles import RiskProfiles
 from .access.runtimeparameters import RuntimeParameters
 from .access.scimconfig import SCIMConfig
@@ -27,6 +28,7 @@ class AccessControl9020(object):
         self.attributes = Attributes(base_url, username, password)
         self.authentication = Authentication(base_url, username, password)
         self.mmfa_config = MMFAConfig(base_url, username, password)
+        self.push_notification = PushNotification(base_url, username, password)
         self.risk_profiles = RiskProfiles(base_url, username, password)
         self.runtime_parameters = RuntimeParameters(
             base_url, username, password)
@@ -42,6 +44,7 @@ class AccessControl9021(AccessControl9020):
     def __init__(self, base_url, username, password):
         super(AccessControl9021, self).__init__(base_url, username, password)
         self.mmfa_config = MMFAConfig9021(base_url, username, password)
+        self.push_notification = PushNotification9021(base_url, username, password)
         self.authentication = Authentication9021(base_url, username, password)
 
 
