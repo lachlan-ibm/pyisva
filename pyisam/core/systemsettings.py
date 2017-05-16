@@ -7,6 +7,7 @@ from .system.advancedtuning import AdvancedTuning
 from .system.configuration import Configuration
 from .system.datetime import DateTime
 from .system.dns import DNS
+from .system.filedownloads import FileDownloads
 from .system.firststeps import FirstSteps
 from .system.hostsfile import HostsFile
 from .system.interfaces import Interfaces
@@ -24,6 +25,7 @@ class SystemSettings9020(object):
         self.configuration = Configuration(base_url, username, password)
         self.date_time = DateTime(base_url, username, password)
         self.dns = DNS(base_url, username, password)
+        self.file_downloads = FileDownloads(base_url, username, password)
         self.first_steps = FirstSteps(base_url, username, password)
         self.hosts_file = HostsFile(base_url, username, password)
         self.interfaces = Interfaces(base_url, username, password)
