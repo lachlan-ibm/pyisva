@@ -259,10 +259,10 @@ class ReverseProxy(object):
 
         return response
 
-    def import_management_root_file(self, webseal_id, page_id, file_path):
+    def import_management_root_files(self, webseal_id, file_path):
         response = Response()
 
-        endpoint = ("%s/%s/management_root/%s" % (REVERSEPROXY, webseal_id, page_id))
+        endpoint = ("%s/%s/management_root" % (REVERSEPROXY, webseal_id))
 
         try:
             with open(file_path, 'rb') as pages:
