@@ -288,3 +288,21 @@ class ReverseProxy(object):
         response.success = response.status_code == 200
 
         return response
+
+    # Upload a single file (eg HTML or ico), rather than a zip.
+    def import_management_root_file(self, webseal_id, page_id, file_path):
+        response = Response()
+
+        endpoint = ("%s/%s/management_root/%s" % (REVERSEPROXY, webseal_id, page_id))
+
+        try:
+            with open(file_path, 'rb') as contents:
+                files = {"file": contents}
+
+                response = self.client.post_file(endpoint, files=files)
+                response.success = response.status_code == 200
+        except IOError as e:
+            logger.error(e)
+            response.success = False
+
+        return response
