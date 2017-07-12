@@ -75,3 +75,50 @@ class SSLCertificates(object):
         response.success = response.status_code == 200
 
         return response
+
+    def get_database(self, kdb_id):
+        endpoint = ("%s/%s/details" % (SSL_CERTIFICATES, kdb_id))
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
+    def create_database(self, kdb_name,
+            type=None, token_label=None, passcode=None, hsm_type=None,
+            ip=None, port=None, kneti_hash=None, esn=None,
+            secondary_ip=None, secondary_port=None,
+            secondary_kneti_hash=None, secondary_esn=None,
+            use_rfs=None, rfs=None, rfs_port=None,
+            rfs_auth=None, update_zip=None, safenet_pw=None):
+        endpoint = SSL_CERTIFICATES
+
+        data = DataObject()
+        data.add_value_string("kdb_name", kdb_name)
+        data.add_value_string("token_label", token_label)
+        data.add_value_string("passcode", passcode)
+        data.add_value_string("type", type)
+        data.add_value_string("token_label", token_label)
+        data.add_value_string("passcode", passcode)
+        data.add_value_string("hsm_type", hsm_type)
+        data.add_value_string("ip", ip)
+        data.add_value("port", port)
+        data.add_value_string("kneti_hash", kneti_hash)
+        data.add_value_string("esn", esn)
+        data.add_value_string("secondary_ip", secondary_ip)
+        data.add_value("secondary_port", secondary_port)
+        data.add_value_string("secondary_kneti_hash", secondary_kneti_hash)
+        data.add_value_string("secondary_esn", secondary_esn)
+        data.add_value_string("use_rfs", use_rfs)
+        data.add_value("rfs", rfs)
+        data.add_value("rfs_port", rfs_port)
+        data.add_value("rfs_auth", rfs_auth)
+        data.add_value_string("safenet_pw", safenet_pw)
+
+        if update_zip:
+            raise NotImplementedError
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 200
+
+        return response
