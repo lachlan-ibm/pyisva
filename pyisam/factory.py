@@ -29,6 +29,7 @@ class Factory(object):
         self._username = username
         self._password = password
         self._version = None
+        self._deployment_model = "Appliance"
 
         self._discover_version()
         self._get_version()
@@ -61,21 +62,28 @@ class Factory(object):
 
     def _class_loader(self, module_name, class_name):
         Klass = getattr(importlib.import_module(module_name), class_name)
-        return Klass(self._base_url, self._username, self._password)
+        return Klass(self._base_url, self._username, self._password, "Docker" == self._deployment_model)
 
     def _discover_version(self):
         client = RESTClient(self._base_url, self._username, self._password)
-        response = client.get_json("/firmware_settings")
 
+        response = client.get_json("/core/sys/versions")
         if response.status_code == 200:
-            for entry in response.json:
-                if entry.get("active", False):
-                    if entry.get("name", "").endswith("_nonproduction_dev"):
-                        self._version = DEVELOPMENT_VERSION
-                    else:
-                        self._version = entry.get("firmware_version")
+            self._version          = "{0} {1}".format(response.json.get("product_description"), response.json.get("firmware_version"))
+            self._deployment_model = response.json.get("deployment_model")
         elif response.status_code == 403:
             raise AuthenticationError("Authentication failed.")
+        else:
+            response = client.get_json("/firmware_settings")
+            if response.status_code == 200:
+                for entry in response.json:
+                    if entry.get("active", False):
+                        if entry.get("name", "").endswith("_nonproduction_dev"):
+                            self._version = DEVELOPMENT_VERSION
+                        else:
+                            self._version = entry.get("firmware_version")
+            elif response.status_code == 403:
+                raise AuthenticationError("Authentication failed.")
 
         if not self._version:
             raise Exception("Failed to retrieve the ISAM firmware version.")
