@@ -38,18 +38,18 @@ class SystemSettings9020(object):
 class SystemSettings9021(SystemSettings9020):
 
     def __init__(self, base_url, username, password, docker):
-        super(SystemSettings9021, self).__init__(base_url, username, password)
+        super(SystemSettings9021, self).__init__(base_url, username, password, docker)
 
 
 class SystemSettings9030(SystemSettings9021):
 
     def __init__(self, base_url, username, password, docker):
-        super(SystemSettings9030, self).__init__(base_url, username, password)
+        super(SystemSettings9030, self).__init__(base_url, username, password, docker)
 
 
 class SystemSettings9040(SystemSettings9030):
 
     def __init__(self, base_url, username, password, docker):
-        super(SystemSettings9040, self).__init__(base_url, username, password)
+        super(SystemSettings9040, self).__init__(base_url, username, password, docker)
         if docker:
             self.configuration = DockerConfiguration(base_url, username, password)

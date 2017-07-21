@@ -44,7 +44,7 @@ class AccessControl9020(object):
 class AccessControl9021(AccessControl9020):
 
     def __init__(self, base_url, username, password, docker):
-        super(AccessControl9021, self).__init__(base_url, username, password)
+        super(AccessControl9021, self).__init__(base_url, username, password, docker)
         self.mmfa_config = MMFAConfig9021(base_url, username, password)
         self.push_notification = PushNotification9021(base_url, username, password)
         self.authentication = Authentication9021(base_url, username, password)
@@ -53,7 +53,7 @@ class AccessControl9021(AccessControl9020):
 class AccessControl9030(AccessControl9021):
 
     def __init__(self, base_url, username, password, docker):
-        super(AccessControl9030, self).__init__(base_url, username, password)
+        super(AccessControl9030, self).__init__(base_url, username, password, docker)
         self.access_control = AC9030(base_url, username, password)
 
 
