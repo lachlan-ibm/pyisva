@@ -91,7 +91,7 @@ class TemplateFiles(object):
 
         return response
 
-    def import_files(self, file_path):
+    def import_files(self, file_path, force=True):
         response = Response()
 
         try:
@@ -99,7 +99,7 @@ class TemplateFiles(object):
                 files = {"file": templates}
 
                 data = DataObject()
-                data.add_value("force", True)
+                data.add_value("force", force)
 
                 response = self.client.post_file(
                     TEMPLATE_FILES, data=data.data, files=files)
