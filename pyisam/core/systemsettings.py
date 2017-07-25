@@ -5,7 +5,6 @@
 from .system.adminsettings import AdminSettings
 from .system.advancedtuning import AdvancedTuning
 from .system.configuration import Configuration
-from .system.configuration import DockerConfiguration
 from .system.datetime import DateTime
 from .system.dns import DNS
 from .system.filedownloads import FileDownloads
@@ -19,7 +18,7 @@ from .system.sslcertificates import SSLCertificates
 
 class SystemSettings9020(object):
 
-    def __init__(self, base_url, username, password, docker):
+    def __init__(self, base_url, username, password):
         super(SystemSettings9020, self).__init__()
         self.advanced_tuning = AdvancedTuning(base_url, username, password)
         self.admin_settings = AdminSettings(base_url, username, password)
@@ -37,19 +36,17 @@ class SystemSettings9020(object):
 
 class SystemSettings9021(SystemSettings9020):
 
-    def __init__(self, base_url, username, password, docker):
-        super(SystemSettings9021, self).__init__(base_url, username, password, docker)
+    def __init__(self, base_url, username, password):
+        super(SystemSettings9021, self).__init__(base_url, username, password)
 
 
 class SystemSettings9030(SystemSettings9021):
 
-    def __init__(self, base_url, username, password, docker):
-        super(SystemSettings9030, self).__init__(base_url, username, password, docker)
+    def __init__(self, base_url, username, password):
+        super(SystemSettings9030, self).__init__(base_url, username, password)
 
 
 class SystemSettings9040(SystemSettings9030):
 
-    def __init__(self, base_url, username, password, docker):
-        super(SystemSettings9040, self).__init__(base_url, username, password, docker)
-        if docker:
-            self.configuration = DockerConfiguration(base_url, username, password)
+    def __init__(self, base_url, username, password):
+        super(SystemSettings9040, self).__init__(base_url, username, password)

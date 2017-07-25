@@ -21,7 +21,7 @@ from .access.userregistry import UserRegistry
 
 class AccessControl9020(object):
 
-    def __init__(self, base_url, username, password, docker):
+    def __init__(self, base_url, username, password):
         super(AccessControl9020, self).__init__()
         self.access_control = AccessControl(base_url, username, password)
         self.advanced_config = AdvancedConfig(base_url, username, password)
@@ -33,7 +33,7 @@ class AccessControl9020(object):
         self.push_notification = PushNotification(base_url, username, password)
         self.risk_profiles = RiskProfiles(base_url, username, password)
         self.runtime_parameters = RuntimeParameters(
-            base_url, username, password, docker)
+            base_url, username, password)
         self.scim_config = SCIMConfig(base_url, username, password)
         self.server_connections = ServerConnections(
             base_url, username, password)
@@ -43,8 +43,8 @@ class AccessControl9020(object):
 
 class AccessControl9021(AccessControl9020):
 
-    def __init__(self, base_url, username, password, docker):
-        super(AccessControl9021, self).__init__(base_url, username, password, docker)
+    def __init__(self, base_url, username, password):
+        super(AccessControl9021, self).__init__(base_url, username, password)
         self.mmfa_config = MMFAConfig9021(base_url, username, password)
         self.push_notification = PushNotification9021(base_url, username, password)
         self.authentication = Authentication9021(base_url, username, password)
@@ -52,13 +52,12 @@ class AccessControl9021(AccessControl9020):
 
 class AccessControl9030(AccessControl9021):
 
-    def __init__(self, base_url, username, password, docker):
-        super(AccessControl9030, self).__init__(base_url, username, password, docker)
+    def __init__(self, base_url, username, password):
+        super(AccessControl9030, self).__init__(base_url, username, password)
         self.access_control = AC9030(base_url, username, password)
 
 
 class AccessControl9040(AccessControl9030):
 
-    def __init__(self, base_url, username, password, docker):
-        super(AccessControl9040, self).__init__(base_url, username, password, docker)
-
+    def __init__(self, base_url, username, password):
+        super(AccessControl9040, self).__init__(base_url, username, password)
