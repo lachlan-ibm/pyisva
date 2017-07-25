@@ -8,6 +8,7 @@ from pyisam.util.model import DataObject
 from pyisam.util.restclient import RESTClient
 
 
+SERVER_CONNECTION_ROOT = "/mga/server_connections"
 SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap"
 SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws"
 
@@ -99,8 +100,24 @@ class ServerConnections(object):
 
         return response
 
+    def delete_web_service(self, uuid):
+        endpoint = "%s/%s/v1" % (SERVER_CONNECTION_WEB_SERVICE, uuid)
+
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
+
     def list_web_service(self):
         endpoint = SERVER_CONNECTION_WEB_SERVICE + "/v1"
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
+    def list_all(self):
+        endpoint = SERVER_CONNECTION_ROOT + "/v1"
 
         response = self.client.get_json(endpoint)
         response.success = response.status_code == 200
