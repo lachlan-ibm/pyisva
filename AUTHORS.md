@@ -9,3 +9,4 @@ PyISAM was originally developed by Benjamin Martin. It is now actively being ext
 - Peter Calvert \<pcalvert@us.ibm.com\>
 - John Sedgmen \<jsedgmen@au1.ibm.com\>
 - Alex Jansons \<alexjans@au1.ibm.com\>
+- Jared Page \<jaredpa@au1.ibm.com\>
