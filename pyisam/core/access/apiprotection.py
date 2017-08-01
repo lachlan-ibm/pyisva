@@ -107,6 +107,48 @@ class APIProtection(object):
 
         return response
 
+    def update_definition(
+            self, definition_id=None, name=None, description=None, tcm_behavior=None,
+            token_char_set=None, access_token_lifetime=None,
+            access_token_length=None, authorization_code_lifetime=None,
+            authorization_code_length=None, refresh_token_length=None,
+            max_authorization_grant_lifetime=None, pin_length=None,
+            enforce_single_use_authorization_grant=None,
+            issue_refresh_token=None,
+            enforce_single_access_token_per_grant=None,
+            enable_multiple_refresh_tokens_for_fault_tolerance=None,
+            pin_policy_enabled=None, grant_types=None, oidc=None):
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("description", description)
+        data.add_value_string("tcmBehavior", tcm_behavior)
+        data.add_value_string("tokenCharSet", token_char_set)
+        data.add_value("accessTokenLifetime", access_token_lifetime)
+        data.add_value("accessTokenLength", access_token_length)
+        data.add_value("authorizationCodeLifetime", authorization_code_lifetime)
+        data.add_value("authorizationCodeLength", authorization_code_length)
+        data.add_value("refreshTokenLength", refresh_token_length)
+        data.add_value(
+            "maxAuthorizationGrantLifetime", max_authorization_grant_lifetime)
+        data.add_value("pinLength", pin_length)
+        data.add_value(
+            "enforceSingleUseAuthorizationGrant",
+            enforce_single_use_authorization_grant)
+        data.add_value("issueRefreshToken", issue_refresh_token)
+        data.add_value(
+            "enforceSingleAccessTokenPerGrant",
+            enforce_single_access_token_per_grant)
+        data.add_value(
+            "enableMultipleRefreshTokensForFaultTolerance",
+            enable_multiple_refresh_tokens_for_fault_tolerance)
+        data.add_value("pinPolicyEnabled", pin_policy_enabled)
+        data.add_value("grantTypes", grant_types)
+
+        response = self.client.put_json(DEFINITIONS+"/"+str(definition_id), data.data)
+        response.success = response.status_code == 204
+
+        return response
+
     def delete_definition(self, id):
         endpoint = "%s/%s" % (DEFINITIONS, id)
 
