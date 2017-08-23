@@ -52,7 +52,7 @@ class AdminSettings(object):
         data.add_value(
             "validateClientCertIdentity", validate_client_cert_identity)
         data.add_value("enableSSLv3", enable_ss_lv3)
-
+        
         response = self.client.put_json(ADMIN_CONFIG, data.data)
         response.success = response.status_code == 200
 

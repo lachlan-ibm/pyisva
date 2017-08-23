@@ -11,6 +11,7 @@ from .system.filedownloads import FileDownloads
 from .system.firststeps import FirstSteps
 from .system.hostsfile import HostsFile
 from .system.interfaces import Interfaces
+from .system.staticroutes import StaticRoutes
 from .system.licensing import Licensing
 from .system.restartshutdown import RestartShutdown
 from .system.sslcertificates import SSLCertificates
@@ -29,6 +30,7 @@ class SystemSettings9020(object):
         self.first_steps = FirstSteps(base_url, username, password)
         self.hosts_file = HostsFile(base_url, username, password)
         self.interfaces = Interfaces(base_url, username, password)
+        self.static_routes = StaticRoutes(base_url, username, password)
         self.licensing = Licensing(base_url, username, password)
         self.restartshutdown = RestartShutdown(base_url, username, password)
         self.ssl_certificates = SSLCertificates(base_url, username, password)
