@@ -34,6 +34,11 @@ class Factory(object):
         self._discover_version()
         self._get_version()
 
+    def get_federation(self):
+        class_name = "Federation" + self._get_version()
+        module_name = "pyisam.core.federationsettings"
+        return self._class_loader(module_name, class_name)
+
     def get_access_control(self):
         class_name = "AccessControl" + self._get_version()
         module_name = "pyisam.core.accesscontrol"

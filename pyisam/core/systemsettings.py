@@ -15,6 +15,7 @@ from .system.staticroutes import StaticRoutes
 from .system.licensing import Licensing
 from .system.restartshutdown import RestartShutdown
 from .system.sslcertificates import SSLCertificates
+from .system.clicommands import CLICommands
 
 
 class SystemSettings9020(object):
@@ -34,6 +35,7 @@ class SystemSettings9020(object):
         self.licensing = Licensing(base_url, username, password)
         self.restartshutdown = RestartShutdown(base_url, username, password)
         self.ssl_certificates = SSLCertificates(base_url, username, password)
+        self.cli_commands = CLICommands(base_url, username, password)
 
 
 class SystemSettings9021(SystemSettings9020):

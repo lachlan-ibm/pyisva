@@ -31,7 +31,7 @@ class AdvancedConfig(object):
 
         return response
 
-    def update(self, id, value=None, sensitive=None):
+    def update(self, id, value=None, sensitive=False):
         data = DataObject()
         data.add_value_string("value", value)
         data.add_value("sensitive", sensitive)

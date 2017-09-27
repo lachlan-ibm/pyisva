@@ -12,6 +12,7 @@ import urllib
 REVERSEPROXY = "/wga/reverseproxy"
 WGA_DEFAULTS = "/isam/wga_templates/defaults"
 JUNCTIONS_QUERY = "junctions_id"
+JMT_CONFIG = "/wga/jmt_config"
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +113,32 @@ class ReverseProxy(object):
         data.add_value_not_empty("runtime", runtime_data.data)
 
         endpoint = "%s/%s/mmfa_config" % (REVERSEPROXY, webseal_id)
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
+    def configure_fed(self,webseal_id,federation_id=None,reuse_certs=False,reuse_acls=False,
+        runtime_hostname=None,runtime_port=None,runtime_username=None,runtime_password=None):
+
+
+        data = DataObject()
+        data.add_value_string("federation_id", federation_id)
+        data.add_value("reuse_certs", reuse_certs)
+        data.add_value("reuse_acls", reuse_acls)
+
+        runtime_data = DataObject()
+        runtime_data.add_value_string("hostname", runtime_hostname)
+        runtime_data.add_value_string("port", runtime_port)
+        runtime_data.add_value_string("username", runtime_username)
+        runtime_data.add_value_string("password", runtime_password)
+
+        data.add_value_not_empty("runtime", runtime_data.data)
+
+        print(data.data)
+
+        endpoint = "%s/%s/fed_config" % (REVERSEPROXY, webseal_id)
 
         response = self.client.post_json(endpoint, data.data)
         response.success = response.status_code == 204
@@ -304,5 +331,37 @@ class ReverseProxy(object):
         except IOError as e:
             logger.error(e)
             response.success = False
+
+        return response
+
+    def import_junction_mapping_file(self, file_path):
+
+        response = Response()
+
+        try:
+            with open(file_path, 'rb') as contents:
+                jmt_config_file = {"jmt_config_file": contents}
+
+                response = self.client.post_file(JMT_CONFIG, files=jmt_config_file)
+                response.success = response.status_code == 200
+        except IOError as e:
+            logger.error(e)
+            response.success = False
+
+        return response
+
+    def update_junction_mapping_file(self, file_id, jmt_config_data):
+
+        data = DataObject()
+        data.add_value_string("id", file_id)
+        data.add_value_string("jmt_config_data", jmt_config_data)
+
+        endpoint = ("%s/%s"
+                    % (JMT_CONFIG, file_id))
+        print(endpoint)
+        print(data.data)
+
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 200
 
         return response

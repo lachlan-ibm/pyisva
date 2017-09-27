@@ -23,7 +23,6 @@ class DataObject(object):
         if value is not None:
             self.data[key] = str(value)
 
-
 class Response(object):
 
     def __init__(self):
