@@ -54,6 +54,12 @@ class PushNotification9021(PushNotification):
     def __init__(self, base_url, username, password):
         super(PushNotification9021, self).__init__(base_url, username, password)
 
+    def list_registrations(self):
+        response = self.client.get_json(PUSH_NOTIFICATION)
+        response.success = response.status_code == 200
+
+        return response
+        
     def create(
             self, app_id=None, platform=None, provider_address=None,
             apple_key_store=None, apple_key_label=None,

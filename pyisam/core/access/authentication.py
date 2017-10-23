@@ -87,8 +87,8 @@ class Authentication(object):
 
     def create_policy(
             self, name=None, policy=None, uri=None, description=None,
-            dialect=None, id=None, user_last_modified=None, last_modified=None,
-            date_created=None):
+            dialect="urn:ibm:security:authentication:policy:1.0:schema", 
+            id=None, user_last_modified=None, last_modified=None, date_created=None):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("policy", policy)
@@ -129,7 +129,8 @@ class Authentication(object):
 
     def update_policy(
             self, id, name=None, policy=None, uri=None, description=None,
-            dialect=None, user_last_modified=None, last_modified=None,
+            dialect="urn:ibm:security:authentication:policy:1.0:schema",
+            user_last_modified=None, last_modified=None,
             date_created=None, predefined=None):
         data = DataObject()
         data.add_value_string("name", name)
@@ -158,8 +159,9 @@ class Authentication9021(Authentication):
 
     def create_policy(
             self, name=None, policy=None, uri=None, description=None,
-            dialect=None, id=None, user_last_modified=None, last_modified=None,
-            date_created=None, enabled=None):
+            dialect="urn:ibm:security:authentication:policy:1.0:schema",
+            id=None, user_last_modified=None, last_modified=None,
+            date_created=None, enabled=True):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("policy", policy)
@@ -179,8 +181,9 @@ class Authentication9021(Authentication):
 
     def update_policy(
             self, id, name=None, policy=None, uri=None, description=None,
-            dialect=None, user_last_modified=None, last_modified=None,
-            date_created=None, predefined=None, enabled=None):
+            dialect="urn:ibm:security:authentication:policy:1.0:schema",
+            user_last_modified=None, last_modified=None,
+            date_created=None, predefined=None, enabled=True):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("policy", policy)

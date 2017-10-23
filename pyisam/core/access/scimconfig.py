@@ -27,8 +27,36 @@ class SCIMConfig(object):
 
         return response
 
+    def get_schema(self,schema_name):
+        endpoint = "%s/%s" % (SCIM_CONFIGURATION,schema_name)
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
     def update(self, data):
         response = self.client.put_json(SCIM_CONFIGURATION, data)
+        response.success = response.status_code == 200
+
+        return response
+
+    def update_schema(self, schema_name, data):
+        endpoint = "%s/%s" % (SCIM_CONFIGURATION,schema_name)
+
+        response = self.client.put_json(endpoint, data)
+        response.success = response.status_code == 200
+
+        return response
+
+    def update_config(self, admin_group="adminGroup",enable_header_authentication=True, enable_authz_filter=True):
+
+        data = DataObject()
+        data.add_value_string("admin_group", admin_group)
+        data.add_value_string("enable_header_authentication", enable_header_authentication)
+        data.add_value_string("enable_authz_filter", enable_authz_filter)
+
+        response = self.client.put_json(SCIM_CONFIGURATION_GENERAL, data.data)
         response.success = response.status_code == 200
 
         return response

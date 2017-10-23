@@ -23,8 +23,8 @@ class AccessControl(object):
         self.client = RESTClient(base_url, username, password)
 
     def create_policy(
-            self, name=None, description=None, dialect=None, policy=None,
-            attributes_required=None):
+            self, name=None, description=None, dialect="urn:oasis:names:tc:xacml:2.0:policy:schema:os", 
+            policy=None, attributes_required=False):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("description", description)

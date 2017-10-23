@@ -22,7 +22,7 @@ class Interfaces(object):
 
     def create_address(
             self, interface_label, address=None, mask_or_prefix=None,
-            enabled=True, allow_management=False):
+            enabled=True, allow_management=False, override_subnet_checking=False):
         """
         DO NOT USE! This method is scheduled for removal.
         """
@@ -44,6 +44,7 @@ class Interfaces(object):
                     address_data.add_value("allowManagement", allow_management)
 
                     data["ipv4"]["addresses"].append(address_data.data)
+                    data["ipv4"]["overrideSubnetChecking"] = override_subnet_checking
 
                     endpoint = ("%s/%s" % (NET_INTERFACES, data.get("uuid")))
 
