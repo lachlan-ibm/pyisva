@@ -5,7 +5,7 @@
 from .access.accesscontrol import AccessControl
 from .access.accesscontrol import AccessControl9030 as AC9030
 from .access.advancedconfig import AdvancedConfig
-from .access.apiprotection import APIProtection
+from .access.apiprotection import APIProtection, APIProtection9040
 from .access.attributes import Attributes
 from .access.authentication import Authentication, Authentication9021
 from .access.filedownloads import FileDownloads
@@ -61,3 +61,4 @@ class AccessControl9040(AccessControl9030):
 
     def __init__(self, base_url, username, password):
         super(AccessControl9040, self).__init__(base_url, username, password)
+        self.api_protection = APIProtection9040(base_url, username, password)
