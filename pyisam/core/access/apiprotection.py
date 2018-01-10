@@ -273,7 +273,7 @@ class APIProtection9040(APIProtection):
             enable_multiple_refresh_tokens_for_fault_tolerance=None,
             pin_policy_enabled=None, grant_types=None, oidc_enabled=False,
             iss=None, poc=None, lifetime=None, alg=None, db=None, cert=None,
-            enc_enabled=False, enc_alg=None, enc_enc=None):
+            enc_enabled=False, enc_alg=None, enc_enc=None, access_policy_id=None):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("description", description)
@@ -299,6 +299,7 @@ class APIProtection9040(APIProtection):
             enable_multiple_refresh_tokens_for_fault_tolerance)
         data.add_value("pinPolicyEnabled", pin_policy_enabled)
         data.add_value("grantTypes", grant_types)
+        data.add_value("accessPolicyId", access_policy_id)
 
         if oidc_enabled:
             oidc = DataObject()
@@ -321,4 +322,34 @@ class APIProtection9040(APIProtection):
         response.success = response.status_code == 201
 
         return response
+
+    def create_client(
+            self, name=None, redirect_uri=None, company_name=None,
+            company_url=None, contact_person=None, contact_type=None,
+            email=None, phone=None, other_info=None, definition=None,
+            client_id=None, client_secret=None, require_pkce_verification=None,
+            jwks_uri=None, encryption_db=None, encryption_cert=None):
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("redirectUri", redirect_uri)
+        data.add_value_string("companyName", company_name)
+        data.add_value_string("companyUrl", company_url)
+        data.add_value_string("contactPerson", contact_person)
+        data.add_value_string("contactType", contact_type)
+        data.add_value_string("email", email)
+        data.add_value_string("phone", phone)
+        data.add_value_string("otherInfo", other_info)
+        data.add_value_string("definition", definition)
+        data.add_value_string("clientId", client_id)
+        data.add_value_string("clientSecret", client_secret)
+        data.add_value_boolean("requirePkce", require_pkce_verification)
+        data.add_value_string("jwksUri", jwks_uri)
+        data.add_value_string("encryptionDb", encryption_db)
+        data.add_value_string("encryptioncert", encryption_cert)
+
+        response = self.client.post_json(CLIENTS, data.data)
+        response.success = response.status_code == 201
+
+        return response
+
 
