@@ -62,6 +62,11 @@ class Factory(object):
         module_name = "pyisam.core.websettings"
         return self._class_loader(module_name, class_name)
 
+    def get_deployment_utility(self):
+        class_name = "WebSettings" + self._get_version()
+        module_name = "pyisam.core.websettings"
+        return self._class_loader(module_name, class_name)
+
     def set_password(self, password):
         self._password = password
 

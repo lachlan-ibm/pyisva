@@ -37,7 +37,7 @@ class RuntimeComponent(object):
         data.add_value_string("domain", isam_domain)
         data.add_value_string("ldap_dn", ldap_dn)
         data.add_value_string("ldap_suffix", ldap_suffix)
-        data.add_value_string("ldap_ssl_db", ldap_ssl_db)
+        data.add_value_string("ldap_ssl_db", ldap_ssl_db if ldap_ssl_db.endswith(".kdb") else ldap_ssl_db+".kdb")
         data.add_value_string("ldap_ssl_label", ldap_ssl_label)
         data.add_value_string("isam_host", isam_host)
         data.add_value("ldap_port", ldap_port)

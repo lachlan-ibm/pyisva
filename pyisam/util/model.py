@@ -15,6 +15,12 @@ class DataObject(object):
         if value is not None:
             self.data[key] = value
 
+    def add_value_boolean(self, key, value):
+        if value is True:
+            self.data[key] = True
+        else:
+            self.data[key] = False
+
     def add_value_not_empty(self, key, value):
         if value:
             self.data[key] = value

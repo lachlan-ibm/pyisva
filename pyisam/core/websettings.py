@@ -4,7 +4,7 @@
 
 from .web.dscadmin import DSCAdmin
 from .web.policyadmin import PolicyAdmin
-from .web.reverseproxy import ReverseProxy
+from .web.reverseproxy import ReverseProxy, ReverseProxy9040
 from .web.runtimecomponent import RuntimeComponent
 
 
@@ -34,3 +34,4 @@ class WebSettings9040(WebSettings9030):
 
     def __init__(self, base_url, username, password):
         super(WebSettings9040, self).__init__(base_url, username, password)
+        self.reverse_proxy = ReverseProxy9040(base_url, username, password)

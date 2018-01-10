@@ -84,6 +84,17 @@ class SSLCertificates(object):
 
         return response
 
+    def get_personal(self, kdb_id, label=None):
+        endpoint = ("%s/%s/personal_cert" % (SSL_CERTIFICATES, kdb_id))
+
+        if label is not None:
+            endpoint += "/%s" %(label)
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
     def get_signer(self, kdb_id, label=None):
         endpoint = ("%s/%s/signer_cert" % (SSL_CERTIFICATES, kdb_id))
 
