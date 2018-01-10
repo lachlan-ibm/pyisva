@@ -17,6 +17,7 @@ from .access.scimconfig import SCIMConfig
 from .access.serverconnections import ServerConnections
 from .access.templatefiles import TemplateFiles
 from .access.userregistry import UserRegistry
+from .access.mappingrules import MappingRules
 
 
 class AccessControl9020(object):
@@ -39,6 +40,7 @@ class AccessControl9020(object):
             base_url, username, password)
         self.template_files = TemplateFiles(base_url, username, password)
         self.user_registry = UserRegistry(base_url, username, password)
+        self.mapping_rules = MappingRules(base_url, username, password)
 
 
 class AccessControl9021(AccessControl9020):
