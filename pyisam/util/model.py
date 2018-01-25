@@ -11,6 +11,9 @@ class DataObject(object):
         super(DataObject, self).__init__()
         self.data = {}
 
+    def __str__(self):
+        return str(self.data)
+
     def add_value(self, key, value):
         if value is not None:
             self.data[key] = value

@@ -237,5 +237,107 @@ class Federations(object):
     def list_federations(self):
         response = self.client.get_json(FEDERATIONS)
         response.success = response.status_code == 200
+        return response
+
+    def list_partners(self, federation_id):
+        endpoint = "%s/%s/partners" % (FEDERATIONS, federation_id)
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
+class Federations9040(Federations):
+
+    def create_oidc_rp_federation(self, name=None, redirect_uri_prefix=None,
+            response_types=None, active_delegate_id=None, identity_mapping_rule_reference=None,
+            advanced_configuration_active_delegate=None, advanced_configuration_rule_id=None):
+
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("protocol", "OIDC10")
+        data.add_value_string("role", 'rp')
+
+        attributeMapping = DataObject()
+        
+        identityMapping = DataObject()
+        identityMapping.add_value_string("activeDelegateId", active_delegate_id)
+        properties = DataObject()
+        properties.add_value_string("identityMappingRuleReference", identity_mapping_rule_reference)
+        identityMapping.add_value_not_empty("properties", properties.data)
+
+        advancedConfiguration = DataObject()
+        if advanced_configuration_active_delegate == None : 
+            advancedConfiguration.add_value_string("activeDelegateId", 'skip-advance-map')
+        else:
+            advancedConfiguration.add_value_string("activeDelegateId", advanced_configuration_active_delegate)
+            properties = DataObject()
+            properties.add_value_string("advancedConfigurationRuleReference", advanced_configuration_rule_id)
+            advancedConfiguration.add_value_not_empty("properties", properties.data)
+
+        configuration = DataObject()
+        configuration.add_value_string("redirectUriPrefix", redirect_uri_prefix)
+        configuration.add_value("responseTypes", response_types)
+        configuration.add_value_not_empty("advancedConfiguration", advancedConfiguration.data)
+        configuration.add_value_not_empty("identityMapping", identityMapping.data)
+        configuration.add_value_not_empty("attributeMapping", attributeMapping.data)
+
+        data.add_value_not_empty("configuration", configuration.data)
+
+        response = self.client.post_json(FEDERATIONS, data.data)
+        response.success = response.status_code == 201
+
+        return response
+
+    def create_oidc_rp_partner(self, federation_id, name=None, enabled=False, client_id=None, 
+            client_secret=None, metadata_endpoint=None, scope=None,
+            token_endpoint_auth_method=None, perform_userinfo=False,
+            advanced_configuration_active_delegate=None, advanced_configuration_rule_id=None):
+
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value("enabled", enabled)
+        data.add_value_string("role", 'rp')
+
+        attributeMapping = DataObject()
+        identityMapping = DataObject()
+
+        configuration = DataObject()
+
+
+        configuration.add_value_not_empty("clientId", client_id)
+        configuration.add_value_not_empty("clientSecret", client_secret)
+        configuration.add_value_not_empty("scope", scope)
+        configuration.add_value_not_empty("tokenEndpointAuthMethod", token_endpoint_auth_method)
+        configuration.add_value_not_empty("performUserinfo", perform_userinfo)
+
+        basic = DataObject()
+        basic.add_value_not_empty("activeDelegateId","metadataEndpointUrl")
+
+        basic_properties = DataObject()
+        basic_properties.add_value_not_empty("metadataEndpointUrl", metadata_endpoint)
+        basic.add_value("properties",basic_properties.data)
+        
+        configuration.add_value("scope", scope)
+
+        configuration.add_value_not_empty("identityMapping", identityMapping.data)
+
+        advancedConfiguration = DataObject()
+        if advanced_configuration_active_delegate == None: 
+            advancedConfiguration.add_value_string("activeDelegateId", 'skip-advance-map')
+        else:
+            advancedConfiguration.add_value_string("activeDelegateId", advanced_configuration_active_delegate)
+            properties = DataObject()
+            properties.add_value_string("advancedConfigurationRuleReference", advanced_configuration_rule_id)
+            advancedConfiguration.add_value_not_empty("properties", properties.data)
+
+        configuration.add_value_not_empty("advanceConfiguration", advancedConfiguration.data)
+        configuration.add_value_not_empty("basicConfiguration", basic.data)
+
+        data.add_value_not_empty("configuration", configuration.data)
+
+        endpoint = "%s/%s/partners" % (FEDERATIONS, federation_id)
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 201
 
         return response
