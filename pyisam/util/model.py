@@ -32,6 +32,9 @@ class DataObject(object):
         if value is not None:
             self.data[key] = str(value)
 
+    def from_json(self, initial_data):
+        self.data = initial_data
+
 class Response(object):
 
     def __init__(self):

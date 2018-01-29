@@ -136,8 +136,6 @@ class ReverseProxy(object):
 
         data.add_value_not_empty("runtime", runtime_data.data)
 
-        print(data.data)
-
         endpoint = "%s/%s/fed_config" % (REVERSEPROXY, webseal_id)
 
         response = self.client.post_json(endpoint, data.data)
