@@ -291,7 +291,8 @@ class Federations9040(Federations):
     def create_oidc_rp_partner(self, federation_id, name=None, enabled=False, client_id=None, 
             client_secret=None, metadata_endpoint=None, scope=None,
             token_endpoint_auth_method=None, perform_userinfo=False,
-            advanced_configuration_active_delegate=None, advanced_configuration_rule_id=None):
+            advanced_configuration_active_delegate=None, advanced_configuration_rule_id=None,
+            signing_algorithm=None):
 
         data = DataObject()
         data.add_value_string("name", name)
@@ -305,6 +306,7 @@ class Federations9040(Federations):
 
 
         configuration.add_value_not_empty("clientId", client_id)
+        configuration.add_value_not_empty("signatureAlgorithm", signing_algorithm)
         configuration.add_value_not_empty("clientSecret", client_secret)
         configuration.add_value_not_empty("scope", scope)
         configuration.add_value_not_empty("tokenEndpointAuthMethod", token_endpoint_auth_method)

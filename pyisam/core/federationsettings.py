@@ -4,6 +4,7 @@
 
 from .federation.federations import Federations, Federations9040
 from .federation.pointofcontact import PointOfContact
+from .federation.accesspolicy import AccessPolicy
 from .federation.attributesources import AttributeSources
 
 class Federation9020(object):
@@ -29,3 +30,4 @@ class Federation9040(Federation9030):
         super(Federation9040, self).__init__(base_url, username, password)
         self.federations = Federations9040(base_url, username, password)
         self.poc= PointOfContact(base_url, username, password)
+        self.access_policy = AccessPolicy(base_url, username, password)

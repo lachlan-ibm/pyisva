@@ -31,7 +31,7 @@ class PointOfContact(object):
     def set_current_profile(self, profile_id):
         data = DataObject()
 
-        data.add_value('currentProfileId',"uuid4084bb3c-0161-1af2-9d7a-8be2c8259414")
+        data.add_value('currentProfileId',profile_id)
 
         endpoint = POC
         response = self.client.put_json(endpoint, data.data)
