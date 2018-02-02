@@ -5,7 +5,7 @@
 import logging
 import uuid
 
-from pyisam.util.model import DataObject
+from pyisam.util.model import DataObject, Response
 from pyisam.util.restclient import RESTClient
 
 ACCESS_POLICY = "/iam/access/v8/access-policies/"
@@ -44,6 +44,8 @@ class AccessPolicy(object):
     def create_policy(self, policy_name=None, category=None, policy_type="JavaScript", file_name=None):
         data = DataObject()
 
+
+        response = None
         try:
             with open(file_name, 'rb') as content:
                 data.add_value_string('category',category)
@@ -52,13 +54,16 @@ class AccessPolicy(object):
                 data.add_value_string("content", content.read().decode('utf-8'))
         except IOError as e:
             logger.error(e)
+            response = Response()
             response.success = False
 
-        endpoint = ACCESS_POLICY
-        response = self.client.post_json(endpoint, data.data)
-        response.success = response.status_code == 201
+        if response == None:
+            endpoint = ACCESS_POLICY
+            response = self.client.post_json(endpoint, data.data)
+            response.success = response.status_code == 201
 
         return response
+
 
     def update_policy(self, policy_id=None, file_name=None):
         data = DataObject()
