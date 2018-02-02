@@ -20,6 +20,10 @@ class RuntimeDb(object):
         self.client = RESTClient(base_url, username, password)
 
 
+    """
+    setup the HVDB for a docker environment.
+
+    """
     def set_db(self, db_type=None, port=None, host=None, secure=True, user=None,passwd=None, db_name=None):
 
         data = DataObject()
