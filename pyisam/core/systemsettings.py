@@ -16,6 +16,8 @@ from .system.licensing import Licensing
 from .system.restartshutdown import RestartShutdown
 from .system.sslcertificates import SSLCertificates
 from .system.clicommands import CLICommands
+from .system.runtimedb import RuntimeDb 
+from .system.docker import Docker
 
 
 class SystemSettings9020(object):
@@ -54,3 +56,5 @@ class SystemSettings9040(SystemSettings9030):
 
     def __init__(self, base_url, username, password):
         super(SystemSettings9040, self).__init__(base_url, username, password)
+        self.runtime_db = RuntimeDb(base_url, username, password)
+        self.docker= Docker(base_url, username, password)

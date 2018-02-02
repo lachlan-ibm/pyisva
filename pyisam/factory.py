@@ -31,7 +31,7 @@ class Factory(object):
         self._version = None
         self._deployment_model = "Appliance"
 
-        self._discover_version()
+        self._discover_version_and_deployment()
         self._get_version()
 
     def get_federation(self):
@@ -62,6 +62,11 @@ class Factory(object):
         module_name = "pyisam.core.websettings"
         return self._class_loader(module_name, class_name)
 
+    def get_deployment_utility(self):
+        class_name = "WebSettings" + self._get_version()
+        module_name = "pyisam.core.websettings"
+        return self._class_loader(module_name, class_name)
+
     def set_password(self, password):
         self._password = password
 
@@ -69,7 +74,13 @@ class Factory(object):
         Klass = getattr(importlib.import_module(module_name), class_name)
         return Klass(self._base_url, self._username, self._password)
 
-    def _discover_version(self):
+    def is_docker(self):
+        return self._deployment_model == "Docker"
+
+    def get_deployment_model(self):
+        return self._deployment_model
+
+    def _discover_version_and_deployment(self):
         client = RESTClient(self._base_url, self._username, self._password)
 
         response = client.get_json("/core/sys/versions")

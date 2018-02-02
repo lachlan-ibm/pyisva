@@ -11,9 +11,18 @@ class DataObject(object):
         super(DataObject, self).__init__()
         self.data = {}
 
+    def __str__(self):
+        return str(self.data)
+
     def add_value(self, key, value):
         if value is not None:
             self.data[key] = value
+
+    def add_value_boolean(self, key, value):
+        if value is True:
+            self.data[key] = True
+        else:
+            self.data[key] = False
 
     def add_value_not_empty(self, key, value):
         if value:
@@ -22,6 +31,9 @@ class DataObject(object):
     def add_value_string(self, key, value):
         if value is not None:
             self.data[key] = str(value)
+
+    def from_json(self, initial_data):
+        self.data = initial_data
 
 class Response(object):
 

@@ -37,7 +37,7 @@ class ReverseProxy(object):
         data.add_value_string("admin_id", admin_id)
         data.add_value_string("admin_pwd", admin_pwd)
         data.add_value_string("ssl_yn", ssl_yn)
-        data.add_value_string("key_file", key_file)
+        data.add_value_string("key_file", key_file if key_file.endswith(".kdb") else key_file+".kdb")
         data.add_value_string("cert_label", cert_label)
         data.add_value_string("ssl_port", ssl_port)
         data.add_value_string("http_yn", http_yn)
@@ -135,8 +135,6 @@ class ReverseProxy(object):
         runtime_data.add_value_string("password", runtime_password)
 
         data.add_value_not_empty("runtime", runtime_data.data)
-
-        print(data.data)
 
         endpoint = "%s/%s/fed_config" % (REVERSEPROXY, webseal_id)
 
@@ -365,3 +363,33 @@ class ReverseProxy(object):
         response.success = response.status_code == 200
 
         return response
+
+class ReverseProxy9040(ReverseProxy):
+
+    def __init__(self, base_url, username, password):
+        super(ReverseProxy, self).__init__()
+        self.client = RESTClient(base_url, username, password)
+
+    def configure_api_protection(
+            self, webseal_id, hostname=None, port=None,
+            username=None, password=None, reuse_certs=None,reuse_acls=None, api=None,
+            browser=None, junction=None):
+        data = DataObject()
+        data.add_value_string("hostname", hostname)
+        data.add_value_string("username", username)
+        data.add_value_string("password", password)
+        data.add_value("port", port)
+        data.add_value("junction", junction if junction != None else "/mga")
+
+        data.add_value_boolean("reuse_certs", reuse_certs)
+        data.add_value_boolean("reuse_acls", reuse_acls)
+        data.add_value_boolean("api", api)
+        data.add_value_boolean("browser", browser)
+
+        endpoint = "%s/%s/oauth_config" % (REVERSEPROXY, webseal_id)
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
