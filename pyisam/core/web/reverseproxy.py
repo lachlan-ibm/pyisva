@@ -37,7 +37,7 @@ class ReverseProxy(object):
         data.add_value_string("admin_id", admin_id)
         data.add_value_string("admin_pwd", admin_pwd)
         data.add_value_string("ssl_yn", ssl_yn)
-        if key_file != None && !key_file.endswith(".kdb"):
+        if key_file != None and not key_file.endswith(".kdb"):
             key_file = key_file+".kdb"
         data.add_value_string("key_file", key_file)
         data.add_value_string("cert_label", cert_label)
