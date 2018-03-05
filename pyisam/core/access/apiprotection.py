@@ -30,7 +30,7 @@ class APIProtection(object):
             client_id=None, client_secret=None):
         data = DataObject()
         data.add_value_string("name", name)
-        data.add_value_string("redirectUri", redirect_uri)
+        data.add_value("redirectUri", redirect_uri)
         data.add_value_string("companyName", company_name)
         data.add_value_string("companyUrl", company_url)
         data.add_value_string("contactPerson", contact_person)
