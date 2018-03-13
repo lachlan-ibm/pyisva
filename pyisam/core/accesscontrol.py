@@ -5,18 +5,19 @@
 from .access.accesscontrol import AccessControl
 from .access.accesscontrol import AccessControl9030 as AC9030
 from .access.advancedconfig import AdvancedConfig
-from .access.apiprotection import APIProtection
+from .access.apiprotection import APIProtection, APIProtection9040
 from .access.attributes import Attributes
 from .access.authentication import Authentication, Authentication9021
 from .access.filedownloads import FileDownloads
 from .access.mmfaconfig import MMFAConfig, MMFAConfig9021
 from .access.pushnotification import PushNotification, PushNotification9021
-from .access.riskprofiles import RiskProfiles
+from .access.riskprofiles import RiskProfiles  
 from .access.runtimeparameters import RuntimeParameters
 from .access.scimconfig import SCIMConfig
 from .access.serverconnections import ServerConnections
 from .access.templatefiles import TemplateFiles
 from .access.userregistry import UserRegistry
+from .access.mappingrules import MappingRules
 
 
 class AccessControl9020(object):
@@ -39,6 +40,7 @@ class AccessControl9020(object):
             base_url, username, password)
         self.template_files = TemplateFiles(base_url, username, password)
         self.user_registry = UserRegistry(base_url, username, password)
+        self.mapping_rules = MappingRules(base_url, username, password)
 
 
 class AccessControl9021(AccessControl9020):
@@ -61,9 +63,11 @@ class AccessControl9040(AccessControl9030):
 
     def __init__(self, base_url, username, password):
         super(AccessControl9040, self).__init__(base_url, username, password)
+        self.api_protection = APIProtection9040(base_url, username, password)
 
 
 class AccessControl9050(AccessControl9040):
 
     def __init__(self, base_url, username, password):
-	super(AccessControl9050, self).__init__(base_url, username, password)
+	      super(AccessControl9050, self).__init__(base_url, username, password)
+

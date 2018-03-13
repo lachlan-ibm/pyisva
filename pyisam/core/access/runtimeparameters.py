@@ -27,7 +27,7 @@ class RuntimeParameters(object):
         endpoint = "%s/%s/v1" % (RUNTIME_TUNING, parameter)
 
         response = self.client.put_json(endpoint, data.data)
-        response.success = response.status_code == 200
+        response.success = response.status_code == 204
 
         return response
 

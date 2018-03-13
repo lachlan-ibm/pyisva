@@ -163,6 +163,9 @@ class RESTClient(object):
         content_type = request_response.headers.get("Content-type", "").lower()
         if "application/json" in content_type:
             response.decode_json()
+        location = request_response.headers.get("Location", "").lower()
+        if location:
+            response.id_from_location = location.split('/')[-1]
 
         return response
 
