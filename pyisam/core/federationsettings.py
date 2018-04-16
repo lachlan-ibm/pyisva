@@ -28,6 +28,14 @@ class Federation9040(Federation9030):
 
     def __init__(self, base_url, username, password):
         super(Federation9040, self).__init__(base_url, username, password)
+       
         self.federations = Federations9040(base_url, username, password)
         self.poc= PointOfContact(base_url, username, password)
         self.access_policy = AccessPolicy(base_url, username, password)
+
+
+
+class Federation9050(Federation9040):
+
+    def __init__(self, base_url, username, password):
+  	    super(Federation9050, self).__init__(base_url, username, password)
