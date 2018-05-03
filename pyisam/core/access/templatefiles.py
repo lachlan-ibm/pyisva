@@ -110,9 +110,10 @@ class TemplateFiles(object):
 
         return response
 
-    def update_file(self, path, file_name, contents=None):
+    def update_file(self, path, file_name, contents=None, force=False):
         data = DataObject()
         data.add_value_string("contents", contents)
+        data.add_value_string("force", force)
         data.add_value_string("type", "file")
 
         endpoint = ("%s/%s/%s" % (TEMPLATE_FILES, path, file_name))

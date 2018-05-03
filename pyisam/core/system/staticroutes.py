@@ -36,8 +36,6 @@ class StaticRoutes(object):
         data.add_value_string("comment", comment)
         data.add_value_string("table", table)
 
-        print(data.data)
-
         response = self.client.post_json(ROUTES, data.data)
         response.success = response.status_code == 201
 

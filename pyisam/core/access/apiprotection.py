@@ -55,7 +55,7 @@ class APIProtection(object):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("redirectUri", redirect_uri)
-        data.add_value_string("companyName", company_name)
+        data.add_value("companyName", company_name)
         data.add_value_string("companyUrl", company_url)
         data.add_value_string("contactPerson", contact_person)
         data.add_value_string("contactType", contact_type)
@@ -331,7 +331,7 @@ class APIProtection9040(APIProtection):
             jwks_uri=None, encryption_db=None, encryption_cert=None):
         data = DataObject()
         data.add_value_string("name", name)
-        data.add_value_string("redirectUri", redirect_uri)
+        data.add_value("redirectUri", redirect_uri)
         data.add_value_string("companyName", company_name)
         data.add_value_string("companyUrl", company_url)
         data.add_value_string("contactPerson", contact_person)
