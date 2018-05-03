@@ -34,7 +34,7 @@ class Configuration(object):
 
         return response
 
-    def reverte_pending_changes(self):
+    def revert_pending_changes(self):
         response = self.client.delete_json_json(PENDING_CHANGES)
         response.success = response.status_code == 200
 
