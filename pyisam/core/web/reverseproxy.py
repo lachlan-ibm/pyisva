@@ -358,8 +358,6 @@ class ReverseProxy(object):
 
         endpoint = ("%s/%s"
                     % (JMT_CONFIG, file_id))
-        print(endpoint)
-        print(data.data)
 
         response = self.client.put_json(endpoint, data.data)
         response.success = response.status_code == 200

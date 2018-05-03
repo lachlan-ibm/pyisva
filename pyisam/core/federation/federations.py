@@ -137,7 +137,6 @@ class Federations(object):
 
         data.add_value_not_empty("configuration", configuration.data)
 
-        print(data.data)
 
         response = self.client.post_json(FEDERATIONS, data.data)
         response.success = response.status_code == 201
@@ -225,8 +224,6 @@ class Federations(object):
 
         endpoint = "%s%s/partners" % (FEDERATIONS, federation_id)
 
-        print(endpoint)
-        print(data.data)
 
         response = self.client.post_json(endpoint, data.data)
         response.success = response.status_code == 201
