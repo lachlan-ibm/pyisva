@@ -203,3 +203,12 @@ class Authentication9021(Authentication):
         response.success = response.status_code == 204
 
         return response
+
+
+    def disable_all_policies():
+        data = DataObject()
+        data.add_value("enabled", False)
+        response = self.client.put_json(AUTHENTICATION_POLICIES, data.data)
+        response.success = response.status_code == 204
+        return response
+
