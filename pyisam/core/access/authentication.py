@@ -205,7 +205,7 @@ class Authentication9021(Authentication):
         return response
 
 
-    def disable_all_policies():
+    def disable_all_policies(self):
         data = DataObject()
         data.add_value("enabled", False)
         response = self.client.put_json(AUTHENTICATION_POLICIES, data.data)
