@@ -32,7 +32,7 @@ export PYTHONPATH="${PYTHONPATH}:${HOME}/repos/pyisam"
 >>> if resp.success:
 ...     print "Successfully restarted the default instance."
 ... else:
-...     print "Failed to restart the default instance. status_code: %s, data: %s" % (r.status_code, r.data)
+...     print "Failed to restart the default instance. status_code: %s, data: %s" % (resp.status_code, resp.data)
 ...
 Successfully restarted the default instance.
 ```
