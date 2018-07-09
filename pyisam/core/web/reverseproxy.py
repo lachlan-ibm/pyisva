@@ -145,6 +145,24 @@ class ReverseProxy(object):
 
         return response
 
+    def configure_aac(self,webseal_id,junction=None,reuse_certs=False,reuse_acls=False,
+        runtime_hostname=None,runtime_port=None,runtime_username=None,runtime_password=None):
+
+        data = DataObject()
+        data.add_value("reuse_certs", reuse_certs)
+        data.add_value("reuse_acls", reuse_acls)
+        data.add_value("junction", junction)
+        data.add_value_string("hostname", runtime_hostname)
+        data.add_value_string("port", runtime_port)
+        data.add_value_string("username", runtime_username)
+        data.add_value_string("password", runtime_password)
+        endpoint = "%s/%s/authsvc_config" % (REVERSEPROXY, webseal_id)
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
     def add_configuration_stanza_entry(
             self, webseal_id, stanza_id, entry_name, value):
         data = {"entries": [[str(entry_name), str(value)]]}
