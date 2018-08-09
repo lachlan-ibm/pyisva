@@ -143,7 +143,9 @@ class APIProtection(object):
             issue_refresh_token=None,
             enforce_single_access_token_per_grant=None,
             enable_multiple_refresh_tokens_for_fault_tolerance=None,
-            pin_policy_enabled=None, grant_types=None, oidc=None):
+            pin_policy_enabled=None, grant_types=None, oidc_enabled=False,
+            iss=None, poc=None, lifetime=None, alg=None, db=None, cert=None,
+            enc_enabled=False, enc_alg=None, enc_enc=None, access_policy_id=None):
         data = DataObject()
         data.add_value_string("name", name)
         data.add_value_string("description", description)
@@ -169,6 +171,24 @@ class APIProtection(object):
             enable_multiple_refresh_tokens_for_fault_tolerance)
         data.add_value("pinPolicyEnabled", pin_policy_enabled)
         data.add_value("grantTypes", grant_types)
+        data.add_value("accessPolicyId", access_policy_id)
+        
+        if oidc_enabled:
+            oidc = DataObject()
+            oidc.add_value("enabled",True)
+            oidc.add_value("iss",iss)
+            oidc.add_value("poc",poc)
+            oidc.add_value("lifetime",lifetime)
+            oidc.add_value("alg",alg)
+            oidc.add_value("db",db)
+            oidc.add_value("cert",cert)
+            if enc_enabled:
+                enc_data = DataObject()
+                enc_data.add_value("db",enc_db)
+                enc_data.add_value("cert",enc_cert)
+                oidc.add_value("enc",enc_data.data)
+
+            data.add_value("oidc",oidc.data)
 
         response = self.client.put_json(DEFINITIONS+"/"+str(definition_id), data.data)
         response.success = response.status_code == 204
