@@ -11,6 +11,7 @@ from pyisam.util.restclient import RESTClient
 
 LMI = "/lmi"
 LMI_RESTART = "/restarts/restart_server"
+APPLIANCE_RESTART = "/diagnostics/restart_shutdown/reboot"
 
 logger = logging.getLogger(__name__)
 
@@ -69,3 +70,24 @@ class RestartShutdown(object):
             time.sleep(sleep_interval)
         else:
             logger.error("Invalid last start time: %i", last_start)
+
+    def restart_appliance(self):
+        last_start = -1
+
+        response = self.get_lmi_status()
+        if response.success:
+            last_start = response.json[0].get("start_time", -1)
+
+        if last_start > 0:
+            response = self.client.post_json(APPLIANCE_RESTART)
+            response.success = (response.status_code == 200
+                and response.json.get("status", False) == True)
+
+            if response.success:
+                logger.info("Waiting for LMI to restart...")
+                self._wait_on_lmi(last_start)
+        else:
+            logger.error("Invalid start time was retrieved: %i", last_start)
+            response.success = False
+
+        return response

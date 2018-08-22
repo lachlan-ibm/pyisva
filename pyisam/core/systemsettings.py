@@ -18,6 +18,7 @@ from .system.sslcertificates import SSLCertificates
 from .system.clicommands import CLICommands
 from .system.runtimedb import RuntimeDb 
 from .system.docker import Docker
+from .system.fixpacks import Fixpacks
 
 
 class SystemSettings9020(object):
@@ -34,6 +35,7 @@ class SystemSettings9020(object):
         self.hosts_file = HostsFile(base_url, username, password)
         self.interfaces = Interfaces(base_url, username, password)
         self.static_routes = StaticRoutes(base_url, username, password)
+        self.fixpacks = Fixpacks(base_url, username, password)
         self.licensing = Licensing(base_url, username, password)
         self.restartshutdown = RestartShutdown(base_url, username, password)
         self.ssl_certificates = SSLCertificates(base_url, username, password)
