@@ -175,8 +175,9 @@ class Federations(object):
         # serverCertValidation.add_value_string("keystore", "")
 
         soapSettings = DataObject()
-        soapSettings.add_value("clientAuth", clientAuth.data)
-        soapSettings.add_value("serverCertValidation", serverCertValidation.data)
+        soapSettings.add_value_not_empty("clientAuth", clientAuth.data)
+        if clientAuth.data or serverCertValidation.data:
+            soapSettings.add_value("serverCertValidation", serverCertValidation.data)
 
         properties = DataObject()
         properties.add_value_string("identityMappingRule", mapping_rule)
