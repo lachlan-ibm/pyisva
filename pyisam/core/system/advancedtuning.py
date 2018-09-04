@@ -31,6 +31,18 @@ class AdvancedTuning(object):
 
         return response
 
+    def update_parameter(self, id=None, key=None, value=None, comment=None):
+        data = DataObject()
+        data.add_value_string("key", key)
+        data.add_value_string("value", value)
+        data.add_value_string("comment", comment)
+
+        response = self.client.put_json(ADVANCED_PARAMETERS+"/"+id, data.data)
+
+        response.success = response.status_code == 200
+
+        return response
+
     def list_parameters(self):
         response = self.client.get_json(ADVANCED_PARAMETERS)
         response.success = response.status_code == 200

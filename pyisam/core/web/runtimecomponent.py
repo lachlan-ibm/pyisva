@@ -39,6 +39,7 @@ class RuntimeComponent(object):
         data.add_value_string("ldap_suffix", ldap_suffix)
         if ldap_ssl_db is not None:
             data.add_value_string("ldap_ssl_db", ldap_ssl_db if ldap_ssl_db.endswith(".kdb") else ldap_ssl_db+".kdb")
+            data.add_value_string("usessl", "on")
         data.add_value_string("ldap_ssl_label", ldap_ssl_label)
         data.add_value_string("isam_host", isam_host)
         data.add_value("ldap_port", ldap_port)

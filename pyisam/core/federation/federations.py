@@ -4,6 +4,7 @@
 
 import logging
 import uuid
+import json
 
 from pyisam.util.model import DataObject
 from pyisam.util.restclient import RESTClient
@@ -108,8 +109,10 @@ class Federations(object):
         encryptionSettings = DataObject()
         signatureSettings = DataObject()
 
-        identityMapping = DataObject()
-        identityMapping.add_value_string("activeDelegateId", active_delegate_id)
+        identityMapping = None
+        if (active_delegate_id is not None):
+            identityMapping = DataObject()
+            identityMapping.add_value_string("activeDelegateId", active_delegate_id)
 
         decryptionKeyIdentifier = DataObject()
         decryptionKeyIdentifier.add_value_string("keystore", decrypt_keystore)
@@ -121,8 +124,10 @@ class Federations(object):
         encryptionSettings.add_value_not_empty("decryptionKeyIdentifier", decryptionKeyIdentifier.data)
         signatureSettings.add_value_not_empty("signingKeyIdentifier", signingKeyIdentifier.data)
 
-        ssoServiceBinding = DataObject()
-        ssoServiceBinding.add_value_string("binding", sso_service_binding)
+        ssoServiceBinding = None
+        if (sso_service_binding is not None):
+            ssoServiceBinding = DataObject()
+            ssoServiceBinding.add_value_string("binding", sso_service_binding)
 
         configuration = DataObject()
         configuration.add_value_not_empty("encryptionSettings", encryptionSettings.data)
@@ -130,13 +135,14 @@ class Federations(object):
         configuration.add_value_string("providerId", provider_id)
         configuration.add_value_string("pointOfContactUrl", point_of_contact_url)
         configuration.add_value_string("companyName", company_name)
-        configuration.add_value("singleSignOnService", [ssoServiceBinding.data])
-        configuration.add_value("identityMapping", identityMapping.data)
+        if (ssoServiceBinding is not None):
+            configuration.add_value("singleSignOnService", [ssoServiceBinding.data])
+        if (identityMapping is not None):
+            configuration.add_value("identityMapping", identityMapping.data)
         configuration.add_value("needConsentToFederate", need_consent_to_federate)
         configuration.add_value_string("messageIssuerFormat", message_issuer_format)
 
         data.add_value_not_empty("configuration", configuration.data)
-
 
         response = self.client.post_json(FEDERATIONS, data.data)
         response.success = response.status_code == 201
@@ -163,14 +169,15 @@ class Federations(object):
 
         clientAuth = DataObject()
         clientAuth.add_value_string("method", client_auth_method)
-        clientAuth.add_value("properties", properties.data)
+        clientAuth.add_value_not_empty("properties", properties.data)
 
         serverCertValidation = DataObject()
-        serverCertValidation.add_value_string("keystore", "")
+        # serverCertValidation.add_value_string("keystore", "")
 
         soapSettings = DataObject()
-        soapSettings.add_value("clientAuth", clientAuth.data)
-        soapSettings.add_value("serverCertValidation", serverCertValidation.data)
+        soapSettings.add_value_not_empty("clientAuth", clientAuth.data)
+        if clientAuth.data or serverCertValidation.data:
+            soapSettings.add_value("serverCertValidation", serverCertValidation.data)
 
         properties = DataObject()
         properties.add_value_string("identityMappingRule", mapping_rule)
@@ -212,7 +219,7 @@ class Federations(object):
         configuration = DataObject()
         configuration.add_value_not_empty("identityMapping", identityMapping.data)
         configuration.add_value_not_empty("attributeMapping", attributeMapping.data)
-        # configuration.add_value_not_empty("assertionConsumerService", [assertionConsumerService.data])
+        configuration.add_value_not_empty("assertionConsumerService", [assertionConsumerService.data])
         configuration.add_value_not_empty("assertionConsumerService", acs)
         configuration.add_value_not_empty("singleLogoutService", single_logout_service)
         configuration.add_value_not_empty("signatureSettings", signatureSettings.data)
@@ -224,6 +231,7 @@ class Federations(object):
 
         endpoint = "%s%s/partners" % (FEDERATIONS, federation_id)
 
+        print(json.dumps(data.data))
 
         response = self.client.post_json(endpoint, data.data)
         response.success = response.status_code == 201
