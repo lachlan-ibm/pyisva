@@ -40,10 +40,10 @@ class WebSettings9040(WebSettings9030):
 class WebSettings9050(WebSettings9040):
 
     def __init__(self, base_url, username, password):
-  	    super(WebSettings9050, self).__init__(base_url, username, password)
+            super(WebSettings9050, self).__init__(base_url, username, password)
 
 
 class WebSettings9060(WebSettings9050):
 
     def __init__(self, base_url, username, password):
-  	    super(WebSettings9060, self).__init__(base_url, username, password)
+            super(WebSettings9060, self).__init__(base_url, username, password)
