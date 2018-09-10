@@ -36,7 +36,7 @@ class AnalysisDiagnostics9050(AnalysisDiagnostics9040):
         super(AnalysisDiagnostics9050, self).__init__(base_url, username, password)
 
 
-class AnalysisDiagnostics9060(AnalysisDiagnostics9050):i
+class AnalysisDiagnostics9060(AnalysisDiagnostics9050):
 
     def __init__(self, base_url, username, password):
         super(AnalysisDiagnostics9060, self).__init__(base_url, username, password)
