@@ -45,8 +45,8 @@ class MMFAConfig9021(MMFAConfig):
             details_url=None, enrollment_endpoint=None,
             hotp_shared_secret_endpoint=None, totp_shared_secret_endpoint=None,
             token_endpoint=None, authntrxn_endpoint=None,
-            mobile_endpoint_prefix=None, discovery_mechanisms=None,
-            options=None):
+            mobile_endpoint_prefix=None, qrlogin_endpoint=None,
+            discovery_mechanisms=None, options=None):
         endpoints = DataObject()
         endpoints.add_value_string("details_url", details_url)
         endpoints.add_value_string("enrollment_endpoint", enrollment_endpoint)
@@ -58,6 +58,7 @@ class MMFAConfig9021(MMFAConfig):
         endpoints.add_value_string("authntrxn_endpoint", authntrxn_endpoint)
         endpoints.add_value_string(
             "mobile_endpoint_prefix", mobile_endpoint_prefix)
+        endpoints.add_value_not_empty("qrlogin_endpoint", qrlogin_endpoint)
 
         data = DataObject()
         data.add_value_string("client_id", client_id)
