@@ -28,6 +28,15 @@ class PointOfContact(object):
 
         return response
 
+    def get_current_profile(self):
+
+        endpoint = POC
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
     def set_current_profile(self, profile_id):
         data = DataObject()
 
