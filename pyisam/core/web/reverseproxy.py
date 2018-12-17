@@ -408,7 +408,8 @@ class ReverseProxy9040(ReverseProxy):
 
         response = self.client.post_json(endpoint, data.data)
         response.success = response.status_code == 204
-        
+        return response
+
     def configure_mmfa(
             self, webseal_id, lmi_hostname=None, lmi_port=None,
             lmi_username=None, lmi_password=None, runtime_hostname=None,
