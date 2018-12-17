@@ -408,6 +408,36 @@ class ReverseProxy9040(ReverseProxy):
 
         response = self.client.post_json(endpoint, data.data)
         response.success = response.status_code == 204
-
         return response
 
+    def configure_mmfa(
+            self, webseal_id, lmi_hostname=None, lmi_port=None,
+            lmi_username=None, lmi_password=None, runtime_hostname=None,
+            runtime_port=None, runtime_username=None, runtime_password=None,
+            reuse_certs=None,reuse_acls=None, reuse_pops=None, channel=None):
+        lmi_data = DataObject()
+        lmi_data.add_value_string("hostname", lmi_hostname)
+        lmi_data.add_value_string("username", lmi_username)
+        lmi_data.add_value_string("password", lmi_password)
+        lmi_data.add_value("port", lmi_port)
+
+        runtime_data = DataObject()
+        runtime_data.add_value_string("hostname", runtime_hostname)
+        runtime_data.add_value_string("username", runtime_username)
+        runtime_data.add_value_string("password", runtime_password)
+        runtime_data.add_value("port", runtime_port)
+
+        data = DataObject()
+        data.add_value('channel', channel)
+        data.add_value("reuse_certs", reuse_certs)
+        data.add_value("reuse_acls", reuse_acls)
+        data.add_value("reuse_pops", reuse_pops)
+        data.add_value_not_empty("lmi", lmi_data.data)
+        data.add_value_not_empty("runtime", runtime_data.data)
+
+        endpoint = "%s/%s/mmfa_config" % (REVERSEPROXY, webseal_id)
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response

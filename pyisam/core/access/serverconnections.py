@@ -10,6 +10,7 @@ from pyisam.util.restclient import RESTClient
 
 SERVER_CONNECTION_ROOT = "/mga/server_connections"
 SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap"
+SERVER_CONNECTION_ISAM_RUNTIME = "/mga/server_connections/isamruntime"
 SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws"
 SERVER_CONNECTION_SMTP = "/mga/server_connections/smtp"
 
@@ -167,4 +168,56 @@ class ServerConnections(object):
         response = self.client.get_json(endpoint)
         response.success = response.status_code == 200
 
+        return response
+        
+class ServerConnections9050(ServerConnections):
+
+    def __init__(self, base_url, username, password):
+        super(ServerConnections, self).__init__()
+        self.client = RESTClient(base_url, username, password)
+
+    def create_isam_runtime(
+            self, name=None, description=None, locked=None,
+            connection_bind_dn=None,
+            connection_bind_pwd=None, connection_ssl_truststore=None,
+            connection_ssl_auth_key=None,
+            connection_ssl=None, connect_timeout=None, servers=None):
+        connection_data = DataObject()        
+        connection_data.add_value_string("bindDN", connection_bind_dn)
+        connection_data.add_value_string("bindPwd", connection_bind_pwd)
+        connection_data.add_value_string(
+            "sslTruststore", connection_ssl_truststore)
+        connection_data.add_value_string("sslAuthKey", connection_ssl_auth_key)        
+        connection_data.add_value("ssl", connection_ssl)
+
+        manager_data = DataObject()
+        manager_data.add_value("connectTimeout", connect_timeout)
+
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("description", description)
+        data.add_value_string("type", "isamruntime")
+        data.add_value("locked", locked)
+        data.add_value("servers", servers)
+        data.add_value_not_empty("connection", connection_data.data)
+        data.add_value_not_empty("connectionManager", manager_data.data)
+
+        endpoint = SERVER_CONNECTION_ISAM_RUNTIME + "/v1"        
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 201
+
+        return response
+
+    def get_runtime(self):
+        endpoint = SERVER_CONNECTION_ISAM_RUNTIME + "/v1"
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+        return response
+        
+    def delete_runtime(self, uuid):
+        endpoint = "%s/%s/v1" % (SERVER_CONNECTION_ISAM_RUNTIME, uuid)
+
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
         return response

@@ -79,11 +79,10 @@ class SCIMConfig(object):
         return response
 
     def update_isam_user(
-            self, ldap_connection=None, isam_domain=None,
-            update_native_users=None):
+            self, ldap_connection=None, isam_domain=None, update_native_users=None):
         data = DataObject()
         data.add_value_string("ldap_connection", ldap_connection)
-        data.add_value_string("isam_domain", isam_domain)
+        data.add_value_string("isam_domain", isam_domain)        
         data.add_value("update_native_users", update_native_users)
 
         endpoint = ("%s/%s" % (SCIM_CONFIGURATION, SCHEMA_ISAM_USER))
@@ -92,3 +91,24 @@ class SCIMConfig(object):
         response.success = response.status_code == 200
 
         return response
+        
+class SCIMConfig9050(SCIMConfig):
+    def __init__(self, base_url, username, password):
+        super(SCIMConfig, self).__init__()
+        self.client = RESTClient(base_url, username, password)
+        
+    def update_isam_user(
+            self, ldap_connection=None, isam_domain=None, connection_type=None,
+            update_native_users=None):
+        data = DataObject()
+        data.add_value_string("ldap_connection", ldap_connection)
+        data.add_value_string("isam_domain", isam_domain)        
+        data.add_value_string("connection_type", connection_type)
+        data.add_value("update_native_users", update_native_users)
+
+        endpoint = ("%s/%s" % (SCIM_CONFIGURATION, SCHEMA_ISAM_USER))
+
+        response = self.client.put_json(endpoint, data.data)
+        response.success = response.status_code == 200
+        return response
+
