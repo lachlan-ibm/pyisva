@@ -367,9 +367,6 @@ class APIProtection9040(APIProtection):
         data.add_value_string("encryptionDb", encryption_db)
         data.add_value_string("encryptioncert", encryption_cert)
 
-        print("derp")
-        print(data.data)
-
         response = self.client.post_json(CLIENTS, data.data)
         response.success = response.status_code == 201
 
