@@ -288,7 +288,7 @@ class ReverseProxy(object):
         return response
 
     def delete_junction(self, webseal_id, junction_point):
-        query = urllib.urlencode({ JUNCTIONS_QUERY : junction_point})
+        query = urllib.parse.urlencode({ JUNCTIONS_QUERY : junction_point})
         endpoint = "%s/%s/junctions?%s" % (REVERSEPROXY, webseal_id, query)
 
         response = self.client.delete_json(endpoint)
