@@ -61,8 +61,8 @@ class DSCAdmin(object):
         """
         Terminate a specific session.
         """
-        replica_set = urllib.quote(replica_set, safe='')
-        session = urllib.quote(session, safe='')
+        replica_set = urllib.parse.quote(replica_set, safe='')
+        session = urllib.parse.quote(session, safe='')
         endpoint = "%s/%s/sessions/session/%s" % (DSC_ADMIN_REPLICAS, replica_set, session)
 
         response = self.client.delete_json(endpoint)
