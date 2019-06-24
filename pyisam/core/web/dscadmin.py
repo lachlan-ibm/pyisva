@@ -49,7 +49,7 @@ class DSCAdmin(object):
         parameters.add_value_string("user", user_name_pattern)
         parameters.add_value_string("max", max_results)
 
-        replica_set = urllib.quote(replica_set, safe='')
+        replica_set = urllib.parse.quote(replica_set, safe='')
         endpoint = "%s/%s/sessions" % (DSC_ADMIN_REPLICAS, replica_set)
 
         response = self.client.get_json(endpoint, parameters.data)
