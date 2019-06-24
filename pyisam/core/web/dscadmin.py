@@ -74,8 +74,8 @@ class DSCAdmin(object):
         """
         Terminate all sessions for the specified user.
         """
-        replica_set = urllib.quote(replica_set, safe='')
-        user_name = urllib.quote(user_name, safe='')
+        replica_set = urllib.parse.quote(replica_set, safe='')
+        user_name = urllib.parse.quote(user_name, safe='')
         endpoint = "%s/%s/sessions/user/%s" % (DSC_ADMIN_REPLICAS, replica_set, user_name)
 
         response = self.client.delete_json(endpoint)
