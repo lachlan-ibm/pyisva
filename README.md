@@ -5,6 +5,9 @@ quick and easy way to construct configuration scripts for appliances.
 
 **Supported Versions**
 
+- IBM Security Access Manager 9.0.8.0
+- IBM Security Access Manager 9.0.7.0
+- IBM Security Access Manager 9.0.6.0
 - IBM Security Access Manager 9.0.5.0
 - IBM Security Access Manager 9.0.4.0
 - IBM Security Access Manager 9.0.3.0
