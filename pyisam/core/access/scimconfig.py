@@ -7,7 +7,9 @@ import logging
 from pyisam.util.model import DataObject
 from pyisam.util.restclient import RESTClient
 
-
+"""
+Test comment by Shane
+"""
 SCHEMA_ISAM_USER = "urn:ietf:params:scim:schemas:extension:isam:1.0:User"
 SCIM_CONFIGURATION = "/mga/scim/configuration"
 SCIM_CONFIGURATION_GENERAL = "/mga/scim/configuration/general"
