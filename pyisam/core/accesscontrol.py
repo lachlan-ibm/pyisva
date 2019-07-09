@@ -18,6 +18,7 @@ from .access.serverconnections import ServerConnections, ServerConnections9050
 from .access.templatefiles import TemplateFiles
 from .access.userregistry import UserRegistry
 from .access.mappingrules import MappingRules
+from .access.fido2config import FIDO2Config
 
 
 class AccessControl9020(object):
@@ -82,6 +83,7 @@ class AccessControl9070(AccessControl9060):
 
     def __init__(self, base_url, username, password):
               super(AccessControl9070, self).__init__(base_url, username, password)
+              self.fido2_config = FIDO2Config(base_url, username, password)
 
 
 class AccessControl9080(AccessControl9070):
