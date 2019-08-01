@@ -13,6 +13,8 @@ SERVER_CONNECTION_LDAP = "/mga/server_connections/ldap"
 SERVER_CONNECTION_ISAM_RUNTIME = "/mga/server_connections/isamruntime"
 SERVER_CONNECTION_WEB_SERVICE = "/mga/server_connections/ws"
 SERVER_CONNECTION_SMTP = "/mga/server_connections/smtp"
+SERVER_CONNECTION_CI = "/mga/server_connections/ci"
+
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +114,51 @@ class ServerConnections(object):
 
     def list_smtp(self):
         endpoint = SERVER_CONNECTION_SMTP + "/v1"
+
+        response = self.client.get_json(endpoint)
+        response.success = response.status_code == 200
+
+        return response
+
+    def create_ci(
+            self, name=None, description=None,
+            connection_host_name=None, connection_client_id=None,
+            connection_client_secret=None, connection_ssl_truststore=None):
+        connection_data = DataObject()
+        connection_data.add_value_string("adminHost", connection_host_name)
+        connection_data.add_value("clientId", connection_client_id)
+        connection_data.add_value("clientSecret", connection_client_secret)
+        connection_data.add_value("ssl", True)
+        connection_data.add_value("sslTruststore", connection_ssl_truststore)
+        connection_data.add_value("usersEndpoint", "/v2.0/Users")
+        # yes, I know this is a token endpoint. The parameter name was poorly selected
+        connection_data.add_value("authorizeEndpoint", "/v1.0/endpoint/default/token")
+        connection_data.add_value("authenticatorsEndpoint", "/v1.0/authenticators")
+        connection_data.add_value("authnmethodsEndpoint", "/v1.0/authnmethods")
+
+        data = DataObject()
+        data.add_value_string("name", name)
+        data.add_value_string("description", description)
+        data.add_value_string("type", "ci")
+        data.add_value_not_empty("connection", connection_data.data)
+
+        endpoint = SERVER_CONNECTION_CI + "/v1"
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 201
+
+        return response
+
+    def delete_ci(self, uuid):
+        endpoint = "%s/%s/v1" % (SERVER_CONNECTION_CI, uuid)
+
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
+
+    def list_ci(self):
+        endpoint = SERVER_CONNECTION_CI + "/v1"
 
         response = self.client.get_json(endpoint)
         response.success = response.status_code == 200
