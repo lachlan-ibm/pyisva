@@ -77,11 +77,17 @@ class Configuration(object):
                 if (status & 32) != 0:
                     logger.info(
                         "Runtime restart was performed for status: %i", status)
-                    # TODO: Wait for Runtime to restart...
+                    self._restart_runtime()
 
         return response
 
     def _restart_lmi(self):
         restart_shutdown = RestartShutdown(
-            self._base_url, self._username, self._password)
+                self._base_url, self._username, self._password)
         restart_shutdown.restart_lmi()
+
+
+    def _restart_runtime(self):
+        restart_shutdown = RestartShutdown(
+                self._base_url, self._username, self._password)
+        restart_shutdown.restart_runtime()
