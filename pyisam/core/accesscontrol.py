@@ -90,3 +90,9 @@ class AccessControl9080(AccessControl9070):
 
     def __init__(self, base_url, username, password):
               super(AccessControl9080, self).__init__(base_url, username, password)
+
+
+class AccessControl10000(AccessControl9080):
+
+    def __init__(self, base_url, username, password):
+              super(AccessControl10000, self).__init__(base_url, username, password)

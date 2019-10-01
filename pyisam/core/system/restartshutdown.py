@@ -33,7 +33,7 @@ class RestartShutdown(object):
 
     def get_runtime_status(self):
         response = self.client.get_json(RUNTIME)
-        response.success = response.status_code == 200
+        response.success = response.status_code == 200 and response.json.get('return_code') == 0
 
         return response
 
