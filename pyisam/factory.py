@@ -13,6 +13,7 @@ VERSIONS = {
     "IBM Security Access Manager 10.0.0.0_b1": "10000",
     "IBM Security Access Manager 10.0.0.0": "10000",
     "IBM Security Access Manager 9.0.8.0": "9080",
+    "IBM Security Access Manager 9.0.7.1": "9071",
     "IBM Security Access Manager 9.0.7.0": "9070",
     "IBM Security Access Manager 9.0.6.0_b2": "9060",
     "IBM Security Access Manager 9.0.6.0_b1": "9060",
