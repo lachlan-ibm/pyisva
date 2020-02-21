@@ -296,7 +296,7 @@ class Federations9040(Federations):
     def create_oidc_rp_partner(self, federation_id, name=None, enabled=False, client_id=None, 
             client_secret=None, metadata_endpoint=None, scope=None,
             token_endpoint_auth_method=None, perform_userinfo=False,
-            advanced_configuration_active_delegate=None, advanced_configuration_rule_id=None,
+            advanced_configuration_active_delegate='skip-advance-map', advanced_configuration_rule_id=None,
             signing_algorithm=None):
 
         data = DataObject()
@@ -328,16 +328,15 @@ class Federations9040(Federations):
 
         configuration.add_value_not_empty("identityMapping", identityMapping.data)
 
-        advancedConfiguration = DataObject()
-        if advanced_configuration_active_delegate == None: 
-            advancedConfiguration.add_value_string("activeDelegateId", 'skip-advance-map')
-        else:
+        if advanced_configuration_active_delegate: 
+            advancedConfiguration = DataObject()
             advancedConfiguration.add_value_string("activeDelegateId", advanced_configuration_active_delegate)
-            properties = DataObject()
-            properties.add_value_string("advancedConfigurationRuleReference", advanced_configuration_rule_id)
-            advancedConfiguration.add_value_not_empty("properties", properties.data)
+            if (advanced_configuration_active_delegate != 'skip-advance-map'):
+                properties = DataObject()
+                properties.add_value_string("advanceMappingRuleReference", advanced_configuration_rule_id)
+                advancedConfiguration.add_value_not_empty("properties", properties.data)
+            configuration.add_value_not_empty("advanceConfiguration", advancedConfiguration.data)
 
-        configuration.add_value_not_empty("advanceConfiguration", advancedConfiguration.data)
         configuration.add_value_not_empty("basicConfiguration", basic.data)
 
         data.add_value_not_empty("configuration", configuration.data)
