@@ -276,13 +276,13 @@ class Federations9040(Federations):
         else:
             advancedConfiguration.add_value_string("activeDelegateId", advanced_configuration_active_delegate)
             properties = DataObject()
-            properties.add_value_string("advancedConfigurationRuleReference", advanced_configuration_rule_id)
+            properties.add_value_string("advanceMappingRuleReference", advanced_configuration_rule_id)
             advancedConfiguration.add_value_not_empty("properties", properties.data)
 
         configuration = DataObject()
         configuration.add_value_string("redirectUriPrefix", redirect_uri_prefix)
         configuration.add_value("responseTypes", response_types)
-        configuration.add_value_not_empty("advancedConfiguration", advancedConfiguration.data)
+        configuration.add_value_not_empty("advanceConfiguration", advancedConfiguration.data)
         configuration.add_value_not_empty("identityMapping", identityMapping.data)
         configuration.add_value_not_empty("attributeMapping", attributeMapping.data)
 
