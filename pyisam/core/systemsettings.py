@@ -105,3 +105,8 @@ class SystemSettings10000(SystemSettings9080):
         self.static_routes = StaticRoutes10000(base_url, username, password)
         self.interfaces = Interfaces10000(base_url, username, password)
         self.managementauthrization = ManagementAuthorisaton(url, username, password)
+
+class SystemSettings10010(SystemSettings10000):
+
+    def __init__(self, base_url, username, password):
+        super(SystemSettings10010, self).__init__(base_url, username, password)

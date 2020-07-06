@@ -1,10 +1,11 @@
 # PyISAM
 
-PyISAM is a Python library that wraps the IBM Security Access Manager's RESTful Web services to provide a
+PyISAM is a Python library that wraps the IBM Security Verify Access RESTful Web services to provide a
 quick and easy way to construct configuration scripts for appliances.
 
 **Supported Versions**
 
+- IBM Security Verify Accesss 10.0.0.1
 - IBM Security Verify Accesss 10.0.0.0
 - IBM Security Access Manager 9.0.7.0
 - IBM Security Access Manager 9.0.6.0
@@ -16,10 +17,10 @@ quick and easy way to construct configuration scripts for appliances.
 
 ## Installation
 
-For Linux/macOS: if you clone the library to `~/repos/pyisam`, add this to `~/.profile`:
+For Linux/macOS: if you clone the library to `~/repos/pyisva`, add this to `~/.profile`:
 ```sh
 # add pyisam library to Python's search path
-export PYTHONPATH="${PYTHONPATH}:${HOME}/repos/pyisam"
+export PYTHONPATH="${PYTHONPATH}:${HOME}/repos/pyisva"
 ```
 
 ## From IBM Security Verify Accesss 10.0.0.0 onwards:

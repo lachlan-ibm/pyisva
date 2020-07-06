@@ -91,3 +91,9 @@ class WebSettings10000(WebSettings9080):
             self.password_strength = PasswordStrength(base_url, username, password)
             self.rsa = RSA(base_url, username, password)
             self.api_access_control = APIAccessControl(base_url, username, password)
+
+
+class WebSettings10010(WebSettings10000):
+
+    def __init__(self, base_url, username, password):
+            super(WebSettings10010, self).__init__(base_url, username, password)
