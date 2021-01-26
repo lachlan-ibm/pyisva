@@ -11,7 +11,7 @@ from .access.authentication import Authentication, Authentication9021
 from .access.filedownloads import FileDownloads
 from .access.mmfaconfig import MMFAConfig, MMFAConfig9021
 from .access.pushnotification import PushNotification, PushNotification9021
-from .access.riskprofiles import RiskProfiles  
+from .access.riskprofiles import RiskProfiles
 from .access.runtimeparameters import RuntimeParameters
 from .access.scimconfig import SCIMConfig, SCIMConfig9050
 from .access.serverconnections import ServerConnections, ServerConnections9050
@@ -111,7 +111,7 @@ class AccessControl10010(AccessControl10000):
               super(AccessControl10010, self).__init__(base_url, username, password)
 
 
-class AccessControl10020(AccessControl100010):
+class AccessControl10020(AccessControl10010):
 
     def __init__(self, base_url, username, password):
               super(AccessControl10020, self).__init__(base_url, username, password)
