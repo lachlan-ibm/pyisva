@@ -72,3 +72,10 @@ class MappingRules(object):
 
         return response
 
+
+    def delete_rule(self, rule_id=None):
+        endpoint = MAPPING_RULES + "/{}".format(rule_id)
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
