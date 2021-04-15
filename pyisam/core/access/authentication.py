@@ -212,3 +212,20 @@ class Authentication9021(Authentication):
         response.success = response.status_code == 204
         return response
 
+
+    def delete_policy(self, _id):
+        endpoint = "%s/%s" % (AUTHENTICATION_POLICIES, _id)
+
+        response = self.client.delete_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
+
+    def delete_mechanism(self, _id):
+        endpoint = "%s/%s" % (AUTHENTICATION_MECHANISMS, _id)
+
+        response = self.client.delete_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response

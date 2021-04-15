@@ -73,3 +73,9 @@ class MMFAConfig9021(MMFAConfig):
         response.success = response.status_code == 204
 
         return response
+
+    def delete(self):
+        response = self.client.delete_json(MMFA_CONFIG)
+        response.success = response.status_code == 204
+
+        return response
