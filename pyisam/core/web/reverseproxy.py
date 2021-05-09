@@ -447,7 +447,7 @@ class ReverseProxy9040(ReverseProxy):
 class ReverseProxy10020(ReverseProxy9040):
 
     def __init__(self, base_url, username, password):
-        super(ReverseProxy9040, self).__init__()
+        super(ReverseProxy9040, self).__init__(base_url, username, password)
         self.client = RESTClient(base_url, username, password)
 
 
@@ -462,5 +462,3 @@ class ReverseProxy10020(ReverseProxy9040):
         response.success = response.status_code == 204
 
         return response
-
-
