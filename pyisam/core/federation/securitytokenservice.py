@@ -7,10 +7,11 @@ import logging
 from pyisam.util.model import DataObject, Response
 from pyisam.util.restclient import RESTClient
 
-STS_MODULES = "/iam/access/v8/sts/modules"
-STS_MODULE_TYPES = "/iam/access/v8/sts/module-types"
-STS_TEMPLATES = "/iam/access/v8/sts/templates"
-STS_CHAINS = "/iam/access/v8/sts/chains"
+STS_BASE = "/iam/access/v8/sts/"
+STS_MODULES = STS_BASE + "modules"
+STS_MODULE_TYPES = STS_BASE + "module-types"
+STS_TEMPLATES = STS_BASE + "templates"
+STS_CHAINS = STS_BASE + "chains"
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class SecurityTokenService(object):
 
         return response
 
-    def get_module(self, module_id=None):
+    def get_module(self, module_id):
 
         endpoint = "%s/%s" % (STS_MODULES, module_id)
 
@@ -57,7 +58,7 @@ class SecurityTokenService(object):
 
         return response
 
-    def get_template(self, template_id=None):
+    def get_template(self, template_id):
 
         endpoint = "%s/%s" % (STS_TEMPLATES, template_id)
 
@@ -66,11 +67,11 @@ class SecurityTokenService(object):
 
         return response
 
-    def create_template(self, name=None, modules=[]):
+    def create_template(self, name, description=None, modules=[]):
 
         data = DataObject()
         data.add_value_string("name", name)
-        data.add_value_string("description", name)
+        data.add_value_string("description", description)
         data.add_value("chainItems", modules)
 
         response = self.client.post_json(STS_TEMPLATES, data.data)
@@ -78,8 +79,10 @@ class SecurityTokenService(object):
 
         return response
 
-    def delete_template(self, template_id=None):
+    def delete_template(self, template_id):
+
         endpoint = "%s/%s" % (STS_TEMPLATES, template_id)
+
         response = self.client.delete_json(endpoint)
         response.success = response.status_code == 204
 
@@ -88,14 +91,12 @@ class SecurityTokenService(object):
 
     def get_chains(self):
 
-        endpoint = STS_CHAINS
-
-        response = self.client.get_json(endpoint)
+        response = self.client.get_json(STS_CHAINS)
         response.success = response.status_code == 200
 
         return response
 
-    def get_chain(self, chain_id=None):
+    def get_chain(self, chain_id):
 
         endpoint = "%s/%s" % (STS_CHAINS, chain_id)
 
@@ -104,14 +105,14 @@ class SecurityTokenService(object):
 
         return response
 
-    def create_chain(self, name=None, template_id=None, request_type=None, 
+    def create_chain(self, name, description=None, template_id=None, request_type=None, 
                      applies_to=None, issuer=None, 
-                     validate_requests=False, sign_responses=False, send_validation_confirmation=False, 
+                     validate_requests=None, sign_responses=None, send_validation_confirmation=None, 
                      properties=[]):
 
         data = DataObject()
         data.add_value_string("name", name)
-        data.add_value_string("description", name)
+        data.add_value_string("description", description)
         data.add_value_string("chainId", template_id)
         data.add_value_string("requestType", request_type)
 
@@ -133,8 +134,10 @@ class SecurityTokenService(object):
 
         return response
 
-    def delete_chain(self, chain_id=None):
+    def delete_chain(self, chain_id):
+
         endpoint = "%s/%s" % (STS_CHAINS, chain_id)
+
         response = self.client.delete_json(endpoint)
         response.success = response.status_code == 204
 
