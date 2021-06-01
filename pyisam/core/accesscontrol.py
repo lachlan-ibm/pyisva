@@ -22,6 +22,9 @@ from .access.fido2config import FIDO2Config
 
 
 class AccessControl9020(object):
+    '''
+    
+    '''
 
     def __init__(self, base_url, username, password):
         super(AccessControl9020, self).__init__()

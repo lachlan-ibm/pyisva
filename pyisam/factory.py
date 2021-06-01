@@ -48,39 +48,63 @@ class Factory(object):
         self._get_version()
 
     def get_federation(self):
+        '''
+        Return manager of Federation endpoint
+        '''
         class_name = "Federation" + self._get_version()
         module_name = "pyisam.core.federationsettings"
         return self._class_loader(module_name, class_name)
 
     def get_access_control(self):
+        '''
+        Return manager of AAC endpoint
+        '''
         class_name = "AccessControl" + self._get_version()
         module_name = "pyisam.core.accesscontrol"
         return self._class_loader(module_name, class_name)
 
     def get_analysis_diagnostics(self):
+        '''
+        Return manager of diagnostic endpoint
+        '''
         class_name = "AnalysisDiagnostics" + self._get_version()
         module_name = "pyisam.core.analysisdiagnostics"
         return self._class_loader(module_name, class_name)
 
     def get_system_settings(self):
+        '''
+        Return manager of system settings endpoint
+        '''
         class_name = "SystemSettings" + self._get_version()
         module_name = "pyisam.core.systemsettings"
         return self._class_loader(module_name, class_name)
 
     def get_version(self):
+        '''
+        Return the Verify Access version
+        '''
         return self._version
 
     def get_web_settings(self):
+        '''
+        Return manager of Web Reverse Proxy endpoints
+        '''
         class_name = "WebSettings" + self._get_version()
         module_name = "pyisam.core.websettings"
         return self._class_loader(module_name, class_name)
 
     def get_deployment_utility(self):
+        '''
+        Return manager of Web Reverse Proxy endpoints
+        '''
         class_name = "WebSettings" + self._get_version()
         module_name = "pyisam.core.websettings"
         return self._class_loader(module_name, class_name)
 
     def set_password(self, password):
+        '''
+        Update the password used to auhenticate to Verify Access administrator endpoints
+        '''
         self._password = password
 
     def _class_loader(self, module_name, class_name):
@@ -88,9 +112,16 @@ class Factory(object):
         return Klass(self._base_url, self._username, self._password)
 
     def is_docker(self):
+        '''
+        Return true if detected deployment is running in a container
+        '''
         return self._deployment_model == "Docker"
 
     def get_deployment_model(self):
+        '''
+        Get the deployment model detected by Verify Access.
+        Appliance or Docker
+        '''
         return self._deployment_model
 
     def _discover_version_and_deployment(self):
