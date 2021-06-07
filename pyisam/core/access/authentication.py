@@ -32,7 +32,6 @@ class Authentication(object):
         data.add_value_not_empty("properties", properties)
         data.add_value_not_empty("attributes", attributes)
 
-        logger.error(data.data)
         response = self.client.post_json(AUTHENTICATION_MECHANISMS, data.data)
         response.success = response.status_code == 201
 

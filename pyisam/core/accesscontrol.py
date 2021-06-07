@@ -23,7 +23,23 @@ from .access.fido2config import FIDO2Config
 
 class AccessControl9020(object):
     '''
-    
+    Object used to managed Advanced Access Control endpoints. Avaliable modules are:
+
+    access_control: Create and manage CBA policies
+    advanced_config: Manage advanced configuration parameters
+    api_protection: Create and manage OIDC definitions and clients
+    attributes: Craete and mange CBA attribute mappings
+    authentication: Create and manage AAC Policies/Mechanisms
+    file_downloads: Download file hosted on Verify Access
+    mmfa_config: Configure Mobile Multi-Factor Authentication for Verify Access
+    push_notifications: Configure and manage push notification providers
+    risk_profiles: Create and manage CBA risk profiles
+    runtime_parameters: Manage parameters of the Liberty runtime server
+    scim_config: Create and manage SCIM attribute mapping
+    server_connections: Create connections to external service providers
+    template_files: Create and manage HTML and JSON template files
+    user_registry: Manage authentication to the Liberty runtime server
+    mapping_rules: Create and manage JavaScript rules used for customized authentication
     '''
 
     def __init__(self, base_url, username, password):
