@@ -90,6 +90,7 @@ class ReverseProxy(object):
 
         return response
 
+
     def configure_mmfa(
             self, webseal_id, lmi_hostname=None, lmi_port=None,
             lmi_username=None, lmi_password=None, runtime_hostname=None,
@@ -451,6 +452,26 @@ class ReverseProxy9040(ReverseProxy):
         data.add_value_not_empty("runtime", runtime_data.data)
 
         endpoint = "%s/%s/mmfa_config" % (REVERSEPROXY, webseal_id)
+
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 204
+
+        return response
+
+
+class ReverseProxy10020(ReverseProxy9040):
+
+    def __init__(self, base_url, username, password):
+        super(ReverseProxy9040, self).__init__(base_url, username, password)
+        self.client = RESTClient(base_url, username, password)
+
+
+    def configure_verify_gateway(self, webseal_id, mmfa=None, junction=None):
+        data = DataObject()
+        data.add_value_boolean("mmfa", mmfa)
+        data.add_value_string("junction", junction);
+
+        endpoint = "{}/{}/verify_gateway_config".format(REVERSEPROXY, webseal_id)
 
         response = self.client.post_json(endpoint, data.data)
         response.success = response.status_code == 204

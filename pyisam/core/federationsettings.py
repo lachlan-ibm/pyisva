@@ -6,13 +6,23 @@ from .federation.federations import Federations, Federations9040, Federations100
 from .federation.pointofcontact import PointOfContact
 from .federation.accesspolicy import AccessPolicy
 from .federation.attributesources import AttributeSources
+from .federation.securitytokenservice import SecurityTokenService
 
 class Federation9020(object):
+    '''
+    Object is used to manage the Federations endpoints of a Verify Access applaince
+
+    federations: Create and mnanage Federation and Partners
+    attribute_sources: Manage attributes added to identities in federation flows
+    sts: Create and manage Security Token Service chains
+    poc: Create and manage Point of Contact profiles
+    '''
 
     def __init__(self, base_url, username, password):
         super(Federation9020, self).__init__()
         self.federations = Federations(base_url, username, password)
         self.attribute_sources = AttributeSources(base_url, username, password)
+        self.sts = SecurityTokenService(base_url, username, password)
 
 class Federation9021(Federation9020):
 
@@ -75,3 +85,9 @@ class Federation10010(Federation10000):
 
     def __init__(self, base_url, username, password):
 	super(Federation10010, self).__init__(base_url, username, password)
+ 
+
+class Federation10020(Federation10010):
+
+    def __init__(self, base_url, username, password):
+            super(Federation10020, self).__init__(base_url, username, password)

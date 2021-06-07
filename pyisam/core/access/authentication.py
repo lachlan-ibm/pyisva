@@ -23,14 +23,14 @@ class Authentication(object):
 
     def create_mechanism(
             self, description=None, name=None, uri=None, type_id=None,
-            properties=None, attributes=None):
+            properties=[], attributes=[]):
         data = DataObject()
         data.add_value_string("description", description)
         data.add_value_string("name", name)
         data.add_value_string("uri", uri)
         data.add_value_string("typeId", type_id)
-        data.add_value("properties", properties)
-        data.add_value("attributes", attributes)
+        data.add_value_not_empty("properties", properties)
+        data.add_value_not_empty("attributes", attributes)
 
         response = self.client.post_json(AUTHENTICATION_MECHANISMS, data.data)
         response.success = response.status_code == 201
@@ -210,3 +210,20 @@ class Authentication9021(Authentication):
         response.success = response.status_code == 204
         return response
 
+
+    def delete_policy(self, _id):
+        endpoint = "%s/%s" % (AUTHENTICATION_POLICIES, _id)
+
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
+
+
+    def delete_mechanism(self, _id):
+        endpoint = "%s/%s" % (AUTHENTICATION_MECHANISMS, _id)
+
+        response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response

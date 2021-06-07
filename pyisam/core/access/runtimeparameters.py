@@ -9,6 +9,7 @@ from pyisam.util.restclient import RESTClient
 
 
 RUNTIME_TUNING = "/mga/runtime_tuning"
+RUNTIME_TRACE = RUNTIME_TUNING + "/trace_specification/v1"
 ENDPOINTS = "endpoints"
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,16 @@ class RuntimeParameters(object):
         endpoint = "%s/%s/%s:%d/v1" % (RUNTIME_TUNING, ENDPOINTS, interface, port)
 
         response = self.client.delete_json(endpoint)
+        response.success = response.status_code == 204
+
+        return response
+
+
+    def update_trace(self, trace_string=""):
+        parameters = DataObject()
+        parameters.add_value("value", trace_string)
+
+        response = self.client.put_json(RUNTIME_TRACE, parameters.data)
         response.success = response.status_code == 204
 
         return response

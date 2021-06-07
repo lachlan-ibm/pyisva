@@ -4,7 +4,7 @@
 
 from .web.dscadmin import DSCAdmin
 from .web.policyadmin import PolicyAdmin
-from .web.reverseproxy import ReverseProxy, ReverseProxy9040
+from .web.reverseproxy import ReverseProxy, ReverseProxy9040, ReverseProxy10020
 from .web.runtimecomponent import RuntimeComponent, RuntimeComponent10000
 from .web.httptransform import HTTP_Transform
 from .web.fsso import FSSO
@@ -16,8 +16,18 @@ from .web.kerberos import Kerberos
 from .web.passwordstrength import PasswordStrength
 from .web.rsa import RSA
 from .web.api_access_control import APIAccessControl
+from .web.runtimecomponent import RuntimeComponent
+
 
 class WebSettings9020(object):
+    '''
+    Object used to manage WebSEAL configuration endpoints
+
+    dsc_admin: Manage the Distributed Session Cache
+    policy_administration: Manage the policy server
+    reverse_proxy: Create and manage WebSEAL instances
+    runtime_component: Create and manage the user registry and policy server configuration files
+    '''
 
     def __init__(self, base_url, username, password):
         super(WebSettings9020, self).__init__()
@@ -97,3 +107,10 @@ class WebSettings10010(WebSettings10000):
 
     def __init__(self, base_url, username, password):
             super(WebSettings10010, self).__init__(base_url, username, password)
+
+
+class WebSettings10020(WebSettings10010):
+
+    def __init__(self, base_url, username, password):
+            super(WebSettings10020, self).__init__(base_url, username, password)
+            self.reverse_proxy = ReverseProxy10020(base_url, username, password)
