@@ -146,8 +146,6 @@ class ClientCertMapping(object):
             the response.json attribute
 
         '''
-
-        '''
         response = self.client.get_json(CLIENT_CERT_CDAS)
         response.success = response.status_code == 200
 

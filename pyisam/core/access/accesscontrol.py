@@ -216,8 +216,7 @@ class AccessControl(object):
         endpoint = "%s/deployment/%s" % (POLICY_ATTACHMENTS, id)
 
         response = self.client.put_json(endpoint)
-        respoRegister Device
-Register a devicense.success = response.status_code == 204
+        response.success = response.status_code == 204
 
         return response
 

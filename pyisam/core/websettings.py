@@ -114,3 +114,10 @@ class WebSettings10020(WebSettings10010):
     def __init__(self, base_url, username, password):
             super(WebSettings10020, self).__init__(base_url, username, password)
             self.reverse_proxy = ReverseProxy10020(base_url, username, password)
+
+
+class WebSettings10030(WebSettings10020):
+
+    def __init__(self, base_url, username, password):
+            super(WebSettings10030, self).__init__(base_url, username, password)
+

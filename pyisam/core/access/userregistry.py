@@ -47,7 +47,7 @@ class UserRegistry(object):
 class UserRegistry10020(UserRegistry):
 
     def __init__(self, base_url, username, password):
-        super(UserRegistry10020, self).__init__()
+        super(UserRegistry10020, self).__init__(base_url, username, password)
         self.client = RESTClient(base_url, username, password)
 
 
@@ -74,7 +74,7 @@ class UserRegistry10020(UserRegistry):
 
         endpoint = USER_REGISTRY + "/groups/v1"
         response = self.client.post_json(endpoint, data.data)
-        response.success= response.status_code == 200
+        response.success = response.status_code == 200
 
         return response
 
@@ -123,8 +123,8 @@ class UserRegistry10020(UserRegistry):
         data.add_value("groups", groups)
 
         endpoint = USER_REGISTRY + "/users/v1"
-        response  self.client.post_json(endpoint, data.data)
-        response.success == response.status_code == 200
+        response = self.client.post_json(endpoint, data.data)
+        response.success = response.status_code == 200
 
         return response
 
@@ -144,7 +144,7 @@ class UserRegistry10020(UserRegistry):
         '''
         endpoint = "{}/users/{}/v1".format(USER_REGISTRY, user_id)
         response = self.client.delete_json(endpoint)
-        response.success = response.status_code = 204
+        response.success = response.status_code == 204
 
         return response
 
