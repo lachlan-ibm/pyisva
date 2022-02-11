@@ -11,6 +11,7 @@ DEVELOPMENT_VERSION = "IBM Security Access Manager Development"
 VERSIONS = {
     DEVELOPMENT_VERSION: "10040",
     "IBM Security Verify Access 10.0.4.0": "10040",
+    "IBM Security Verify Access 10.0.3.1": "10031",
     "IBM Security Verify Access 10.0.3.0": "10030",
     "IBM Security Verify Access 10.0.2.0": "10020",
     "IBM Security Verify Access 10.0.1.0": "10010",
