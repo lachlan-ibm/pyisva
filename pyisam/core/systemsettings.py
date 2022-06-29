@@ -148,3 +148,7 @@ class SystemSettings10040(SystemSettings10031):
             super(SystemSettings10040, self).__init__(base_url, username, password)
 
 
+class SystemSettings10050(SystemSettings10040):
+
+    def __init__(self, base_url, username, password):
+            super(SystemSettings10050, self).__init__(base_url, username, password)
