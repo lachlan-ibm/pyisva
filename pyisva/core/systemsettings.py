@@ -125,7 +125,7 @@ class SystemSettings10000(SystemSettings9080):
         super(SystemSettings10000, self).__init__(base_url, username, password)
         self.static_routes = StaticRoutes10000(base_url, username, password)
         self.interfaces = Interfaces10000(base_url, username, password)
-        self.managementauthrization = ManagementAuthorization(base_url, username, password)
+        self.managementauthorization = ManagementAuthorization(base_url, username, password)
         self.snapshot = Snapshot(base_url, username, password)
 
 class SystemSettings10010(SystemSettings10000):
