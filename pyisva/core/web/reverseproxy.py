@@ -169,7 +169,7 @@ class ReverseProxy(object):
         data = DataObject()
         data.add_value_string("operation", "restart")
 
-        endpoint = "%s/%s" % (REVERSEPROXY, id)
+        endpoint = "%s/%s" % (REVERSEPROXY, webseal_id)
 
         response = self.client.put_json(endpoint, data.data)
         response.success = response.status_code == 200
@@ -469,7 +469,7 @@ class ReverseProxy(object):
                     % (REVERSEPROXY, webseal_id, stanza_id, entry_name))
 
         response = self.client.put_json(endpoint, data.data)
-        response.success = response.status_code == 204
+        response.success = response.status_code == 200
 
         return response
 
