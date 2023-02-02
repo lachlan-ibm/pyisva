@@ -8,7 +8,6 @@ from .access.advancedconfig import AdvancedConfig
 from .access.apiprotection import APIProtection, APIProtection9040
 from .access.attributes import Attributes
 from .access.authentication import Authentication, Authentication9021
-from .access.filedownloads import FileDownloads
 from .access.mmfaconfig import MMFAConfig, MMFAConfig9021
 from .access.pushnotification import PushNotification, PushNotification9021
 from .access.riskprofiles import RiskProfiles
@@ -26,21 +25,20 @@ class AccessControl9020(object):
     '''
     Object used to managed Advanced Access Control endpoints. Avaliable modules are:
 
-    :var access_control: Create and manage CBA policies
-    :var advanced_config: Manage advanced configuration parameters
-    :var api_protection: Create and manage OIDC definitions and clients
-    :var attributes: Craete and mange CBA attribute mappings
-    :var authentication: Create and manage AAC Policies/Mechanisms
-    :var file_downloads: Download file hosted on Verify Access
-    :var mmfa_config: Configure Mobile Multi-Factor Authentication for Verify Access
-    :var push_notifications: Configure and manage push notification providers
-    :var risk_profiles: Create and manage CBA risk profiles
-    :var runtime_parameters: Manage parameters of the Liberty runtime server
-    :var scim_config: Create and manage SCIM attribute mapping
-    :var server_connections: Create connections to external service providers
-    :var template_files: Create and manage HTML and JSON template files
-    :var user_registry: Manage authentication to the Liberty runtime server
-    :var mapping_rules: Create and manage JavaScript rules used for customized authentication
+    :var access_control: Create and manage :ref:`Access Control` policies.
+    :var advanced_config: Manage :ref:`Advanced Configuration` parameters.
+    :var api_protection: Create and manage OIDC :ref:`API Protection` definitions and clients.
+    :var attributes: Craete and manage Risk Based Access :ref:`Attribute <Attributes>` mappings.
+    :var authentication: Create and manage :ref:Authentication` policies and mechanisms.
+    :var mapping_rules: Create and manage JavaScript :ref:`Mapping Rules` used for customized authentication.
+    :var mmfa_config: Configure :ref:`Mobile Multi-Factor Authentication` for Verify Access.
+    :var push_notifications: Configure and manage :ref:`Push Notification Providers`.
+    :var risk_profiles: Create and manage Risk Based Access :ref:`Risk Profiles`.
+    :var runtime_parameters: Manage :ref:`Runtime Parameters` of the Liberty runtime server.
+    :var scim_config: Create and manage :ref:`SCIM<SCIM Configuration>` attribute mapping.
+    :var server_connections: Create :ref:`Server Connections` to external service providers.
+    :var template_files: Create and manage HTML and JSON i:ref:`Template Files`.
+    :var user_registry: Manage :ref:`user authentication<User Registry>` to the Liberty runtime server.
     '''
 
     def __init__(self, base_url, username, password):
@@ -50,7 +48,6 @@ class AccessControl9020(object):
         self.api_protection = APIProtection(base_url, username, password)
         self.attributes = Attributes(base_url, username, password)
         self.authentication = Authentication(base_url, username, password)
-        self.file_downloads = FileDownloads(base_url, username, password)
         self.mmfa_config = MMFAConfig(base_url, username, password)
         self.push_notification = PushNotification(base_url, username, password)
         self.risk_profiles = RiskProfiles(base_url, username, password)

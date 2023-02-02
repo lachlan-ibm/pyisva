@@ -6,7 +6,7 @@ from .web.dscadmin import DSCAdmin
 from .web.policyadmin import PolicyAdmin
 from .web.reverseproxy import ReverseProxy, ReverseProxy9040, ReverseProxy10020
 from .web.runtimecomponent import RuntimeComponent, RuntimeComponent10000
-from .web.httptransform import HTTP_Transform
+from .web.httptransform import HTTPTransform
 from .web.fsso import FSSO
 from .web.clientcertmapping import ClientCertMapping
 from .web.junctionmapping import JunctionMapping
@@ -17,6 +17,7 @@ from .web.passwordstrength import PasswordStrength
 from .web.rsa import RSA
 from .web.api_access_control import APIAccessControl
 from .web.runtimecomponent import RuntimeComponent
+from .web.ratelimit import RateLimit
 
 
 class WebSettings9020(object):
@@ -87,11 +88,14 @@ class WebSettings9080(WebSettings9071):
 
 
 class WebSettings10000(WebSettings9080):
+    """
+    
+    """
 
     def __init__(self, base_url, username, password):
             super(WebSettings10000, self).__init__(base_url, username, password)
             self.runtime_component = RuntimeComponent10000(base_url, username, password)
-            self.http_transform = HTTP_Transform(base_url, username, password)
+            self.http_transform = HTTPTransform(base_url, username, password)
             self.fsso = FSSO(base_url, username, password)
             self.client_cert_mapping = ClientCertMapping(base_url, username, password)
             self.jct_mapping = JunctionMapping (base_url, username, password)
@@ -101,6 +105,7 @@ class WebSettings10000(WebSettings9080):
             self.password_strength = PasswordStrength(base_url, username, password)
             self.rsa = RSA(base_url, username, password)
             self.api_access_control = APIAccessControl(base_url, username, password)
+            self.ratelimit = RateLimit(base_url, username, password)
 
 
 class WebSettings10010(WebSettings10000):
