@@ -26,14 +26,14 @@ class AttributeSources(object):
             attribute_name (:obj:`str`): The name of the attribute.
             attribute_type (:obj:`str`): The type of the attribute source. Valid types are: credential, value, ldap.
             attribute_value (:obj:`str`): The value of the source attribute.
-            properties (:obj:`list` of :obj:`str`): The properties associated with an attribute source.
+            properties (:obj:`list` of :obj:`dict`): The properties associated with an attribute source.
 
         Returns:
             :obj:`~requests.Response`: The response from verify access. 
 
             Success can be checked by examining the response.success boolean attribute
 
-            If the request is successful the id of the created attribute source can be acessed from the
+            If the request is successful the id of the created attribute source can be accessed from the
             response.id_from_location attribute
 
         """
@@ -64,7 +64,7 @@ class AttributeSources(object):
 
             Success can be checked by examining the response.success boolean attribute
 
-            If the request is successful the id of the created attribute source can be acessed from the
+            If the request is successful the id of the created attribute source can be accessed from the
             response.id_from_location attribute
 
         """
@@ -99,7 +99,7 @@ class AttributeSources(object):
         response.success = response.status_code == 204
         return response
 
-    def get_attribute_soruce(self, attribute_name=None):
+    def get_attribute_source(self, attribute_name=None):
         """
         Get a configured attribute source
 

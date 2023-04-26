@@ -195,7 +195,7 @@ class SysAccount(object):
             the response.json attribute
         """
         data = DataObject()
-        data.add_alue_string("id", group)
+        data.add_value_string("id", group)
         endpoint = SYSACCOUNT_GROUPS + '/{}/groups/v1'.format(user)
         response = self.client.put_json(endpoint, data.data)
         response.success = response.status_code == 200
@@ -228,7 +228,7 @@ class SysAccount(object):
         Create a new management interface group
 
         Args:
-            group (:obj;`str`): The name of the group the user will be added to. The name can contain any ASCII 
+            group (:obj:`str`): The name of the group the user will be added to. The name can contain any ASCII 
                             characters but leading and trailing white space will be trimmed.
 
         Returns:
