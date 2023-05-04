@@ -1,6 +1,6 @@
-# PyISAM
+# PyISVA
 
-PyISAM is a Python library that wraps the IBM Security Verify Access RESTful Web services to provide a
+PyISVA is a Python library that wraps the IBM Security Verify Access RESTful Web services to provide a
 quick and easy way to construct configuration scripts for appliances.
 
 **Supported Versions**
@@ -29,7 +29,7 @@ For Linux/macOS: if you clone the library to `~/repos/pyisva`, add this to `~/.p
 export PYTHONPATH="${PYTHONPATH}:${HOME}/repos/pyisva"
 ```
 
-## From IBM Security Verify Accesss 10.0.0.0 onwards:
+## From IBM Security Verify Access 10.0.0.0 onwards:
 Module has been build into a package Currently hosted on PyPi that can be installed using pip:
 
 ```sh
